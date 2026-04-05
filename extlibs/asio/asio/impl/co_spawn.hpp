@@ -87,7 +87,8 @@ struct co_spawn_state
   Handler handler;
   co_spawn_work_guard<Executor> spawn_work;
   co_spawn_work_guard<associated_executor_t<Handler, Executor>> handler_work;
-  Function function;
+  Function 
+;
 };
 
 template <typename Handler, typename Executor, typename Function>
