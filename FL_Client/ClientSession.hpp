@@ -4,8 +4,7 @@
 #include "asio.hpp"
 
 
-class IncomingQueue;
-class OutgoingQueue;
+class DataQueue;
 class InputManager;
 class OutputManager;
 
@@ -15,17 +14,17 @@ public:
 	~ClientSession();
 
 	void writeOnOutgoingData(std::vector<char>& data);
-	void start() { doWrite(); }
+	void start();
 private:
 	asio::ip::tcp::socket sessionSocket;
-	std::vector<char> buffer;
+	asio::strand<asio::ip::tcp::socket::executor_type> sessionStrand;
 	asio::chrono::milliseconds writeWaitingTime = asio::chrono::milliseconds(500);
-	asio::steady_timer writeWaitingTimer;
-	std::shared_ptr<IncomingQueue> incomingQueue;
-	std::shared_ptr<OutgoingQueue> outgoingQueue;
+	std::shared_ptr<DataQueue> incomingQueue;
+	std::shared_ptr<DataQueue> outgoingQueue;
 	std::unique_ptr<InputManager> inputManager;
 	std::unique_ptr<OutputManager> outputManager;
 
 	void doWrite();
+	void doRead();
 
 };

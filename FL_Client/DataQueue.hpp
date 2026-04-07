@@ -3,7 +3,7 @@
 #include <vector>
 #include <mutex>
 
-class IncomingQueue {
+class DataQueue {
 public:
 	void push(const std::vector<char>& data);
 	bool empty() const;

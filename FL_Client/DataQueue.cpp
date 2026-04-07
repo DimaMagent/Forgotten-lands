@@ -1,16 +1,16 @@
-#include "IncomingQueue.hpp"
+#include "DataQueue.hpp"
 
-void IncomingQueue::push(const std::vector<char>& data) {
+void DataQueue::push(const std::vector<char>& data) {
 	std::lock_guard<std::mutex> lock(queueMutex);
 	queue.push(data);
 }
 
-bool IncomingQueue::empty() const {
+bool DataQueue::empty() const {
 	std::lock_guard<std::mutex> lock(queueMutex);
 	return queue.empty();
 }
 
-bool IncomingQueue::tryPop(std::vector<char>& out) {
+bool DataQueue::tryPop(std::vector<char>& out) {
 	std::lock_guard<std::mutex> lock(queueMutex);
 	if (queue.empty()) { return false; }
 	out = std::move(queue.front());

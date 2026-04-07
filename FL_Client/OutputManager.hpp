@@ -1,11 +1,11 @@
 #pragma once
 #include <memory>
 
-class OutgoingQueue;
+class DataQueue;
 
 class OutputManager {
 public:
-	OutputManager(std::shared_ptr<OutgoingQueue> outQueue);
+	OutputManager(std::shared_ptr<DataQueue> outQueue);
 private:
-	std::shared_ptr<OutgoingQueue> outgoingQueue;
+	std::shared_ptr<DataQueue> outgoingQueue;
 };

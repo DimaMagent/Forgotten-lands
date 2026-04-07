@@ -1,7 +1,7 @@
 #include "InputManager.hpp"
-#include "IncomingQueue.hpp"
+#include "DataQueue.hpp"
 
-InputManager::InputManager(std::shared_ptr<IncomingQueue> incQueue):
+InputManager::InputManager(std::shared_ptr<DataQueue> incQueue):
 	incomingQueue(std::move(incQueue))
 {
 }
