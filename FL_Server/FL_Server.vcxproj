@@ -76,6 +76,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>;$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -90,6 +91,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>;$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -102,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)extlibs\asio;$(SolutionDir)extlibs\sqlite;$(SolutionDir)extlibs\json;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)extlibs\asio;$(SolutionDir)extlibs\sqlite;$(SolutionDir)extlibs\json;$(SolutionDir)FL_SharedLib;%(AdditionalIncludeDirectories);$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -117,6 +119,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>;$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,6 +134,12 @@
   <ItemGroup>
     <ClInclude Include="Server.hpp" />
     <ClInclude Include="Session.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FL_SharedLib\FL_SharedLib.vcxproj">
+      <Project>{71235eed-ff94-4e07-94fd-1f7c9e1a1bd5}</Project>
+	  <Name>FL_SharedLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,26 +1,54 @@
 #include "Session.hpp"
 #include <iostream>
 #include <string>
-#include <array>
+#include "DataQueue.hpp"
 
-Session::Session(asio::ip::tcp::socket socket) : sessionSocket(std::move(socket))
+Session::Session(asio::ip::tcp::socket socket) :
+	sessionSocket(std::move(socket)), sessionStrand(asio::make_strand(sessionSocket.get_executor()))
 {
+	incomingQueue = std::make_shared<DataQueue>();
+	outgoingQueue = std::make_shared<DataQueue>();
+}
+
+void Session::writeOnOutgoingData(std::vector<char>& data)
+{
+	auto self = shared_from_this();
+	outgoingQueue->push(data);
+	asio::post(sessionStrand, [self]() { self->doWrite(); });
 }
 
 void Session::doRead()
 {
 	auto self(shared_from_this());
-	sessionSocket.async_read_some(asio::buffer(buffer), [this, self](std::error_code ec, size_t len) {
+	std::shared_ptr<std::vector<char>> localBuffer = std::make_shared<std::vector<char>>(8192u);
+	sessionSocket.async_read_some(asio::buffer(*localBuffer), asio::bind_executor(sessionStrand, [this, self, localBuffer](std::error_code ec, size_t len) {
 		if (ec) {
 			std::cout << ec.value() << "::" << ec.message() << std::endl;
 			return;
 		}
-		std::cout << "Received: " << std::string(buffer.data(), len) << std::endl;
+		std::cout << "Received: " << std::string(localBuffer->data(), len) << std::endl;
+		incomingQueue->push(*localBuffer);
 		doRead();
-		});
+		}));
 
 }
 
-void Session::doWrite(std::size_t length)
+void Session::doWrite()
 {
+	auto self(shared_from_this());
+	std::shared_ptr<std::vector<char>> localBuffer = std::make_shared<std::vector<char>>(1024u);
+	bool isOutgoing = outgoingQueue->tryPop(*localBuffer);
+	if (!isOutgoing) {
+		std::cout << "No data to write, waiting..." << std::endl;
+		return;
+	}
+
+	asio::async_write(sessionSocket, asio::buffer(*localBuffer), asio::bind_executor(sessionStrand, [this, self, localBuffer](std::error_code ec, size_t len) {
+		if (ec) {
+			std::cout << ec.value() << "::" << ec.message() << std::endl;
+			return;
+		}
+		std::cout << "Write continues" << std::endl;
+		doWrite();
+		}));
 }

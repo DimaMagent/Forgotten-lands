@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "DataQueue.hpp"
 
 void DataQueue::push(const std::vector<char>& data) {

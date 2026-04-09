@@ -18,7 +18,6 @@ public:
 private:
 	asio::ip::tcp::socket sessionSocket;
 	asio::strand<asio::ip::tcp::socket::executor_type> sessionStrand;
-	asio::chrono::milliseconds writeWaitingTime = asio::chrono::milliseconds(500);
 	std::shared_ptr<DataQueue> incomingQueue;
 	std::shared_ptr<DataQueue> outgoingQueue;
 	std::unique_ptr<InputManager> inputManager;

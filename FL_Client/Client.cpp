@@ -29,7 +29,7 @@ void Client::doConnect(asio::ip::tcp::endpoint connectEndpoint)
 		std::shared_ptr<ClientSession> sessionPtr = std::make_shared<ClientSession>(std::move(socket));
 		session = sessionPtr;
 		sessionPtr->start();
-		std::vector<char> vec{ 'H', 'e', 'l', 'l', 'o' };
+		std::vector<char> vec{ 'H', 'e', 'l', 'l', 'o', ' ', 'f', 'r', 'o', 'm', ' ', 'c', 'l', 'i', 'e', 'n', 't'};
 		tryWrite(vec);
 		});
 }

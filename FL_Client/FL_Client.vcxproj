@@ -77,7 +77,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug Dynamic|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v143</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release Static|x64'" Label="Configuration">
@@ -170,7 +170,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>extlibs\include;%(AdditionalIncludeDirectories);$(SolutionDir)extlibs\asio</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>extlibs\include;%(AdditionalIncludeDirectories);$(SolutionDir)extlibs\asio;$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -191,7 +191,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)extlibs\sfml\include;%(AdditionalIncludeDirectories);$(SolutionDir)extlibs\asio</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)extlibs\sfml\include;%(AdditionalIncludeDirectories);$(SolutionDir)extlibs\asio;$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -221,7 +221,7 @@ xcopy /E /Y "$(SolutionDir)FL_Client\resources\*" "$(TargetDir)resources\"</Comm
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>extlibs\include;%(AdditionalIncludeDirectories);$(SolutionDir)extlibs\asio</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>extlibs\include;%(AdditionalIncludeDirectories);$(SolutionDir)extlibs\asio;$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -246,7 +246,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>extlibs\include;%(AdditionalIncludeDirectories);$(SolutionDir)extlibs\asio</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>extlibs\include;%(AdditionalIncludeDirectories);$(SolutionDir)extlibs\asio;$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -273,7 +273,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>extlibs\include;%(AdditionalIncludeDirectories);$(SolutionDir)extlibs\asio;$(SolutionDir)extlibs\asio</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>extlibs\include;%(AdditionalIncludeDirectories);$(SolutionDir)extlibs\asio;$(SolutionDir)extlibs\asio;$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -294,12 +294,12 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)extlibs\sfml\include;$(SolutionDir)extlibs\asio;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)extlibs\sfml\include;$(SolutionDir)extlibs\asio;$(SolutionDir)FL_SharedLib;%(AdditionalIncludeDirectories);$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)extlibs\sfml\lib\$(PlatformTarget)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)extlibs\sfml\lib\$(PlatformTarget);$(SolutionDir)FL_SharedLib\$(PlatformTarget)\Debug</AdditionalLibraryDirectories>
       <AdditionalDependencies>sfml-network-d.lib;sfml-audio-d.lib;openal32.lib;sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
@@ -322,7 +322,7 @@ xcopy /E /Y "$(SolutionDir)FL_Client\resources\*" "$(TargetDir)resources\"</Comm
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>SFML_STATIC;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>extlibs\include;%(AdditionalIncludeDirectories);$(SolutionDir)extlibs\asio;$(SolutionDir)extlibs\asio</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>extlibs\include;%(AdditionalIncludeDirectories);$(SolutionDir)extlibs\asio;$(SolutionDir)extlibs\asio;$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -347,7 +347,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>extlibs\include;%(AdditionalIncludeDirectories);$(SolutionDir)extlibs\asio;$(SolutionDir)extlibs\asio</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>extlibs\include;%(AdditionalIncludeDirectories);$(SolutionDir)extlibs\asio;$(SolutionDir)extlibs\asio;$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -372,7 +372,6 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ClientMain.cpp" />
     <ClCompile Include="ClientSession.cpp" />
-    <ClCompile Include="DataQueue.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="OutputManager.cpp" />
   </ItemGroup>
@@ -592,16 +591,21 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <ClInclude Include="extlibs\include\SFML\Window\Window.hpp" />
     <ClInclude Include="extlibs\include\SFML\Window\WindowHandle.hpp" />
     <ClInclude Include="extlibs\include\SFML\Window\WindowStyle.hpp" />
-    <ClInclude Include="DataQueue.hpp" />
     <ClInclude Include="InputManager.hpp" />
     <ClInclude Include="OutputManager.hpp" />
-    <ClInclude Include="TimerHandle.hpp" />
+    <ClInclude Include="SessionComponent.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="resources\ball.wav" />
   </ItemGroup>
   <ItemGroup>
     <Font Include="resources\sansation.ttf" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FL_SharedLib\FL_SharedLib.vcxproj">
+      <Project>{71235eed-ff94-4e07-94fd-1f7c9e1a1bd5}</Project>
+      <Name>FL_SharedLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

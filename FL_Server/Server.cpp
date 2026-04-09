@@ -2,9 +2,20 @@
 #include <iostream>
 #include "Session.hpp"
 
+
 Server::Server(asio::io_context& context, short port) : acceptor(context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
 {
+
 	doAccept();
+}
+
+bool Server::tryWrite(std::vector<char>& data)
+{
+	if (auto sessionPtr = session.lock()) {
+		sessionPtr->writeOnOutgoingData(data);
+		return true;
+	}
+	return false;
 }
 
 void Server::doAccept()
@@ -14,7 +25,11 @@ void Server::doAccept()
 		{
 			if (!ec) {
 				std::cout << "Client connected" << std::endl;
-				std::make_shared<Session>(std::move(socket))->start();
+				std::shared_ptr<Session> sessionPtr = std::make_shared<Session>(std::move(socket));
+				sessionPtr->start();
+				session = sessionPtr;
+				std::vector<char> vec{ 'H', 'e', 'l', 'l', 'o', ' ', 'f', 'r', 'o', 'm', ' ', 's', 'e', 'r', 'v', 'e', 'r' };
+				tryWrite(vec);
 			}
 			else {
 				std::cout << ec.value() << "::" << ec.message() << std::endl;

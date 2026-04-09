@@ -4,6 +4,7 @@
 #include "OutputManager.hpp"
 #include <iostream>
 #include <vector>
+
 ClientSession::ClientSession(asio::ip::tcp::socket socket)
     : sessionSocket(std::move(socket)), sessionStrand(asio::make_strand(sessionSocket.get_executor()))
 {
