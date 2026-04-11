@@ -3,13 +3,14 @@
 #include "asio.hpp"
 
 class DataQueue;
+struct NetData;
 
 class Session: public std::enable_shared_from_this<Session> {
 public:
 	Session(asio::ip::tcp::socket socket);
 	~Session() = default;
 	void start() { doRead(); }
-	void writeOnOutgoingData(std::vector<char>& data);
+	void writeOnOutgoingData(NetData& data);
 private:
 	asio::ip::tcp::socket sessionSocket;
 	asio::strand<asio::ip::tcp::socket::executor_type> sessionStrand;

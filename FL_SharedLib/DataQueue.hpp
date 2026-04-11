@@ -2,13 +2,14 @@
 #include <queue>
 #include <vector>
 #include <mutex>
+#include "NetData.hpp"
 
 class DataQueue {
 public:
-	void push(const std::vector<char>& data);
+	void push(const NetData& data);
 	bool empty() const;
-	bool tryPop(std::vector<char>& out);
+	bool tryPop(NetData& out);
 private:
 	mutable std::mutex queueMutex;
-	std::queue<std::vector<char>> queue;
+	std::queue<NetData> queue;
 };

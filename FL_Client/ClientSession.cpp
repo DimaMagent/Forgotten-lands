@@ -21,7 +21,7 @@ void ClientSession::start() {
     asio::post(sessionStrand, [self]() { self->doRead(); });
 }
 
-void ClientSession::writeOnOutgoingData(std::vector<char>& data)
+void ClientSession::writeOnOutgoingData(NetData& data)
 {
 	auto self = shared_from_this();
     outgoingQueue->push(data);
@@ -31,14 +31,14 @@ void ClientSession::writeOnOutgoingData(std::vector<char>& data)
 void ClientSession::doWrite()
 {
 	auto self(shared_from_this());
-	std::shared_ptr<std::vector<char>> localBuffer = std::make_shared<std::vector<char>>(1024u);
+	std::shared_ptr<NetData> localBuffer = std::make_shared<NetData>(1024u);
 	bool isOutgoing = outgoingQueue->tryPop(*localBuffer);
 	if (!isOutgoing) {
 		std::cout << "No data to write, waiting..." << std::endl;
 		return;
 	}
 
-	asio::async_write(sessionSocket, asio::buffer(*localBuffer), asio::bind_executor(sessionStrand, [this, self, localBuffer](std::error_code ec, size_t len) {
+	asio::async_write(sessionSocket, asio::buffer(localBuffer->getData()), asio::bind_executor(sessionStrand, [this, self, localBuffer](std::error_code ec, size_t len) {
 		if (ec) {
 			std::cout << ec.value() << "::" << ec.message() << std::endl;
 			return;
@@ -49,13 +49,13 @@ void ClientSession::doWrite()
 }
 void ClientSession::doRead() {
 	auto self(shared_from_this());
-	std::shared_ptr<std::vector<char>> localBuffer = std::make_shared<std::vector<char>>(8192u);
-	sessionSocket.async_read_some(asio::buffer(*localBuffer), asio::bind_executor(sessionStrand, [this, self, localBuffer](std::error_code ec, size_t len) {
+	std::shared_ptr<NetData> localBuffer = std::make_shared<NetData>(8192u);
+	sessionSocket.async_read_some(asio::buffer(localBuffer->getData()), asio::bind_executor(sessionStrand, [this, self, localBuffer](std::error_code ec, size_t len) {
 		if (ec) {
 			std::cout << ec.value() << "::" << ec.message() << std::endl;
 			return;
 		}
-		std::cout << "Received: " << std::string(localBuffer->data(), len) << std::endl;
+		std::cout << "Received: " << std::string(localBuffer->getData().data(), len) << std::endl;
 		incomingQueue->push(*localBuffer);
 		doRead();
 		}));

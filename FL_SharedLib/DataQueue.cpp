@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "DataQueue.hpp"
 
-void DataQueue::push(const std::vector<char>& data) {
+void DataQueue::push(const NetData& data) {
 	std::lock_guard<std::mutex> lock(queueMutex);
 	queue.push(data);
 }
@@ -11,7 +11,7 @@ bool DataQueue::empty() const {
 	return queue.empty();
 }
 
-bool DataQueue::tryPop(std::vector<char>& out) {
+bool DataQueue::tryPop(NetData& out) {
 	std::lock_guard<std::mutex> lock(queueMutex);
 	if (queue.empty()) { return false; }
 	out = std::move(queue.front());
