@@ -1,8 +1,8 @@
 #pragma once
 #include <queue>
-#include <vector>
 #include <mutex>
 #include "NetData.hpp"
+
 
 class DataQueue {
 public:

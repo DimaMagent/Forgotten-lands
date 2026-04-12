@@ -1,7 +1,8 @@
 #pragma once
 #include <vector>
 
-struct NetData {
+
+class NetData {
 public:
 	NetData() = default;
 	NetData(const std::vector<char>& data) : data(data) {}

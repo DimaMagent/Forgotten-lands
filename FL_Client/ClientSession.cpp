@@ -1,7 +1,8 @@
+#include "asio.hpp"
 #include "ClientSession.hpp"
 #include "DataQueue.hpp"
-#include "InputManager.hpp"
-#include "OutputManager.hpp"
+#include "InputDataManager.hpp"
+#include "OutputDataManager.hpp"
 #include <iostream>
 #include <vector>
 
@@ -10,8 +11,8 @@ ClientSession::ClientSession(asio::ip::tcp::socket socket)
 {
 	incomingQueue = std::make_shared<DataQueue>();
 	outgoingQueue = std::make_shared<DataQueue>();
-	inputManager = std::make_unique<InputManager>(incomingQueue);
-	outputManager = std::make_unique<OutputManager>(outgoingQueue);
+	inputManager = std::make_unique<InputDataManager>(incomingQueue);
+	outputManager = std::make_unique<OutputDataManager>(outgoingQueue);
 }
 
 ClientSession::~ClientSession() = default;

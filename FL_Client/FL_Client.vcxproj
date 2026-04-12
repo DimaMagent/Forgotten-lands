@@ -295,6 +295,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)extlibs\sfml\include;$(SolutionDir)extlibs\asio;$(SolutionDir)FL_SharedLib;%(AdditionalIncludeDirectories);$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -372,8 +373,10 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ClientMain.cpp" />
     <ClCompile Include="ClientSession.cpp" />
+    <ClCompile Include="InputDataManager.cpp" />
     <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="OutputManager.cpp" />
+    <ClCompile Include="NetComponent.cpp" />
+    <ClCompile Include="OutputDataManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="extlibs\bin\x64\openal32.dll" />
@@ -591,8 +594,10 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <ClInclude Include="extlibs\include\SFML\Window\Window.hpp" />
     <ClInclude Include="extlibs\include\SFML\Window\WindowHandle.hpp" />
     <ClInclude Include="extlibs\include\SFML\Window\WindowStyle.hpp" />
+    <ClInclude Include="InputDataManager.hpp" />
     <ClInclude Include="InputManager.hpp" />
-    <ClInclude Include="OutputManager.hpp" />
+    <ClInclude Include="NetComponent.hpp" />
+    <ClInclude Include="OutputDataManager.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="resources\ball.wav" />

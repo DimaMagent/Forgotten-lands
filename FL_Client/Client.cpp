@@ -1,36 +1,45 @@
 #include "Client.hpp"
+#include <SFML/Graphics.hpp>
 #include <iostream>
-#include "ClientSession.hpp"
-#include <vector>
-#include "NetData.hpp"
+#include "NetComponent.hpp"
+#include "InputManager.hpp"
+#include "asio.hpp"
 
+Client::Client() :
+	clientContext(std::make_unique<asio::io_context>()), netComponent(std::make_unique<NetComponent>(*clientContext)),
+	inputManager(std::make_unique<InputManager>(isRunningFlag)) {}
 
-Client::Client(asio::io_context& context, asio::ip::tcp::endpoint endpoint) : socket(context)
+Client::~Client() = default;
+
+void Client::start()
 {
-	doConnect(endpoint);
-}
-
-bool Client::tryWrite(NetData& data)
-{
-	if (auto sessionPtr = session.lock()) {
-		sessionPtr->writeOnOutgoingData(data);
-		return true;
-	}
-	return false;
-}
-
-void Client::doConnect(asio::ip::tcp::endpoint connectEndpoint)
-{
-	socket.async_connect(connectEndpoint, [this](std::error_code ec) {
-		if (ec) {
-			std::cout << ec.value() << "::" << ec.message() << std::endl;
-			return;
+	try {
+		setlocale(LC_ALL, "Russian");
+		isRunningFlag = true;
+		netComponent->doConnect();
+		std::thread ClientThread([this]() {clientContext->run(); });
+		window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "FL_Client.exe", sf::Style::Fullscreen);
+		for (;;) {
+			window->display();
+			sf::Event event;
+			while (window->pollEvent(event)) {
+				inputManager->handleEvent(event);
+			}
+			if (!isRunningFlag) {
+				window->close();
+				break;
+			}
+			if (!window->isOpen()) {
+				break;
+			}
 		}
-		std::cout << "Connect to server" << std::endl;
-		std::shared_ptr<ClientSession> sessionPtr = std::make_shared<ClientSession>(std::move(socket));
-		session = sessionPtr;
-		sessionPtr->start();
-		NetData data(std::vector<char>{ 'H', 'e', 'l', 'l', 'o', ' ', 'f', 'r', 'o', 'm', ' ', 'c', 'l', 'i', 'e', 'n', 't'});
-		tryWrite(data);
-		});
+		clientContext->stop();
+		ClientThread.join();
+		std::cout << "Client stopped" << std::endl;
+		return;
+	}
+	catch (std::exception& e) {
+		std::cerr << "Exception: " << e.what() << std::endl;
+		std::cin.get();
+	}
 }

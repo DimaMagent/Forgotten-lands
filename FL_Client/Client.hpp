@@ -1,16 +1,26 @@
 #pragma once
-#include "asio.hpp"
+#include "asio\ip\tcp.hpp"
+#include <memory>
 
-class ClientSession;
-struct NetData;
+class NetComponent;
+class InputManager;
+namespace asio {
+	class io_context;
+}
+namespace sf {
+	class RenderWindow;
+}
+
 
 class Client {
 public:
-	Client(asio::io_context& context, asio::ip::tcp::endpoint endpoint);
-	bool tryWrite(NetData& data);
+	Client();
+	~Client();
+	void start();
 private:
-	asio::ip::tcp::socket socket;
-	std::weak_ptr<ClientSession> session;
-	
-	void doConnect(asio::ip::tcp::endpoint connectEndpoint);
+	std::unique_ptr<asio::io_context> clientContext;
+	std::unique_ptr<NetComponent> netComponent;
+	std::unique_ptr<InputManager> inputManager;
+	std::unique_ptr<sf::RenderWindow> window;
+	bool isRunningFlag = false;
 };

@@ -1,9 +1,11 @@
 #pragma once
-#include "asio.hpp"
+#include "asio\ip\tcp.hpp"
 
 class Session;
-struct NetData;
-
+class NetData;
+namespace asio {
+	class io_context;
+}
 class Server {
 public:
 	Server(asio::io_context& context, short port);

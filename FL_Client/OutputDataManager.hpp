@@ -3,9 +3,9 @@
 
 class DataQueue;
 
-class OutputManager {
+class OutputDataManager {
 public:
-	OutputManager(std::shared_ptr<DataQueue> outQueue);
+	OutputDataManager(std::shared_ptr<DataQueue> outQueue);
 private:
 	std::shared_ptr<DataQueue> outgoingQueue;
 };

@@ -3,7 +3,7 @@
 #include "asio.hpp"
 
 class DataQueue;
-struct NetData;
+class NetData;
 
 class Session: public std::enable_shared_from_this<Session> {
 public:

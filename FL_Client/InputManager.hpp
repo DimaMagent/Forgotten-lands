@@ -1,11 +1,15 @@
 #pragma once
 #include <memory>
 
-class DataQueue;
+namespace sf {
+	class Event;
+}
 
 class InputManager {
-public:
-	InputManager(std::shared_ptr<DataQueue> incQueue);
+	public:
+	InputManager(bool& isRunningFlag);
+	~InputManager();
+	void handleEvent(const sf::Event& event);
 private:
-	std::shared_ptr<DataQueue> incomingQueue;
+	bool& isRunningFlag;
 };

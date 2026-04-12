@@ -105,6 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)extlibs\asio;$(SolutionDir)extlibs\sqlite;$(SolutionDir)extlibs\json;$(SolutionDir)FL_SharedLib;%(AdditionalIncludeDirectories);$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,7 +139,7 @@
   <ItemGroup>
     <ProjectReference Include="..\FL_SharedLib\FL_SharedLib.vcxproj">
       <Project>{71235eed-ff94-4e07-94fd-1f7c9e1a1bd5}</Project>
-	  <Name>FL_SharedLib</Name>
+      <Name>FL_SharedLib</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,13 +1,13 @@
 #pragma once
 #include <memory>
 #include <vector>
-#include "asio.hpp"
+#include "asio\ip\tcp.hpp"
 
 
 class DataQueue;
-class InputManager;
-class OutputManager;
-struct NetData;
+class InputDataManager;
+class OutputDataManager;
+class NetData;
 
 class ClientSession : public std::enable_shared_from_this<ClientSession> {
 public:
@@ -21,8 +21,8 @@ private:
 	asio::strand<asio::ip::tcp::socket::executor_type> sessionStrand;
 	std::shared_ptr<DataQueue> incomingQueue;
 	std::shared_ptr<DataQueue> outgoingQueue;
-	std::unique_ptr<InputManager> inputManager;
-	std::unique_ptr<OutputManager> outputManager;
+	std::unique_ptr<InputDataManager> inputManager;
+	std::unique_ptr<OutputDataManager> outputManager;
 
 	void doWrite();
 	void doRead();
