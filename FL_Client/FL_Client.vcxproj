@@ -294,7 +294,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)extlibs\sfml\include;$(SolutionDir)extlibs\asio;$(SolutionDir)FL_SharedLib;%(AdditionalIncludeDirectories);$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)extlibs\sfml\include;$(SolutionDir)extlibs\asio;$(SolutionDir)FL_SharedLib;$(SolutionDir)extlibs\json;$(SolutionDir)$(ProjectName)\data;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -370,15 +370,6 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Client.cpp" />
-    <ClCompile Include="ClientMain.cpp" />
-    <ClCompile Include="ClientSession.cpp" />
-    <ClCompile Include="InputDataManager.cpp" />
-    <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="NetComponent.cpp" />
-    <ClCompile Include="OutputDataManager.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="extlibs\bin\x64\openal32.dll" />
     <None Include="extlibs\bin\x64\sfml-audio-2.dll" />
     <None Include="extlibs\bin\x64\sfml-audio-d-2.dll" />
@@ -432,6 +423,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <None Include="extlibs\lib\x86\sfml-system-s-d.pdb" />
     <None Include="extlibs\lib\x86\sfml-window-d.pdb" />
     <None Include="extlibs\lib\x86\sfml-window-s-d.pdb" />
+    <None Include="resources\Characters.json" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\flac.lib" />
@@ -494,8 +486,19 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\vorbisfile.lib" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Client.hpp" />
-    <ClInclude Include="ClientSession.hpp" />
+    <ClInclude Include="data\Character.hpp" />
+    <ClInclude Include="data\CharacterFactory.hpp" />
+    <ClInclude Include="data\Client.hpp" />
+    <ClInclude Include="data\ClientSession.hpp" />
+    <ClInclude Include="data\DataLoader.hpp" />
+    <ClInclude Include="data\Entity.hpp" />
+    <ClInclude Include="data\InputDataManager.hpp" />
+    <ClInclude Include="data\InputManager.hpp" />
+    <ClInclude Include="data\NetComponent.hpp" />
+    <ClInclude Include="data\OutputDataManager.hpp" />
+    <ClInclude Include="data\RenderComponent.hpp" />
+    <ClInclude Include="data\TextureManager.hpp" />
+    <ClInclude Include="data\World.hpp" />
     <ClInclude Include="extlibs\include\SFML\Audio.hpp" />
     <ClInclude Include="extlibs\include\SFML\Audio\AlResource.hpp" />
     <ClInclude Include="extlibs\include\SFML\Audio\Export.hpp" />
@@ -594,22 +597,28 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <ClInclude Include="extlibs\include\SFML\Window\Window.hpp" />
     <ClInclude Include="extlibs\include\SFML\Window\WindowHandle.hpp" />
     <ClInclude Include="extlibs\include\SFML\Window\WindowStyle.hpp" />
-    <ClInclude Include="InputDataManager.hpp" />
-    <ClInclude Include="InputManager.hpp" />
-    <ClInclude Include="NetComponent.hpp" />
-    <ClInclude Include="OutputDataManager.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <Media Include="resources\ball.wav" />
-  </ItemGroup>
-  <ItemGroup>
-    <Font Include="resources\sansation.ttf" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FL_SharedLib\FL_SharedLib.vcxproj">
       <Project>{71235eed-ff94-4e07-94fd-1f7c9e1a1bd5}</Project>
       <Name>FL_SharedLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="data\Character.cpp" />
+    <ClCompile Include="data\CharacterFactory.cpp" />
+    <ClCompile Include="data\Client.cpp" />
+    <ClCompile Include="data\ClientMain.cpp" />
+    <ClCompile Include="data\ClientSession.cpp" />
+    <ClCompile Include="data\DataLoader.cpp" />
+    <ClCompile Include="data\Entity.cpp" />
+    <ClCompile Include="data\InputDataManager.cpp" />
+    <ClCompile Include="data\InputManager.cpp" />
+    <ClCompile Include="data\NetComponent.cpp" />
+    <ClCompile Include="data\OutputDataManager.cpp" />
+    <ClCompile Include="data\RenderComponent.cpp" />
+    <ClCompile Include="data\TextureManager.cpp" />
+    <ClCompile Include="data\World.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

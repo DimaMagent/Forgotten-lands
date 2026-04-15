@@ -3,11 +3,14 @@
 #include <iostream>
 #include "NetComponent.hpp"
 #include "InputManager.hpp"
+#include "World.hpp"
+#include "CharacterFactory.hpp"
+#include "Character.hpp"
 #include "asio.hpp"
 
 Client::Client() :
 	clientContext(std::make_unique<asio::io_context>()), netComponent(std::make_unique<NetComponent>(*clientContext)),
-	inputManager(std::make_unique<InputManager>(isRunningFlag)) {}
+	inputManager(std::make_unique<InputManager>(isRunningFlag)), characterFactory(std::make_unique<CharacterFactory>()) {}
 
 Client::~Client() = default;
 
@@ -19,6 +22,8 @@ void Client::start()
 		netComponent->doConnect();
 		std::thread ClientThread([this]() {clientContext->run(); });
 		window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "FL_Client.exe", sf::Style::Fullscreen);
+		world = std::make_unique<World>(*window);
+		world->addEntity(characterFactory->createCharacter(CharacterType::Player));
 		for (;;) {
 			window->display();
 			sf::Event event;
@@ -32,6 +37,7 @@ void Client::start()
 			if (!window->isOpen()) {
 				break;
 			}
+			world->render();
 		}
 		clientContext->stop();
 		ClientThread.join();

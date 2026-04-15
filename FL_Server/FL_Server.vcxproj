@@ -104,7 +104,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)extlibs\asio;$(SolutionDir)extlibs\sqlite;$(SolutionDir)extlibs\json;$(SolutionDir)FL_SharedLib;%(AdditionalIncludeDirectories);$(SolutionDir)FL_SharedLib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)extlibs\asio;$(SolutionDir)extlibs\sqlite;$(SolutionDir)extlibs\json;$(SolutionDir)FL_SharedLib;$(SolutionDir)$(ProjectName)\data;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -128,19 +128,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Server.cpp" />
-    <ClCompile Include="ServerMain.cpp" />
-    <ClCompile Include="Session.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Server.hpp" />
-    <ClInclude Include="Session.hpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\FL_SharedLib\FL_SharedLib.vcxproj">
       <Project>{71235eed-ff94-4e07-94fd-1f7c9e1a1bd5}</Project>
       <Name>FL_SharedLib</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="data\Server.cpp" />
+    <ClCompile Include="data\ServerMain.cpp" />
+    <ClCompile Include="data\Session.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="data\Server.hpp" />
+    <ClInclude Include="data\Session.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

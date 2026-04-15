@@ -1,0 +1,11 @@
+{
+  "Player": {
+    "texturePath": "resources/assets/test.bmp",
+    "textureRect": {
+      "height": 32,
+      "width": 32,
+      "x": 0,
+      "y": 0
+    }
+  }
+}

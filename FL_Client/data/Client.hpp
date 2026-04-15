@@ -4,6 +4,8 @@
 
 class NetComponent;
 class InputManager;
+class World;
+class CharacterFactory;
 namespace asio {
 	class io_context;
 }
@@ -22,5 +24,7 @@ private:
 	std::unique_ptr<NetComponent> netComponent;
 	std::unique_ptr<InputManager> inputManager;
 	std::unique_ptr<sf::RenderWindow> window;
+	std::unique_ptr<World> world;
+	std::unique_ptr<CharacterFactory> characterFactory;
 	bool isRunningFlag = false;
 };
