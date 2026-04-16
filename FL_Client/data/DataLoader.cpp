@@ -7,7 +7,7 @@ DataLoader::DataLoader(){}
 DataLoader::~DataLoader() = default;
 
 
-RenderData DataLoader::getData(const std::string& id)
+JsonData DataLoader::getData(const std::string& id)
 {
 	std::ifstream file("resources/Characters.json");
 	if (!file.is_open()) {
@@ -15,15 +15,16 @@ RenderData DataLoader::getData(const std::string& id)
 	}
 	nlohmann::json data;
 	file >> data;
-	RenderData rd;
+	JsonData rd;
 	fromJson(data, id, rd);
 	return rd;
 }
 
-void DataLoader::fromJson(const nlohmann::json& json, const std::string& id, RenderData& out)
+void DataLoader::fromJson(const nlohmann::json& json, const std::string& id, JsonData& out)
 {
 	try {
 		auto& characterData = json.at(id);
+		characterData.at("maxVelocity").get_to(out.maxVelocity);
 		characterData.at("texturePath").get_to(out.texturePath);
 		auto& rect = characterData.at("textureRect");
 		rect.at("x").get_to(out.textureRect.left);

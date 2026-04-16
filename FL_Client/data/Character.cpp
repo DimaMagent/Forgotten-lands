@@ -1,9 +1,17 @@
 #include "Character.hpp"
-#include "RenderComponent.hpp"
+#include "TransformComponent.hpp"
+#include "MovementComponent.hpp"
 
-Character::Character(RenderComponent& rc) : Entity(std::make_shared<RenderComponent>(rc))
-{
-}
+Character::Character(const RenderComponent& rc, const TransformComponent& tc, const MovementComponent& mc) : Entity(rc, tc),
+	movementComponent(std::make_unique<MovementComponent>(mc))
+{}
 
 Character::~Character() = default;
+
+void Character::move(float deltaTime)
+{
+	if (movementComponent) {
+		movementComponent->move(deltaTime, transformComponent->getPosition());
+	}
+}
 

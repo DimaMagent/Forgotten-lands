@@ -2,15 +2,17 @@
 #include <memory>
 
 class RenderComponent;
+class TransformComponent;
 namespace sf {
 	class RenderTarget;
 }
 
 class Entity {
 public:
-	Entity(std::shared_ptr<RenderComponent> rc);
+	Entity(const RenderComponent& rc, const TransformComponent& tc);
 	~Entity();
 	void render(sf::RenderTarget& target) const;
-private:
+protected:
 	std::shared_ptr<RenderComponent> renderComponent;
+	std::unique_ptr<TransformComponent> transformComponent;
 };

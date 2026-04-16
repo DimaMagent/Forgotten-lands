@@ -4,9 +4,10 @@
 #include <string>
 #include <json.hpp>
 
-struct RenderData{
+struct JsonData{
 	std::string texturePath;
 	sf::IntRect textureRect;
+	float maxVelocity;
 };
 
 
@@ -15,7 +16,7 @@ public:
 	DataLoader();
 	DataLoader(const DataLoader&) = delete;
 	~DataLoader();
-	RenderData getData(const std::string& id);
+	JsonData getData(const std::string& id);
 private:
-	void fromJson(const nlohmann::json& json, const std::string& id, RenderData& out);
+	void fromJson(const nlohmann::json& json, const std::string& id, JsonData& out);
 };

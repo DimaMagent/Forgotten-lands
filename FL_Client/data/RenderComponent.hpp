@@ -12,7 +12,8 @@ class RenderComponent {
 public:
 	RenderComponent(const sf::Texture& texture, const sf::IntRect& rc);
 	void Render(sf::RenderTarget& target) const;
+	void updatePosition(const sf::Vector2f& position);
 private:
 	std::shared_ptr<sf::Texture> texture;
-	sf::IntRect rect;
+	sf::IntRect rectTransform;
 };

@@ -6,11 +6,11 @@
 Session::Session(asio::ip::tcp::socket socket) :
 	sessionSocket(std::move(socket)), sessionStrand(asio::make_strand(sessionSocket.get_executor()))
 {
-	incomingQueue = std::make_shared<DataQueue>();
-	outgoingQueue = std::make_shared<DataQueue>();
+	incomingQueue = std::make_shared<sl::DataQueue>();
+	outgoingQueue = std::make_shared<sl::DataQueue>();
 }
 
-void Session::writeOnOutgoingData(NetData& data)
+void Session::writeOnOutgoingData(sl::NetData& data)
 {
 	auto self = shared_from_this();
 	outgoingQueue->push(data);
@@ -20,7 +20,7 @@ void Session::writeOnOutgoingData(NetData& data)
 void Session::doRead()
 {
 	auto self(shared_from_this());
-	std::shared_ptr<NetData> localBuffer = std::make_shared<NetData>(8192u);
+	std::shared_ptr<sl::NetData> localBuffer = std::make_shared<sl::NetData>(8192u);
 	sessionSocket.async_read_some(asio::buffer(localBuffer->getData()), asio::bind_executor(sessionStrand, [this, self, localBuffer](std::error_code ec, size_t len) {
 		if (ec) {
 			std::cout << ec.value() << "::" << ec.message() << std::endl;
@@ -36,7 +36,7 @@ void Session::doRead()
 void Session::doWrite()
 {
 	auto self(shared_from_this());
-	std::shared_ptr<NetData> localBuffer = std::make_shared<NetData>(1024u);
+	std::shared_ptr<sl::NetData> localBuffer = std::make_shared<sl::NetData>(1024u);
 	bool isOutgoing = outgoingQueue->tryPop(*localBuffer);
 	if (!isOutgoing) {
 		std::cout << "No data to write, waiting..." << std::endl;

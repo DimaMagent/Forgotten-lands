@@ -7,7 +7,7 @@
 
 NetComponent::NetComponent(asio::io_context& context) : socket(context), endpoint(asio::ip::make_address(serverAddress), serverPort) {}
 
-bool NetComponent::tryWrite(NetData& data)
+bool NetComponent::tryWrite(sl::NetData& data)
 {
 	if (auto sessionPtr = session.lock()) {
 		sessionPtr->writeOnOutgoingData(data);
@@ -29,7 +29,7 @@ void NetComponent::doConnect()
 		std::shared_ptr<ClientSession> sessionPtr = std::make_shared<ClientSession>(std::move(socket));
 		session = sessionPtr;
 		sessionPtr->start();
-		NetData data(std::vector<char>{ 'H', 'e', 'l', 'l', 'o', ' ', 'f', 'r', 'o', 'm', ' ', 'c', 'l', 'i', 'e', 'n', 't'});
+		sl::NetData data(std::vector<char>{ 'H', 'e', 'l', 'l', 'o', ' ', 'f', 'r', 'o', 'm', ' ', 'c', 'l', 'i', 'e', 'n', 't'});
 		tryWrite(data);
 		});
 }

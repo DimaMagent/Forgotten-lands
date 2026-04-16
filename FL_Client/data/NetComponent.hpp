@@ -3,7 +3,9 @@
 #include <string>
 
 class ClientSession;
-class NetData;
+namespace sl {
+	class NetData;
+}
 namespace asio {
 	class io_context;
 }
@@ -12,7 +14,7 @@ class NetComponent {
 		NetComponent(asio::io_context& context);
 		~NetComponent() = default;
 
-		bool tryWrite(NetData& data);
+		bool tryWrite(sl::NetData& data);
 		void doConnect();
 	private:
 		std::string serverAddress = "127.0.0.1";

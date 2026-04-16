@@ -1,11 +1,12 @@
 {
   "Player": {
-    "texturePath": "resources/assets/test.bmp",
+    "texturePath": "resources/assets/unarmed_character/steht0000.bmp",
     "textureRect": {
-      "height": 32,
-      "width": 32,
+      "height": 96,
+      "width": 96,
       "x": 0,
       "y": 0
-    }
+    },
+    "maxVelocity": 200.0
   }
 }

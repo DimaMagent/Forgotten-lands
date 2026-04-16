@@ -494,10 +494,12 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <ClInclude Include="data\Entity.hpp" />
     <ClInclude Include="data\InputDataManager.hpp" />
     <ClInclude Include="data\InputManager.hpp" />
+    <ClInclude Include="data\MovementComponent.hpp" />
     <ClInclude Include="data\NetComponent.hpp" />
     <ClInclude Include="data\OutputDataManager.hpp" />
     <ClInclude Include="data\RenderComponent.hpp" />
     <ClInclude Include="data\TextureManager.hpp" />
+    <ClInclude Include="data\TransformComponent.hpp" />
     <ClInclude Include="data\World.hpp" />
     <ClInclude Include="extlibs\include\SFML\Audio.hpp" />
     <ClInclude Include="extlibs\include\SFML\Audio\AlResource.hpp" />
@@ -614,10 +616,12 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <ClCompile Include="data\Entity.cpp" />
     <ClCompile Include="data\InputDataManager.cpp" />
     <ClCompile Include="data\InputManager.cpp" />
+    <ClCompile Include="data\MovementComponent.cpp" />
     <ClCompile Include="data\NetComponent.cpp" />
     <ClCompile Include="data\OutputDataManager.cpp" />
     <ClCompile Include="data\RenderComponent.cpp" />
     <ClCompile Include="data\TextureManager.cpp" />
+    <ClCompile Include="data\TransformComponent.cpp" />
     <ClCompile Include="data\World.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

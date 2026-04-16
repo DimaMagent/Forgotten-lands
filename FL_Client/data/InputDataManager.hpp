@@ -1,11 +1,13 @@
 #pragma once
 #include <memory>
 
-class DataQueue;
+namespace sl {
+	class DataQueue;
+}
 
 class InputDataManager {
 public:
-	InputDataManager(std::shared_ptr<DataQueue> incQueue);
+	InputDataManager(std::shared_ptr<sl::DataQueue> incQueue);
 private:
-	std::shared_ptr<DataQueue> incomingQueue;
+	std::shared_ptr<sl::DataQueue> incomingQueue;
 };
