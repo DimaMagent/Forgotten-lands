@@ -10,9 +10,9 @@ namespace sf {
 
 class RenderComponent {
 public:
+	RenderComponent() = default;
 	RenderComponent(const sf::Texture& texture, const sf::IntRect& rc);
-	void Render(sf::RenderTarget& target) const;
-	void updatePosition(const sf::Vector2f& position);
+	void Render(sf::RenderTarget& target, sf::Vector2f position) const;
 private:
 	std::shared_ptr<sf::Texture> texture;
 	sf::IntRect rectTransform;

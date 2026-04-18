@@ -17,7 +17,7 @@ class CharacterFactory {
 public:
 	CharacterFactory();
 	~CharacterFactory();
-	std::unique_ptr<Character> createCharacter(const CharacterType characterId);
+	Character createCharacter(const CharacterType characterId);
 private:
 	std::unique_ptr<DataLoader> dataLoader;
 	std::unique_ptr<TextureManager> textureManager;

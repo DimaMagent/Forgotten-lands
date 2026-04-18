@@ -9,6 +9,7 @@ namespace sf {
 
 class Entity {
 public:
+	Entity() = default;
 	Entity(const RenderComponent& rc, const TransformComponent& tc);
 	~Entity();
 	void render(sf::RenderTarget& target) const;

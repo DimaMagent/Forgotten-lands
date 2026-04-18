@@ -14,24 +14,29 @@ CharacterFactory::CharacterFactory() {
 
 CharacterFactory::~CharacterFactory() = default;
 
-std::unique_ptr<Character> CharacterFactory::createCharacter(const CharacterType characterId)
+Character CharacterFactory::createCharacter(const CharacterType characterId)
 {
-	auto it = characterIdToDataId.find(characterId);
-	if (it == characterIdToDataId.end()) {
-		std::cout << "Character ID not found: " << static_cast<int>(characterId) << std::endl;
-		return nullptr;
+	try {
+		auto it = characterIdToDataId.find(characterId);
+		if (it == characterIdToDataId.end()) {
+			throw std::runtime_error("Character ID not found: " + std::to_string(static_cast<int>(characterId)));
+		}
+
+		std::string dataId = it->second;
+		JsonData jd = dataLoader->getData(dataId);
+
+		if (auto renderCompIt = renderCompCache.find(characterId); renderCompIt != renderCompCache.end()) {
+			return Character(renderCompIt->second, TransformComponent(), MovementComponent(jd.maxVelocity));
+		}
+		RenderComponent rc(textureManager->getTexture(jd.texturePath), jd.textureRect);
+		renderCompCache.try_emplace(characterId, std::move(rc));
+
+		return Character(renderCompCache.find(characterId)->second, TransformComponent(), MovementComponent(jd.maxVelocity));
 	}
-
-	std::string dataId = it->second;
-	JsonData jd = dataLoader->getData(dataId);
-
-	if (auto renderCompIt = renderCompCache.find(characterId); renderCompIt != renderCompCache.end()) {
-		return std::make_unique<Character>(renderCompIt->second, TransformComponent(), MovementComponent (jd.maxVelocity));
+	catch (const std::exception& e) {
+		std::cerr << "Error creating character: " << e.what() << std::endl;
+		return Character();
 	}
-	RenderComponent rc(textureManager->getTexture(jd.texturePath), jd.textureRect);
-	renderCompCache.try_emplace(characterId, std::move(rc));
-
-	return std::make_unique<Character>(renderCompCache.find(characterId)->second, TransformComponent(), MovementComponent(jd.maxVelocity));
 }
 
 void CharacterFactory::InitializeCharacterIdToDataId()

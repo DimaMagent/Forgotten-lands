@@ -14,10 +14,11 @@ namespace sl {
 		Delegate() = default;
 		void addFunction(std::function<void(Args...)> func) {
 			std::lock_guard<std::mutex> lock(mtx);
-			functions.push_back(func);
+			functions.push_back(std::move(func));
 		}
-		void broadcast(Args... args) {
+		void broadcast(Args&... args) {
 			std::lock_guard<std::mutex> lock(mtx);
+			if (functions.empty()) { return; }
 			for (const auto& func : functions) {
 				func(args...);
 			}

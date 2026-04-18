@@ -1,31 +1,44 @@
 #include "MovementComponent.hpp"
 #include <cmath>
+#include <iostream>
 
 MovementComponent::MovementComponent(float maxSpeed, sf::Time maxAccelerationTime) : maxSpeed(maxSpeed), maxAccelerationTime(maxAccelerationTime)
 {
+	CurrentSpeed = 0.f;
 }
 
-void MovementComponent::addMovement(sf::Vector2i direction)
+void MovementComponent::addVelocityVector(sf::Vector2i direction, float speed)
 {
-	addVelocity(asNormalized(sf::Vector2f(direction)) * CurrentSpeed);
-	isAccelerating = true;
+	addVelocity(asNormalized(sf::Vector2f(direction)) * speed);
 }
 
-void MovementComponent::move(float deltaTime, sf::Vector2f& position)
+void MovementComponent::addDirection(sf::Vector2i direction)
 {
-	if (isAccelerating) {
+	directionVector = inBounds(asNormalized(direction) + directionVector, sf::Vector2i(-1, -1), sf::Vector2i(1, 1));
+}
+
+sf::Vector2f MovementComponent::move(float deltaTime, const sf::Vector2f& position)
+{
+	if (directionVector != sf::Vector2i(0, 0)) {
 		currentAccelerationTime > maxAccelerationTime ? currentAccelerationTime = maxAccelerationTime :
-			currentAccelerationTime += sf::seconds(deltaTime);
+			currentAccelerationTime += std::min(sf::seconds(deltaTime), maxAccelerationTime);
 		float t = currentAccelerationTime.asSeconds() / maxAccelerationTime.asSeconds();
 		CurrentSpeed = maxSpeed * (3 * t * t - 2 * t * t * t);
 	}
-	else {
-		currentAccelerationTime = sf::Time::Zero;
-		CurrentSpeed = 0.f;
+	else if (CurrentSpeed > 0.f){
+		currentAccelerationTime = std::max(sf::Time::Zero, currentAccelerationTime - sf::seconds(deltaTime));
+		float t = currentAccelerationTime.asSeconds() / maxAccelerationTime.asSeconds();
+		CurrentSpeed = maxSpeed * (3 * t * t - 2 * t * t * t);
 	}
-	position += velocityVector * deltaTime;
+	if (CurrentSpeed > 0.f) {
+		if (directionVector == sf::Vector2i(1, 1) || directionVector == sf::Vector2i(-1, 1) || directionVector == sf::Vector2i(1, -1) || directionVector == sf::Vector2i(-1, -1)) {
+			CurrentSpeed /= std::sqrt(directionVector.x * directionVector.x + directionVector.y * directionVector.y);
+		}
+		velocityVector += sf::Vector2f(directionVector) * CurrentSpeed * deltaTime;
+	}
+	sf::Vector2f newPosition = position + velocityVector;
 	resetVelocity();
-	isAccelerating = false;
+	return newPosition;
 }
 
 
@@ -43,4 +56,34 @@ sf::Vector2f MovementComponent::asNormalized(const sf::Vector2f& vector) const
 	else {
 		return sf::Vector2f(0.f, 0.f);
 	}
+}
+
+sf::Vector2i MovementComponent::asNormalized(const sf::Vector2i& vector) const
+{
+	double length = std::sqrt(vector.x * vector.x + vector.y * vector.y);
+	if (length >= 0.0001) {
+		return sf::Vector2i(std::round(vector.x / length), std::round(vector.y / length));
+	}
+	else {
+		return sf::Vector2i(0, 0);
+	}
+}
+
+sf::Vector2i MovementComponent::inBounds(const sf::Vector2i& vector, const sf::Vector2i& minBounds, const sf::Vector2i& maxBounds) const
+{
+	sf::Vector2i boundedVector = vector;
+	if (vector.x <= minBounds.x) {
+		boundedVector.x = minBounds.x;
+	}
+	else if (vector.x >= maxBounds.x) {
+		boundedVector.x = maxBounds.x;
+	}
+
+	if (vector.y <= minBounds.y) {
+		boundedVector.y = minBounds.y;
+	}
+	else if (vector.y >= maxBounds.y) {
+		boundedVector.y = maxBounds.y;
+	}
+	return boundedVector;
 }

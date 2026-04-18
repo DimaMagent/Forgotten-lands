@@ -1,6 +1,6 @@
 #include "InputManager.hpp"
-#include <SFML/Graphics.hpp>
 #include <iostream>
+#include <SFML/Window/Event.hpp>
 
 InputManager::InputManager(bool& isRunningFlag) : isRunningFlag(isRunningFlag)
 {
@@ -19,9 +19,23 @@ void InputManager::handleEvent(const sf::Event& event){
 			isRunningFlag = false;
 			std::cout << "Input: Escape" << std::endl;
 		}
+		onEvent.broadcast(event);
+		break;
+	case sf::Event::KeyReleased:
+		onEvent.broadcast(event);
+		break;
+	case sf::Event::MouseMoved:
+		//mousePosChecker(event);
 		break;
 	default:
 		break;
+	}
+}
+
+void InputManager::mousePosChecker(const sf::Event& event)
+{
+	if (event.type == sf::Event::MouseMoved) {
+		std::cout << "Mouse position: (" << event.mouseMove.x << ", " << event.mouseMove.y << ")" << std::endl;
 	}
 }
 

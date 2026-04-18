@@ -6,16 +6,13 @@ RenderComponent::RenderComponent(const sf::Texture& te, const sf::IntRect& rc) :
 {
 }
 
-void RenderComponent::Render(sf::RenderTarget& target) const
+void RenderComponent::Render(sf::RenderTarget& target, sf::Vector2f position) const
 {
 	if (texture) {
-		target.draw(sf::Sprite(*texture, rectTransform));
+		sf::Sprite sprite(*texture, rectTransform);
+		sprite.setPosition(position);
+		target.draw(sprite);
 	}
 }
 
-void RenderComponent::updatePosition(const sf::Vector2f& position)
-{
-	rectTransform.left = static_cast<int>(position.x + std::round(rectTransform.width / 2));
-	rectTransform.top = static_cast<int>(position.y + std::round(rectTransform.height / 2));
-}
 

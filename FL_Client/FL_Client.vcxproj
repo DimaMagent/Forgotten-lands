@@ -490,6 +490,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <ClInclude Include="data\CharacterFactory.hpp" />
     <ClInclude Include="data\Client.hpp" />
     <ClInclude Include="data\ClientSession.hpp" />
+    <ClInclude Include="data\Controller.hpp" />
     <ClInclude Include="data\DataLoader.hpp" />
     <ClInclude Include="data\Entity.hpp" />
     <ClInclude Include="data\InputDataManager.hpp" />
@@ -612,6 +613,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <ClCompile Include="data\Client.cpp" />
     <ClCompile Include="data\ClientMain.cpp" />
     <ClCompile Include="data\ClientSession.cpp" />
+    <ClCompile Include="data\Controller.cpp" />
     <ClCompile Include="data\DataLoader.cpp" />
     <ClCompile Include="data\Entity.cpp" />
     <ClCompile Include="data\InputDataManager.cpp" />

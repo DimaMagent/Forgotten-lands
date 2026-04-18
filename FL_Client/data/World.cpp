@@ -1,5 +1,7 @@
 #include "World.hpp"
 #include "Entity.hpp"
+#include "Character.hpp"
+#include <iostream>
 
 World::World(sf::RenderTarget& renderTarget) : renderTarget(renderTarget) {}
 
@@ -12,19 +14,39 @@ void World::addEntity(std::unique_ptr<Entity> entity)
 	}
 }
 
+void World::setPlayerCharacter(const Character& character)
+{
+	playerCharacter = std::make_shared<Character>(character);
+	OnSetPlayerEntity.broadcast(playerCharacter);
+}
+
 void World::update(float deltaTime)
 {
 
+	timeSinceLastUpdate += std::min(sf::seconds(deltaTime), sf::seconds(0.1f));
+	while (timeSinceLastUpdate >= updateTime) {
+		timeSinceLastUpdate -= updateTime;
+
+		if (playerCharacter) {
+			playerCharacter->move(updateTime.asSeconds());
+		}
+	}
+	
 }
 
 void World::render()
 {
-	if (Entities.empty()) { return; }
-	for (const auto& entity : Entities) {
-		if (entity) {
-			entity->render(renderTarget);
+	if (!Entities.empty()) {
+		for (const auto& entity : Entities) {
+			if (entity) {
+				entity->render(renderTarget);
+			}
 		}
 	}
+	if (playerCharacter) {
+		playerCharacter->render(renderTarget);
+	}
+
 }
 
 /*Remove is performed using swap&pop.*/
