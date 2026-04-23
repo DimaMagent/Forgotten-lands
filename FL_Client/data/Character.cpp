@@ -1,7 +1,8 @@
+#include "pch.hpp"
 #include "Character.hpp"
 #include "TransformComponent.hpp"
 #include "MovementComponent.hpp"
-#include <iostream>
+#include "RenderComponent.hpp"
 
 
 Character::Character(const RenderComponent& rc, const TransformComponent& tc, const MovementComponent& mc) : Entity(rc, tc),
@@ -15,6 +16,14 @@ Character::Character(const Character & other) : Entity(*other.renderComponent, *
 Character::Character(Character && other) noexcept : Entity(*other.renderComponent, *other.transformComponent),
 movementComponent(std::move(other.movementComponent))
 {}
+
+Character& Character::operator=(const Character & other)
+{
+	this->renderComponent = std::make_shared<RenderComponent>(*other.renderComponent);
+	this->transformComponent = std::make_unique<TransformComponent>(*other.transformComponent);
+	this->movementComponent = std::make_unique<MovementComponent>(*other.movementComponent);
+	return *this;
+}
 
 Character::~Character() = default;
 

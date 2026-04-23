@@ -1,13 +1,11 @@
+#include "pch.hpp"
 #include "Client.hpp"
-#include <SFML/Graphics.hpp>
-#include <iostream>
 #include "NetComponent.hpp"
 #include "InputManager.hpp"
 #include "World.hpp"
 #include "CharacterFactory.hpp"
 #include "Character.hpp"
 #include "Controller.hpp"
-#include "asio.hpp"
 
 Client::Client() :
 	clientContext(std::make_unique<asio::io_context>()), netComponent(std::make_unique<NetComponent>(*clientContext)),
@@ -26,11 +24,10 @@ void Client::start()
 		window->setVerticalSyncEnabled(true);
 		world = std::make_unique<World>(*window);
 		controller = std::make_unique<Controller>(*inputManager, *world);
-		world->setPlayerCharacter(std::move(characterFactory->createCharacter(CharacterType::Player)));
+		world->setPlayerCharacter(characterFactory->createCharacter(CharacterType::Player));
 		sf::Clock timer;
 		for (;;) {
 
-			//sf::Time test = sf::seconds(1.f / 60.f);
 			sf::Event event;
 			while (window->pollEvent(event)) {
 				inputManager->handleEvent(event);

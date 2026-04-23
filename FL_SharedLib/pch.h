@@ -9,6 +9,9 @@
 
 // Добавьте сюда заголовочные файлы для предварительной компиляции
 #include "framework.h"
-
+#include <vector>
+#include <functional>
+#include <mutex>
+#include <cstdint>
 
 #endif //PCH_H

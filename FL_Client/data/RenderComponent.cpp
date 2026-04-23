@@ -1,8 +1,9 @@
+#include "pch.hpp"
 #include "RenderComponent.hpp"
-#include "SFML/Graphics.hpp"
+#include <SFML/Graphics/Sprite.hpp>
 
-RenderComponent::RenderComponent(const sf::Texture& te, const sf::IntRect& rc) :
-	texture(std::make_shared<sf::Texture>(te)), rectTransform(rc)
+RenderComponent::RenderComponent(std::shared_ptr<const sf::Texture> texturePtr, const sf::IntRect& rc) :
+	texture(std::move(texturePtr)), rectTransform(rc)
 {
 }
 

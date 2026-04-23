@@ -11,6 +11,7 @@ public:
 	Character(const RenderComponent& rc, const TransformComponent& tc, const MovementComponent& mc);
 	Character(const Character& other);
 	Character(Character&& other) noexcept;
+	Character& operator=(const Character& other);
 	~Character();
 	void move(float deltaTime);
 	void addVelocityVector(sf::Vector2i direction, float speed);

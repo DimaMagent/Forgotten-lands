@@ -1,6 +1,6 @@
 ﻿// FL_Server.cpp : Этот файл содержит функцию "main". Здесь начинается и заканчивается выполнение программы.
 //
-#include <iostream>
+#include "pch.hpp"
 #include "Server.hpp"
 
 int main()

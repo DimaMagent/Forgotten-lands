@@ -11,7 +11,7 @@ class TextureManager {
 public:
 	TextureManager();
 	~TextureManager();
-	const sf::Texture& getTexture(const std::string& path);
+	std::shared_ptr<sf::Texture> getTexture(const std::string& path);
 private:
-	std::unordered_map<std::string, sf::Texture> textures;
+	std::unordered_map<std::string, std::shared_ptr<sf::Texture>> textures;
 };

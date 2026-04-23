@@ -1,20 +1,13 @@
+#include "pch.hpp"
 #include "NetComponent.hpp"
-#include "asio.hpp"
 #include "ClientSession.hpp"
-#include <iostream>
-#include <vector>
-#include "NetData.hpp"
+#include "Packer.hpp"
+#include "IncomingDataManager.hpp"
+#include "OutputDataManager.hpp"
 
 NetComponent::NetComponent(asio::io_context& context) : socket(context), endpoint(asio::ip::make_address(serverAddress), serverPort) {}
 
-bool NetComponent::tryWrite(sl::NetData& data)
-{
-	if (auto sessionPtr = session.lock()) {
-		sessionPtr->writeOnOutgoingData(data);
-		return true;
-	}
-	return false;
-}
+NetComponent::~NetComponent() = default;
 
 void NetComponent::doConnect()
 {
@@ -29,7 +22,8 @@ void NetComponent::doConnect()
 		std::shared_ptr<ClientSession> sessionPtr = std::make_shared<ClientSession>(std::move(socket));
 		session = sessionPtr;
 		sessionPtr->start();
-		sl::NetData data(std::vector<char>{ 'H', 'e', 'l', 'l', 'o', ' ', 'f', 'r', 'o', 'm', ' ', 'c', 'l', 'i', 'e', 'n', 't'});
-		tryWrite(data);
+		inputManager = std::make_unique<IncomingDataManager>(sessionPtr->getIncomingQueue());
+		outputManager = std::make_shared<OutputDataManager>(sessionPtr);
+		Packer::setOutputManager(outputManager);
 		});
 }

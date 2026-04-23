@@ -1,6 +1,6 @@
+#include "pch.hpp"
 #include "MovementComponent.hpp"
 #include <cmath>
-#include <iostream>
 
 MovementComponent::MovementComponent(float maxSpeed, sf::Time maxAccelerationTime) : maxSpeed(maxSpeed), maxAccelerationTime(maxAccelerationTime)
 {

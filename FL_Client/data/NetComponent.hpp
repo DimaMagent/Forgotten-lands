@@ -3,6 +3,8 @@
 #include <string>
 
 class ClientSession;
+class IncomingDataManager;
+class OutputDataManager;
 namespace sl {
 	class NetData;
 }
@@ -12,9 +14,8 @@ namespace asio {
 class NetComponent {
 	public:
 		NetComponent(asio::io_context& context);
-		~NetComponent() = default;
+		~NetComponent();
 
-		bool tryWrite(sl::NetData& data);
 		void doConnect();
 	private:
 		std::string serverAddress = "127.0.0.1";
@@ -22,6 +23,7 @@ class NetComponent {
 		asio::ip::tcp::socket socket;
 		asio::ip::tcp::endpoint endpoint;
 		std::weak_ptr<ClientSession> session;
-
+		std::unique_ptr<IncomingDataManager> inputManager;
+		std::shared_ptr<OutputDataManager> outputManager;
 
 };

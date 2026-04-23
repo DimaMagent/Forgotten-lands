@@ -1,5 +1,6 @@
+#include "pch.hpp"
 #include "TransformComponent.hpp"
-#include <iostream>
+
 
 TransformComponent::TransformComponent()
 { 

@@ -11,7 +11,7 @@ class Entity {
 public:
 	Entity() = default;
 	Entity(const RenderComponent& rc, const TransformComponent& tc);
-	~Entity();
+	virtual ~Entity();
 	void render(sf::RenderTarget& target) const;
 protected:
 	std::shared_ptr<RenderComponent> renderComponent;

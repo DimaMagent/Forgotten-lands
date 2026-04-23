@@ -1,7 +1,7 @@
+#include "pch.hpp"
 #include "World.hpp"
 #include "Entity.hpp"
 #include "Character.hpp"
-#include <iostream>
 
 World::World(sf::RenderTarget& renderTarget) : renderTarget(renderTarget) {}
 
@@ -14,9 +14,9 @@ void World::addEntity(std::unique_ptr<Entity> entity)
 	}
 }
 
-void World::setPlayerCharacter(const Character& character)
+void World::setPlayerCharacter(std::unique_ptr<Character>&& character)
 {
-	playerCharacter = std::make_shared<Character>(character);
+	playerCharacter = std::make_shared<Character>(std::move(*character));
 	OnSetPlayerEntity.broadcast(playerCharacter);
 }
 

@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "CharacterFactory.hpp"
 #include "Character.hpp"
 #include "DataLoader.hpp"
@@ -14,7 +15,7 @@ CharacterFactory::CharacterFactory() {
 
 CharacterFactory::~CharacterFactory() = default;
 
-Character CharacterFactory::createCharacter(const CharacterType characterId)
+std::unique_ptr<Character> CharacterFactory::createCharacter(const CharacterType characterId)
 {
 	try {
 		auto it = characterIdToDataId.find(characterId);
@@ -26,16 +27,17 @@ Character CharacterFactory::createCharacter(const CharacterType characterId)
 		JsonData jd = dataLoader->getData(dataId);
 
 		if (auto renderCompIt = renderCompCache.find(characterId); renderCompIt != renderCompCache.end()) {
-			return Character(renderCompIt->second, TransformComponent(), MovementComponent(jd.maxVelocity));
+			return std::make_unique<Character>(*renderCompIt->second, TransformComponent(), MovementComponent(jd.maxVelocity));
 		}
-		RenderComponent rc(textureManager->getTexture(jd.texturePath), jd.textureRect);
-		renderCompCache.try_emplace(characterId, std::move(rc));
 
-		return Character(renderCompCache.find(characterId)->second, TransformComponent(), MovementComponent(jd.maxVelocity));
+		std::shared_ptr<RenderComponent> rcPtr = std::make_shared<RenderComponent>(textureManager->getTexture(jd.texturePath), jd.textureRect);
+		renderCompCache.try_emplace(characterId, rcPtr);
+
+		return std::make_unique<Character>(*renderCompCache.find(characterId)->second, TransformComponent(), MovementComponent(jd.maxVelocity));
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Error creating character: " << e.what() << std::endl;
-		return Character();
+		return nullptr;
 	}
 }
 

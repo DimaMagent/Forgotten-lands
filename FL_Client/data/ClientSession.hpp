@@ -5,9 +5,8 @@
 
 namespace sl {
 	class DataQueue;
-	class NetData;
 }
-class InputDataManager;
+class IncomingDataManager;
 class OutputDataManager;
 
 
@@ -16,15 +15,15 @@ public:
 	ClientSession(asio::ip::tcp::socket socket);
 	~ClientSession();
 
-	void writeOnOutgoingData(sl::NetData& data);
+	void writeOnOutgoingData(std::vector<uint8_t>& data);
 	void start();
+	std::shared_ptr<sl::DataQueue> getIncomingQueue() { return incomingQueue; }
+	std::shared_ptr<sl::DataQueue> getOutgoingQueue() { return outgoingQueue; }
 private:
 	asio::ip::tcp::socket sessionSocket;
 	asio::strand<asio::ip::tcp::socket::executor_type> sessionStrand;
 	std::shared_ptr<sl::DataQueue> incomingQueue;
 	std::shared_ptr<sl::DataQueue> outgoingQueue;
-	std::unique_ptr<InputDataManager> inputManager;
-	std::unique_ptr<OutputDataManager> outputManager;
 
 	void doWrite();
 	void doRead();

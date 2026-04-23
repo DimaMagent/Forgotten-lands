@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "Delegate.hpp"
+#include "LockFreeDelegate.hpp"
 
 
 namespace sf {
@@ -9,7 +9,7 @@ namespace sf {
 
 class InputManager {
 public:
-	sl::Delegate<const sf::Event&> onEvent;
+	sl::LockFreeDelegate<const sf::Event&> onEvent;
 	InputManager(bool& isRunningFlag);
 	~InputManager();
 	void handleEvent(const sf::Event& event);

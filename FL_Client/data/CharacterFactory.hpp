@@ -1,5 +1,4 @@
 #pragma once
-#include <iostream>
 #include <unordered_map>
 #include <memory>
 
@@ -17,11 +16,11 @@ class CharacterFactory {
 public:
 	CharacterFactory();
 	~CharacterFactory();
-	Character createCharacter(const CharacterType characterId);
+	std::unique_ptr<Character> createCharacter(const CharacterType characterId);
 private:
 	std::unique_ptr<DataLoader> dataLoader;
 	std::unique_ptr<TextureManager> textureManager;
-	std::unordered_map<CharacterType, RenderComponent> renderCompCache;
+	std::unordered_map<CharacterType, std::shared_ptr<RenderComponent>> renderCompCache;
 	std::unordered_map<CharacterType, std::string> characterIdToDataId;
 
 	void InitializeCharacterIdToDataId();

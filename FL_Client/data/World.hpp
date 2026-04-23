@@ -12,11 +12,11 @@ namespace sf {
 
 class World {
 public:
-	sl::Delegate<const std::weak_ptr<Character>&> OnSetPlayerEntity;
+	sl::Delegate<const std::weak_ptr<Character>> OnSetPlayerEntity;
 	World(sf::RenderTarget& renderTarget);
 	~World();
 	void addEntity(std::unique_ptr<Entity> entity);
-	void setPlayerCharacter(const Character& character);
+	void setPlayerCharacter(std::unique_ptr<Character>&& character);
 	void render();
 	void update(float deltaTime);
 	void removeEntity(size_t index);

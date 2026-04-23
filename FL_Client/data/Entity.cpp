@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "Entity.hpp"
 #include "RenderComponent.hpp"
 #include "TransformComponent.hpp"

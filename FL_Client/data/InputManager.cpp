@@ -1,6 +1,5 @@
+#include "pch.hpp"
 #include "InputManager.hpp"
-#include <iostream>
-#include <SFML/Window/Event.hpp>
 
 InputManager::InputManager(bool& isRunningFlag) : isRunningFlag(isRunningFlag)
 {

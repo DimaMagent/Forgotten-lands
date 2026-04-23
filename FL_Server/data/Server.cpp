@@ -1,22 +1,12 @@
+#include "pch.hpp"
 #include "Server.hpp"
-#include "asio.hpp"
-#include <iostream>
 #include "Session.hpp"
-#include "NetData.hpp"
+#include "IncomingDataManager.hpp"
 
 Server::Server(asio::io_context& context, short port) : acceptor(context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
 {
-
+	
 	doAccept();
-}
-
-bool Server::tryWrite(sl::NetData& data)
-{
-	if (auto sessionPtr = session.lock()) {
-		sessionPtr->writeOnOutgoingData(data);
-		return true;
-	}
-	return false;
 }
 
 void Server::doAccept()
@@ -29,8 +19,7 @@ void Server::doAccept()
 				std::shared_ptr<Session> sessionPtr = std::make_shared<Session>(std::move(socket));
 				sessionPtr->start();
 				session = sessionPtr;
-				sl::NetData data(std::vector<char>{ 'H', 'e', 'l', 'l', 'o', ' ', 'f', 'r', 'o', 'm', ' ', 's', 'e', 'r', 'v', 'e', 'r' });
-				tryWrite(data);
+				incomingDataManager = std::make_shared<IncomingDataManager>(sessionPtr->getIncomingQueue());
 			}
 			else {
 				std::cout << ec.value() << "::" << ec.message() << std::endl;

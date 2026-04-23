@@ -1,6 +1,6 @@
+#include "pch.hpp"
 #include "DataLoader.hpp"
 #include <fstream>
-#include <iostream>
 
 DataLoader::DataLoader(){}
 

@@ -2,15 +2,19 @@
 #include <queue>
 #include <mutex>
 #include "NetData.hpp"
+#include <vector>
+#include <cstdint>
+#include "LockFreeDelegate.hpp"
 
 namespace sl {
 	class DataQueue {
 	public:
-		void push(const NetData& data);
+		LockFreeDelegate<> onDataPushed;
+		void push(const std::vector<uint8_t>& data);
 		bool empty() const;
-		bool tryPop(NetData& out);
+		bool tryPop(std::vector<uint8_t>& out);
 	private:
 		mutable std::mutex queueMutex;
-		std::queue<NetData> queue;
+		std::queue<std::vector<uint8_t>> queue;
 	};
 }

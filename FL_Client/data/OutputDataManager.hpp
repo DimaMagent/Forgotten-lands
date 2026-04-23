@@ -1,12 +1,14 @@
 #pragma once
 #include <memory>
 namespace sl {
-	class DataQueue;
+	class Packet;
 }
+class ClientSession;
 
 class OutputDataManager {
 public:
-	OutputDataManager(std::shared_ptr<sl::DataQueue> outQueue);
+	OutputDataManager(std::shared_ptr<ClientSession> session);
+	void writePacket(const sl::Packet& packetData);
 private:
-	std::shared_ptr<sl::DataQueue> outgoingQueue;
+	std::weak_ptr<ClientSession> session;
 };

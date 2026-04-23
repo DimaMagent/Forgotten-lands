@@ -106,6 +106,8 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)extlibs\asio;$(SolutionDir)extlibs\sqlite;$(SolutionDir)extlibs\json;$(SolutionDir)FL_SharedLib;$(SolutionDir)$(ProjectName)\data;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,11 +136,17 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="data\IncomingDataManager.cpp" />
+    <ClCompile Include="data\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="data\Server.cpp" />
     <ClCompile Include="data\ServerMain.cpp" />
     <ClCompile Include="data\Session.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="data\IncomingDataManager.hpp" />
+    <ClInclude Include="data\pch.hpp" />
     <ClInclude Include="data\Server.hpp" />
     <ClInclude Include="data\Session.hpp" />
   </ItemGroup>

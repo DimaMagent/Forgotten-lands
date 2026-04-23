@@ -142,13 +142,25 @@
     <ClInclude Include="DataQueue.hpp" />
     <ClInclude Include="Delegate.hpp" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="Header.hpp" />
+    <ClInclude Include="LockFreeDelegate.hpp" />
     <ClInclude Include="NetData.hpp" />
+    <ClInclude Include="InputStatePacket.hpp" />
+    <ClInclude Include="Packet.hpp" />
+    <ClInclude Include="PacketData.hpp" />
+    <ClInclude Include="PacketDataTypes.hpp" />
+    <ClInclude Include="PacketManager.hpp" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="TimerHandle.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DataQueue.cpp" />
     <ClCompile Include="FL_SharedLib.cpp" />
+    <ClCompile Include="Header.cpp" />
+    <ClCompile Include="InputStatePacket.cpp" />
+    <ClCompile Include="Packet.cpp" />
+    <ClCompile Include="PacketData.cpp" />
+    <ClCompile Include="PacketManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
