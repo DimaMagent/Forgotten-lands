@@ -3,6 +3,7 @@
 
 class Session;
 class IncomingDataManager;
+class DataProcessorManager;
 namespace asio {
 	class io_context;
 }
@@ -13,5 +14,6 @@ private:
 	asio::ip::tcp::acceptor acceptor;
 	std::weak_ptr<Session> session;
 	std::shared_ptr<IncomingDataManager> incomingDataManager;
+	std::optional<DataProcessorManager> dataProcessorManager;
 	void doAccept();
 };

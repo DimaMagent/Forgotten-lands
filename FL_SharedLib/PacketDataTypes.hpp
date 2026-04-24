@@ -8,4 +8,12 @@ namespace sl {
 		IS_MoveLeft = 1 << 2,
 		IS_MoveRight = 1 << 3,
 	};
+
+	enum PacketType : uint8_t {
+		PT_Unknown = 0,
+		PT_InputState = 1,
+		PT_Input = 2,
+		PT_PlayerPosition = 3,
+		PT_GameStateUpdate = 4,
+	};
 }

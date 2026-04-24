@@ -8,7 +8,7 @@ bool sl::InputStatePacket::write(std::vector<uint8_t>& out) const
 
 void sl::InputStatePacket::read(const std::vector<uint8_t>& in, size_t& offset)
 {
-	return data.read(in, offset);
+	data.read(in, offset);
 }
 
 

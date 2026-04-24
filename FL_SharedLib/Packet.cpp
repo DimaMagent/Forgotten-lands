@@ -4,7 +4,8 @@
 std::optional<sl::Header> sl::Packet::readHeader(const std::vector<uint8_t>& in, size_t& offset)
 {
 	sl::Header header;
-	if (in.size() < sizeof(sl::Header)) {
+	HeaderData headerData = header.getData(); 
+	if (in.size() < sizeof(headerData.sequenceNumber) + sizeof(headerData.type)) {
 		return std::nullopt;
 	}
 	header.read(in, offset);

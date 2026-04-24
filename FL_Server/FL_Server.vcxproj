@@ -136,6 +136,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="data\DataProcessorManager.cpp" />
     <ClCompile Include="data\IncomingDataManager.cpp" />
     <ClCompile Include="data\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -145,6 +146,7 @@
     <ClCompile Include="data\Session.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="data\DataProcessorManager.hpp" />
     <ClInclude Include="data\IncomingDataManager.hpp" />
     <ClInclude Include="data\pch.hpp" />
     <ClInclude Include="data\Server.hpp" />

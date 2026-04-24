@@ -2,10 +2,11 @@
 #include "Server.hpp"
 #include "Session.hpp"
 #include "IncomingDataManager.hpp"
+#include "DataProcessorManager.hpp"
 
 Server::Server(asio::io_context& context, short port) : acceptor(context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
 {
-	
+	dataProcessorManager.emplace();
 	doAccept();
 }
 
