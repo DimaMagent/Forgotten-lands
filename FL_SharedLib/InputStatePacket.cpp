@@ -20,7 +20,7 @@ void sl::InputStatePacket::fillPacketData(uint16_t sequenceNumber, PacketType ty
 bool sl::InputStateData::write(std::vector<uint8_t>& out) const
 {
 	header.write(out);
-	write_uint8_t(out, inputState);
+	net::write_uint8_t(out, inputState);
 	return true;
 }
 

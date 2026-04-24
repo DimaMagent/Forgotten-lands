@@ -1,5 +1,7 @@
 #pragma once
 #include "asio\ip\tcp.hpp"
+#include <vector>
+#include <memory>
 
 class Session;
 class IncomingDataManager;
@@ -10,10 +12,11 @@ namespace asio {
 class Server {
 public:
 	Server(asio::io_context& context, short port);
+	~Server();
 private:
 	asio::ip::tcp::acceptor acceptor;
-	std::weak_ptr<Session> session;
+	std::vector<std::weak_ptr<Session>> sessions;
 	std::shared_ptr<IncomingDataManager> incomingDataManager;
-	std::optional<DataProcessorManager> dataProcessorManager;
+	std::unique_ptr<DataProcessorManager> dataProcessorManager;
 	void doAccept();
 };

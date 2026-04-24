@@ -147,7 +147,7 @@
     <ClInclude Include="NetData.hpp" />
     <ClInclude Include="InputStatePacket.hpp" />
     <ClInclude Include="Packet.hpp" />
-    <ClInclude Include="PacketData.hpp" />
+    <ClInclude Include="NetUtils.hpp" />
     <ClInclude Include="PacketDataTypes.hpp" />
     <ClInclude Include="PacketManager.hpp" />
     <ClInclude Include="pch.h" />
@@ -159,7 +159,7 @@
     <ClCompile Include="Header.cpp" />
     <ClCompile Include="InputStatePacket.cpp" />
     <ClCompile Include="Packet.cpp" />
-    <ClCompile Include="PacketData.cpp" />
+    <ClCompile Include="NetUtils.cpp" />
     <ClCompile Include="PacketManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

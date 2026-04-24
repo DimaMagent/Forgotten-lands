@@ -25,6 +25,7 @@ void Session::doRead()
 			std::cout << ec.value() << "::" << ec.message() << std::endl;
 			return;
 		}
+		localBuffer->resize(len);
 		incomingQueue->push(*localBuffer);
 		doRead();
 		}));
@@ -34,8 +35,7 @@ void Session::doWrite()
 {
 	auto self(shared_from_this());
 	std::shared_ptr<std::vector<uint8_t>> localBuffer = std::make_shared<std::vector<uint8_t>>(1024u);
-	bool isOutgoing = outgoingQueue->tryPop(*localBuffer);
-	if (!isOutgoing) {
+	if (!outgoingQueue->tryPop(*localBuffer)) {
 		std::cout << "No data to write, waiting..." << "\n";
 		return;
 	}

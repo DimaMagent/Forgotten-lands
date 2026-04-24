@@ -29,8 +29,7 @@ void ClientSession::doWrite()
 {
 	auto self(shared_from_this());
 	std::shared_ptr<std::vector<uint8_t>> localBuffer = std::make_shared<std::vector<uint8_t>>(1024u);
-	bool isOutgoing = outgoingQueue->tryPop(*localBuffer);
-	if (!isOutgoing) {
+	if (!outgoingQueue->tryPop(*localBuffer)) {
 		std::cout << "No data to write, waiting..." << "\n";
 		return;
 	}
@@ -40,7 +39,7 @@ void ClientSession::doWrite()
 			std::cout << ec.value() << "::" << ec.message() << std::endl;
 			return;
 		}
-		std::cout << "Write, size: " << sizeof(*localBuffer) << "\n";
+		std::cout << "Write, sizeof: " << sizeof(*localBuffer) << "\n";
 		doWrite();
 		}));
 }
@@ -53,6 +52,7 @@ void ClientSession::doRead() {
 			return;
 		}
 		std::cout << "Received data from server" << "\n";
+		localBuffer->resize(len);
 		incomingQueue->push(*localBuffer);
 		doRead();
 		}));

@@ -6,9 +6,11 @@
 
 Server::Server(asio::io_context& context, short port) : acceptor(context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port))
 {
-	dataProcessorManager.emplace();
+	dataProcessorManager = std::make_unique<DataProcessorManager>();
 	doAccept();
 }
+
+Server::~Server() = default;
 
 void Server::doAccept()
 {
@@ -19,8 +21,8 @@ void Server::doAccept()
 				std::cout << "Client connected" << std::endl;
 				std::shared_ptr<Session> sessionPtr = std::make_shared<Session>(std::move(socket));
 				sessionPtr->start();
-				session = sessionPtr;
-				incomingDataManager = std::make_shared<IncomingDataManager>(sessionPtr->getIncomingQueue());
+				sessions.push_back(sessionPtr);
+				incomingDataManager = std::make_shared<IncomingDataManager>(sessionPtr->getIncomingQueue(), *dataProcessorManager);
 			}
 			else {
 				std::cout << ec.value() << "::" << ec.message() << std::endl;
