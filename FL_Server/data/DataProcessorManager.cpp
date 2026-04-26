@@ -9,7 +9,7 @@ DataProcessorManager::DataProcessorManager()
 	registerHandler<sl::InputStatePacket>(sl::PT_InputState, std::function<void(const sl::InputStatePacket&)>(
     [](const sl::InputStatePacket& p){
         const auto& data = p.getData();
-        std::cout << "Received InputState packet, state: " << static_cast<int>(data.inputState) << "\n";
+        std::cout << "Received InputState packet, state: " << static_cast<int>(data.inputState) << "is pressing: " << data.pressingFlag << "\n";
         // TODO: делегировать конкретной подсистеме (GameState, PlayerManager и т.д.)
     }
 ));

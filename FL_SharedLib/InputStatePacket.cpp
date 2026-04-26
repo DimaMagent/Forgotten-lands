@@ -12,15 +12,16 @@ void sl::InputStatePacket::read(const std::vector<uint8_t>& in, size_t& offset)
 }
 
 
-void sl::InputStatePacket::fillPacketData(uint16_t sequenceNumber, PacketType type, uint8_t inputState)
+void sl::InputStatePacket::fillPacketData(uint16_t sequenceNumber, PacketType type, uint8_t inputState, bool pressingFlag)
 {
-	data.fillPacketData(sequenceNumber, type, inputState);
+	data.fillPacketData(sequenceNumber, type, inputState, pressingFlag);
 }
 
 bool sl::InputStateData::write(std::vector<uint8_t>& out) const
 {
 	header.write(out);
 	net::write_uint8_t(out, inputState);
+	net::write_uint8_t(out, pressingFlag);
 	return true;
 }
 
@@ -28,13 +29,15 @@ void sl::InputStateData::read(const std::vector<uint8_t>& in, size_t& offset)
 {
 	if (offset < in.size()) {
 		header.read(in, offset);
-		inputState = in[offset];
-		offset += 1;
+		inputState = in[offset++];
+		pressingFlag = in[offset++];
+
 	}
 }
 
-void sl::InputStateData::fillPacketData(uint16_t sequenceNumber, PacketType type, uint8_t inputState)
+void sl::InputStateData::fillPacketData(uint16_t sequenceNumber, PacketType type, uint8_t inputState, bool pressingFlag)
 {
 	this->inputState = inputState;
-	header.fillHeader(sequenceNumber, type, sizeof(inputState));
+	this->pressingFlag = pressingFlag;
+	header.fillHeader(sequenceNumber, type, sizeof(inputState) + sizeof(pressingFlag));
 }

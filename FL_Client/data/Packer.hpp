@@ -10,9 +10,9 @@ class OutputDataManager;
 class Packer {
 public:
 	Packer() = delete;
-	static void packageInputStatePacket(sl::InputState inputState);
+	static void packageInputStatePacket(sl::InputState inputState, bool pressingFlag);
 	static void setOutputManager(std::shared_ptr<OutputDataManager> manager);
 private:
-	static std::atomic<uint16_t> secuenceNumber;
+	static std::atomic<uint16_t> sequenceNumber;
 	static std::weak_ptr<OutputDataManager> staticOutputManager;
 };

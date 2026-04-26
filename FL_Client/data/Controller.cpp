@@ -18,14 +18,14 @@ void Controller::onEvent(const sf::Event& event) {
 		if (auto it = keyBindings.find(event.key.code); it != keyBindings.end()) {
 			std::cout << "Executed action for key: " << event.key.code << std::endl;
 			reverseInputMultiplier = 1;
-			Packer::packageInputStatePacket(it->second());
+			Packer::packageInputStatePacket(it->second(), true);
 		}
 		break;
 	case sf::Event::KeyReleased:
 		if (auto it = keyBindings.find(event.key.code); it != keyBindings.end()) {
 			std::cout << "Released action for key: " << event.key.code << std::endl;
 			reverseInputMultiplier = -1;
-			Packer::packageInputStatePacket(it->second());
+			Packer::packageInputStatePacket(it->second(), false);
 		}
 		break;
 	default:

@@ -4,7 +4,7 @@
 #include "Header.hpp"
 #include "InputStatePacket.hpp"
 
-std::atomic<uint16_t> Packer::secuenceNumber = 0;
+std::atomic<uint16_t> Packer::sequenceNumber = 0;
 std::weak_ptr<OutputDataManager> Packer::staticOutputManager;
 
 void Packer::setOutputManager(std::shared_ptr<OutputDataManager> manager)
@@ -12,11 +12,11 @@ void Packer::setOutputManager(std::shared_ptr<OutputDataManager> manager)
 	staticOutputManager = manager;
 }
 
-void Packer::packageInputStatePacket(sl::InputState inputState)
+void Packer::packageInputStatePacket(sl::InputState inputState, bool pressingFlag)
 {
 	if (auto manager = staticOutputManager.lock()) {
 		sl::InputStatePacket packet;
-		packet.fillPacketData(secuenceNumber++, sl::PacketType::PT_InputState, static_cast<uint8_t>(inputState));
+		packet.fillPacketData(sequenceNumber++, sl::PacketType::PT_InputState, static_cast<uint8_t>(inputState), pressingFlag);
 		manager->writePacket(packet);
 	}
 	else {
