@@ -5,13 +5,16 @@
 class NetComponent;
 class InputManager;
 class World;
-class CharacterFactory;
+
 class Controller;
 namespace asio {
 	class io_context;
 }
 namespace sf {
 	class RenderWindow;
+}
+namespace sl {
+	class EntityFactory;
 }
 
 
@@ -27,6 +30,6 @@ private:
 	std::unique_ptr<sf::RenderWindow> window;
 	std::unique_ptr<World> world;
 	std::unique_ptr<Controller> controller;
-	std::unique_ptr<CharacterFactory> characterFactory;
+	std::unique_ptr<sl::EntityFactory> entityFactory;
 	bool isRunningFlag = false;
 };

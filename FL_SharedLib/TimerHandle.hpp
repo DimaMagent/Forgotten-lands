@@ -1,7 +1,7 @@
 #pragma once
 #include "asio.hpp"
 #include <iostream>
-
+/*
 namespace sl {
 	template <typename T>
 	class TimerHandle {
@@ -32,3 +32,4 @@ namespace sl {
 		asio::chrono::seconds callDelay;
 	};
 }
+*/

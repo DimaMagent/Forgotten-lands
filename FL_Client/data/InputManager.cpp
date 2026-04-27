@@ -8,33 +8,28 @@ InputManager::InputManager(bool& isRunningFlag) : isRunningFlag(isRunningFlag)
 InputManager::~InputManager() = default;
 
 void InputManager::handleEvent(const sf::Event& event){
-	if (event.type == sf::Event::Closed) {
+	if (event.is<sf::Event::Closed>()) {
 		isRunningFlag = false;
+		return;
 	}
-	switch (event.type)
-	{
-	case sf::Event::KeyPressed:
-		if (event.key.code == sf::Keyboard::Escape) {
+	if (const auto* keyEvent = event.getIf<sf::Event::KeyPressed>()) {
+		if (keyEvent->code == sf::Keyboard::Key::Escape) {
 			isRunningFlag = false;
 			std::cout << "Input: Escape" << std::endl;
 		}
 		onEvent.broadcast(event);
-		break;
-	case sf::Event::KeyReleased:
-		onEvent.broadcast(event);
-		break;
-	case sf::Event::MouseMoved:
-		//mousePosChecker(event);
-		break;
-	default:
-		break;
+		return;
 	}
+	if (event.is<sf::Event::KeyReleased>()) {
+		onEvent.broadcast(event);
+		return;
+	}
+	// if (const auto* mouseMoved = event.getIf<sf::Event::MouseMoved>()) {
+	//     mousePosChecker(*mouseMoved);
+	// }}
 }
 
-void InputManager::mousePosChecker(const sf::Event& event)
-{
-	if (event.type == sf::Event::MouseMoved) {
-		std::cout << "Mouse position: (" << event.mouseMove.x << ", " << event.mouseMove.y << ")" << std::endl;
-	}
+void InputManager::mousePosChecker(const sf::Event::MouseMoved& event) {
+	std::cout << "Mouse position: (" << event.position.x << ", " << event.position.y << ")" << std::endl;
 }
 

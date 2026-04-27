@@ -294,7 +294,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)extlibs\sfml\include;$(SolutionDir)extlibs\asio;$(SolutionDir)FL_SharedLib;$(SolutionDir)extlibs\json;$(SolutionDir)$(ProjectName)\data;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)extlibs\asio;$(SolutionDir)FL_SharedLib;$(SolutionDir)extlibs\json;$(SolutionDir)$(ProjectName)\data;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
@@ -303,8 +303,8 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(SolutionDir)extlibs\sfml\lib\$(PlatformTarget);$(SolutionDir)FL_SharedLib\$(PlatformTarget)\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-network-d.lib;sfml-audio-d.lib;openal32.lib;sfml-graphics-d.lib;sfml-window-d.lib;sfml-system-d.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)FL_SharedLib\$(PlatformTarget)\Debug</AdditionalLibraryDirectories>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>copy /Y "$(SolutionDir)extlibs\sfml\bin\x64\sfml-system-d-2.dll" "$(TargetDir)"
@@ -490,22 +490,15 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="data\Character.hpp" />
-    <ClInclude Include="data\CharacterFactory.hpp" />
     <ClInclude Include="data\Client.hpp" />
     <ClInclude Include="data\ClientSession.hpp" />
     <ClInclude Include="data\Controller.hpp" />
-    <ClInclude Include="data\DataLoader.hpp" />
-    <ClInclude Include="data\Entity.hpp" />
     <ClInclude Include="data\IncomingDataManager.hpp" />
     <ClInclude Include="data\InputManager.hpp" />
-    <ClInclude Include="data\MovementComponent.hpp" />
     <ClInclude Include="data\NetComponent.hpp" />
     <ClInclude Include="data\OutputDataManager.hpp" />
     <ClInclude Include="data\Packer.hpp" />
     <ClInclude Include="data\pch.hpp" />
-    <ClInclude Include="data\RenderComponent.hpp" />
-    <ClInclude Include="data\TextureManager.hpp" />
-    <ClInclude Include="data\TransformComponent.hpp" />
     <ClInclude Include="data\World.hpp" />
     <ClInclude Include="extlibs\include\SFML\Audio.hpp" />
     <ClInclude Include="extlibs\include\SFML\Audio\AlResource.hpp" />
@@ -614,25 +607,18 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="data\Character.cpp" />
-    <ClCompile Include="data\CharacterFactory.cpp" />
     <ClCompile Include="data\Client.cpp" />
     <ClCompile Include="data\ClientMain.cpp" />
     <ClCompile Include="data\ClientSession.cpp" />
     <ClCompile Include="data\Controller.cpp" />
-    <ClCompile Include="data\DataLoader.cpp" />
-    <ClCompile Include="data\Entity.cpp" />
     <ClCompile Include="data\IncomingDataManager.cpp" />
     <ClCompile Include="data\InputManager.cpp" />
-    <ClCompile Include="data\MovementComponent.cpp" />
     <ClCompile Include="data\NetComponent.cpp" />
     <ClCompile Include="data\OutputDataManager.cpp" />
     <ClCompile Include="data\Packer.cpp" />
     <ClCompile Include="data\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Dynamic|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="data\RenderComponent.cpp" />
-    <ClCompile Include="data\TextureManager.cpp" />
-    <ClCompile Include="data\TransformComponent.cpp" />
     <ClCompile Include="data\World.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

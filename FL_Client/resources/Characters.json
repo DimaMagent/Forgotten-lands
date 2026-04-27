@@ -1,12 +1,22 @@
 {
-  "Player": {
-    "texturePath": "resources/assets/unarmed_character/steht0000.bmp",
-    "textureRect": {
-      "height": 96,
-      "width": 96,
-      "x": 0,
-      "y": 0
+  "player": {
+    "render": {
+      "texturePath": "resources/assets/unarmed_character/steht0000.bmp",
+      "textureRect": {
+        "height": 96,
+        "width": 96,
+        "x": 0,
+        "y": 0
+      }
     },
-    "maxVelocity": 200.0
+    "transform": {
+      "position": {
+        "x": 0,
+        "y": 0
+      }
+    },
+    "movement": {
+      "maxVelocity": 200.0
+    }
   }
 }

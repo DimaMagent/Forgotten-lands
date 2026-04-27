@@ -3,24 +3,26 @@
 #include <unordered_map>
 #include <functional>
 #include <SFML/Window/Keyboard.hpp>
+#include <SFML/Window/Event.hpp>
 #include "PacketDataTypes.hpp"
 
 class InputManager;
 class World;
-class Character;
-namespace sf {
-	class Event;
+namespace sl {
+	class Entity;
 }
 
 class Controller {
 public:
 	Controller(InputManager& im, World& world);
+	~Controller();
 private:
 	std::unordered_map<sf::Keyboard::Key, std::function<sl::InputState()>> keyBindings;
-	std::weak_ptr<Character> playerCharacter;
+	std::weak_ptr<sl::Entity> playerEntity;
 	int reverseInputMultiplier = -1;
 
 	void onEvent(const sf::Event& event);
-	void OnPlayerCharacterSet(std::weak_ptr<Character> playerCharacter);
-	void InitKeyBindings();
+	void onPlayerEntitySet(std::weak_ptr<sl::Entity> playerEntity);
+	void initKeyBindings();
+	void moveEntity(sf::Vector2i direction);
 };

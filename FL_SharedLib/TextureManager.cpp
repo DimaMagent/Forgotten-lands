@@ -1,5 +1,6 @@
-#include "pch.hpp"
+#include "pch.h"
 #include "TextureManager.hpp"
+#include <SFML/Graphics.hpp>
 
 TextureManager::TextureManager()
 {

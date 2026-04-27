@@ -5,7 +5,6 @@
 sl::MovementComponent::MovementComponent(float maxSpeed, sf::Time maxAccelerationTime) : maxSpeed(maxSpeed), maxAccelerationTime(maxAccelerationTime)
 {
 }
-
 void sl::MovementComponent::addVelocityVector(sf::Vector2i direction, float speed)
 {
 	addVelocity(asNormalized(sf::Vector2f(direction)) * speed);
@@ -39,17 +38,6 @@ sf::Vector2f sl::MovementComponent::move(float deltaTime, const sf::Vector2f& po
 	resetVelocity();
 	return newPosition;
 }
-
-void sl::MovementComponent::loadFromJSON(const nlohmann::json& data)
-{
-	if (data.contains("maxSpeed") && data["maxSpeed"].is_number()) {
-		maxSpeed = data["maxSpeed"].get<float>();
-	}
-	if (data.contains("maxAccelerationTime") && data["maxAccelerationTime"].is_number()) {
-		maxAccelerationTime = sf::seconds(data["maxAccelerationTime"].get<float>());
-	}
-}
-
 
 void sl::MovementComponent::addVelocity(const sf::Vector2f& velocity)
 {

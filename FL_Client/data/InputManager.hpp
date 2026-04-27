@@ -1,11 +1,8 @@
 #pragma once
 #include <memory>
 #include "LockFreeDelegate.hpp"
+#include <SFML/Window/Event.hpp>
 
-
-namespace sf {
-	class Event;
-}
 
 class InputManager {
 public:
@@ -16,5 +13,5 @@ public:
 private:
 	bool& isRunningFlag;
 
-	void mousePosChecker(const sf::Event& event);
+	void mousePosChecker(const sf::Event::MouseMoved& event);
 };

@@ -1,5 +1,4 @@
 #pragma once
-#include <json.hpp>
 
 namespace sl {
 
@@ -8,6 +7,5 @@ namespace sl {
 	public:
 		Component() = default;
 		virtual ~Component() = default;
-		virtual void loadFromJSON(const nlohmann::json& data) = 0;
 	};
 }

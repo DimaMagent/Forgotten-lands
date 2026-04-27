@@ -4,6 +4,7 @@
 #include "Component.hpp"
 
 namespace sl {
+
 	class MovementComponent: public Component {
 	public:
 		MovementComponent(float maxSpeed = 0, sf::Time maxAccelerationTime = sf::seconds(0.5f));
@@ -21,7 +22,6 @@ namespace sl {
 		sf::Vector2f getVelocity() const { return velocityVector; }
 		void resetVelocity() { velocityVector = sf::Vector2f(0.f, 0.f); }
 
-		void loadFromJSON(const nlohmann::json& data) override;
 	private:
 		sf::Vector2f velocityVector;
 		sf::Vector2i directionVector;

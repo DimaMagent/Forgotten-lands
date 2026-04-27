@@ -3,13 +3,13 @@
 #include "NetComponent.hpp"
 #include "InputManager.hpp"
 #include "World.hpp"
-#include "CharacterFactory.hpp"
-#include "Character.hpp"
+#include "EntityFactory.hpp"
+#include "Entity.hpp"
 #include "Controller.hpp"
 
 Client::Client() :
 	clientContext(std::make_unique<asio::io_context>()), netComponent(std::make_unique<NetComponent>(*clientContext)),
-	inputManager(std::make_unique<InputManager>(isRunningFlag)), characterFactory(std::make_unique<CharacterFactory>()) {}
+	inputManager(std::make_unique<InputManager>(isRunningFlag)), entityFactory(std::make_unique<sl::EntityFactory>()) {}
 
 Client::~Client() = default;
 
@@ -20,17 +20,15 @@ void Client::start()
 		isRunningFlag = true;
 		netComponent->doConnect();
 		std::thread ClientThread([this]() {clientContext->run(); });
-		window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "FL_Client.exe", sf::Style::Default); // sf::Style::Fullscreen
+		window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "FL_Client.exe", sf::State::Windowed); // sf::Style::Fullscreen
 		window->setVerticalSyncEnabled(true);
 		world = std::make_unique<World>(*window);
 		controller = std::make_unique<Controller>(*inputManager, *world);
-		world->setPlayerCharacter(characterFactory->createCharacter(CharacterType::Player));
+		world->setPlayerEntity(entityFactory->createEntity(sl::EntityType::Player));
 		sf::Clock timer;
 		for (;;) {
-
-			sf::Event event;
-			while (window->pollEvent(event)) {
-				inputManager->handleEvent(event);
+			while (const std::optional<sf::Event> event = window->pollEvent()) {
+				inputManager->handleEvent(event.value());
 			}
 			if (!isRunningFlag) {
 				window->close();

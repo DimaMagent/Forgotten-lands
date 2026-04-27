@@ -1,23 +1,25 @@
 #include "pch.hpp"
 #include "World.hpp"
 #include "Entity.hpp"
-#include "Character.hpp"
+#include "RenderComponent.hpp"
+#include "MovementComponent.hpp"
+#include "TransformComponent.hpp"
 
 World::World(sf::RenderTarget& renderTarget) : renderTarget(renderTarget) {}
 
 World::~World() = default;
 
-void World::addEntity(std::unique_ptr<Entity> entity)
+void World::addEntity(std::unique_ptr<sl::Entity>&& entity)
 {
 	if (entity) {
 		Entities.push_back(std::move(entity));
 	}
 }
 
-void World::setPlayerCharacter(std::unique_ptr<Character>&& character)
+void World::setPlayerEntity(std::unique_ptr<sl::Entity>&& entity)
 {
-	playerCharacter = std::make_shared<Character>(std::move(*character));
-	OnSetPlayerEntity.broadcast(playerCharacter);
+	playerEntity = std::make_shared<sl::Entity>(std::move(*entity));
+	OnSetPlayerEntity.broadcast(playerEntity);
 }
 
 void World::update(float deltaTime)
@@ -27,9 +29,15 @@ void World::update(float deltaTime)
 	while (timeSinceLastUpdate >= updateTime) {
 		timeSinceLastUpdate -= updateTime;
 
-		if (playerCharacter) {
-			playerCharacter->move(updateTime.asSeconds());
-		}
+		if (!playerEntity) { break; }
+
+		sl::MovementComponent* movComp = playerEntity->getComponent<sl::MovementComponent>();
+		sl::TransformComponent* trComp = playerEntity->getComponent<sl::TransformComponent>();
+
+		if (!movComp || !trComp) { break; }
+
+		trComp->setPosition(movComp->move(updateTime.asSeconds(), trComp->getPosition()));
+		
 	}
 	
 }
@@ -38,13 +46,23 @@ void World::render()
 {
 	if (!Entities.empty()) {
 		for (const auto& entity : Entities) {
-			if (entity) {
-				entity->render(renderTarget);
-			}
+			if (!entity) { continue; }
+
+			RenderComponent* comp = entity->getComponent<RenderComponent>();
+			sl::TransformComponent* trComp = entity->getComponent<sl::TransformComponent>();
+
+			if (!comp || !trComp) { continue; }
+
+			comp->render(renderTarget, trComp->getPosition());
+			
 		}
 	}
-	if (playerCharacter) {
-		playerCharacter->render(renderTarget);
+	if (playerEntity) {
+		RenderComponent* comp = playerEntity->getComponent<RenderComponent>();
+		sl::TransformComponent* trComp = playerEntity->getComponent<sl::TransformComponent>();
+		if (comp && trComp) {
+			comp->render(renderTarget, trComp->getPosition());
+		}
 	}
 
 }

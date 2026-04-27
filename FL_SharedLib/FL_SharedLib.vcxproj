@@ -139,11 +139,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Component.hpp" />
+    <ClInclude Include="ComponentRegistry.hpp" />
+    <ClInclude Include="DataLoader.hpp" />
     <ClInclude Include="DataQueue.hpp" />
     <ClInclude Include="Delegate.hpp" />
+    <ClInclude Include="Entity.hpp" />
+    <ClInclude Include="EntityFactory.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Header.hpp" />
     <ClInclude Include="LockFreeDelegate.hpp" />
+    <ClInclude Include="MovementComponent.hpp" />
     <ClInclude Include="NetData.hpp" />
     <ClInclude Include="InputStatePacket.hpp" />
     <ClInclude Include="Packet.hpp" />
@@ -151,13 +157,21 @@
     <ClInclude Include="PacketDataTypes.hpp" />
     <ClInclude Include="PacketManager.hpp" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="RenderComponent.hpp" />
+    <ClInclude Include="TextureManager.hpp" />
     <ClInclude Include="TimerHandle.hpp" />
+    <ClInclude Include="TransformComponent.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ComponentRegistry.cpp" />
+    <ClCompile Include="DataLoader.cpp" />
     <ClCompile Include="DataQueue.cpp" />
+    <ClCompile Include="Entity.cpp" />
+    <ClCompile Include="EntityFactory.cpp" />
     <ClCompile Include="FL_SharedLib.cpp" />
     <ClCompile Include="Header.cpp" />
     <ClCompile Include="InputStatePacket.cpp" />
+    <ClCompile Include="MovementComponent.cpp" />
     <ClCompile Include="Packet.cpp" />
     <ClCompile Include="NetUtils.cpp" />
     <ClCompile Include="PacketManager.cpp" />
@@ -167,6 +181,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="RenderComponent.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
+    <ClCompile Include="TransformComponent.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

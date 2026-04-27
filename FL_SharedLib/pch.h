@@ -13,5 +13,6 @@
 #include <functional>
 #include <mutex>
 #include <cstdint>
+#include <iostream>
 
 #endif //PCH_H
