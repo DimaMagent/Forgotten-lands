@@ -20,7 +20,7 @@ void Client::start()
 		isRunningFlag = true;
 		netComponent->doConnect();
 		std::thread ClientThread([this]() {clientContext->run(); });
-		window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "FL_Client.exe", sf::State::Windowed); // sf::Style::Fullscreen
+		window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "FL_Client.exe", sf::State::Windowed); // sf::State::Fullscreen
 		window->setVerticalSyncEnabled(true);
 		world = std::make_unique<World>(*window);
 		controller = std::make_unique<Controller>(*inputManager, *world);

@@ -8,7 +8,7 @@ RenderComponent::RenderComponent(std::shared_ptr<const sf::Texture> texturePtr, 
 }
 
 RenderComponent::RenderComponent(std::shared_ptr<const sf::Texture> texturePtr, int height, int width, int x, int y):
-	texture(texturePtr), rectTransform(sf::IntRect(sf::Vector2i(height, width), sf::Vector2i(x, y)))
+	texture(texturePtr), rectTransform(sf::IntRect(sf::Vector2i(x, y), sf::Vector2i(height, width)))
 {
 }
 

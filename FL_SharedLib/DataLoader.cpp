@@ -7,16 +7,24 @@ DataLoader::DataLoader(){}
 DataLoader::~DataLoader() = default;
 
 
-json& DataLoader::getData(const std::string& id)
+json DataLoader::getData(const std::string& id)
 {
-	std::ifstream file("resources/Characters.json");
-	if (!file.is_open()) {
-		throw std::runtime_error("Could not open Characters.json");
+	try {
+		std::ifstream file("resources/Characters.json");
+		if (file.is_open()) {
+			nlohmann::json data;
+			file >> data;
+			auto& EntityData = data.at(id);
+			return std::move(EntityData);
+		}
+		else {
+			throw std::runtime_error("Could not open Characters.json");
+		}
+
 	}
-	nlohmann::json data;
-	file >> data;
-	auto& EntityData = data.at(id);
-	return EntityData;
+	catch (std::exception& e) {
+		std::cerr << "DataLoader::getData exception: " << e.what() << "\n";
+	}
 }
 
 //

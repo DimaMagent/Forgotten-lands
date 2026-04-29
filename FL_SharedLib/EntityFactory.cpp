@@ -19,14 +19,13 @@ sl::EntityFactory::~EntityFactory() = default;
 
 std::unique_ptr<sl::Entity> sl::EntityFactory::createEntity(const EntityType EntityId)
 {
-	try {
 		auto it = characterIdToDataId.find(EntityId);
 		if (it == characterIdToDataId.end()) {
-			throw std::runtime_error("Character ID not found: " + std::to_string(static_cast<int>(EntityId)));
+			return nullptr;
 		}
 
 		std::string dataId = it->second;
-		json& jd = dataLoader->getData(dataId);
+		json jd = dataLoader->getData(dataId);
 
 		std::unique_ptr<sl::Entity> entity = std::make_unique<sl::Entity>();
 
@@ -34,13 +33,11 @@ std::unique_ptr<sl::Entity> sl::EntityFactory::createEntity(const EntityType Ent
 			if (registry.contains(key)) {
 				registry[key](*entity, value);
 			}
+			else {
+				std::cout << "Registry have not: " << key << "\n";
+			}
 		}
 		return std::move(entity);
-	}
-	catch (const std::exception& e) {
-		std::cerr << "Error creating character: " << e.what() << std::endl;
-		return nullptr;
-	}
 }
 
 void sl::EntityFactory::InitializeCharacterIdToDataId()
@@ -57,8 +54,8 @@ void sl::EntityFactory::registrationComponents()
 		entity.addComponent<sl::MovementComponent>(js.value("maxVelocity", 20.0f));
 		});
 	registry.try_emplace("render", [this](Entity& entity, const json& js) {
-		auto& rectData = js.at("textureRect");
 		std::shared_ptr<sf::Texture> texture = this->textureManager->getTexture(js.value("texturePath", ""));
+		auto& rectData = js.at("textureRect");
 		entity.addComponent<RenderComponent>(texture,
 			rectData.value("height", 0),
 			rectData.value("width", 0),

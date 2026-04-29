@@ -18,8 +18,11 @@ void World::addEntity(std::unique_ptr<sl::Entity>&& entity)
 
 void World::setPlayerEntity(std::unique_ptr<sl::Entity>&& entity)
 {
+	if (!entity) { return; }
+
 	playerEntity = std::make_shared<sl::Entity>(std::move(*entity));
 	OnSetPlayerEntity.broadcast(playerEntity);
+	
 }
 
 void World::update(float deltaTime)

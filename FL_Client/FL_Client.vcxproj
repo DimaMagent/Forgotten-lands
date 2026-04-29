@@ -229,7 +229,7 @@ xcopy /E /Y "$(SolutionDir)FL_Client\resources\*" "$(TargetDir)resources\"</Comm
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)extlibs\sfml\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-network-s.lib;ws2_32.lib;sfml-audio-s.lib;ogg.lib;vorbis.lib;vorbisfile.lib;vorbisenc.lib;flac.lib;openal32.lib;sfml-graphics-s.lib;freetype.lib;sfml-window-s.lib;gdi32.lib;opengl32.lib;sfml-system-s.lib;winmm.lib;kernel32.lib;user32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;gdi32.lib;opengl32.lib;winmm.lib;kernel32.lib;user32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>copy /Y "$(SolutionDir)extlibs\bin\$(PlatformTarget)\openal32.dll"  "$(TargetDir)openal32.dll"
@@ -279,7 +279,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)extlibs\sfml\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-network-s-d.lib;ws2_32.lib;sfml-audio-s-d.lib;ogg.lib;vorbis.lib;vorbisfile.lib;vorbisenc.lib;flac.lib;openal32.lib;sfml-graphics-s-d.lib;freetype.lib;sfml-window-s-d.lib;gdi32.lib;opengl32.lib;sfml-system-s-d.lib;winmm.lib;kernel32.lib;user32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;gdi32.lib;opengl32.lib;winmm.lib;kernel32.lib;user32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>copy /Y "$(SolutionDir)extlibs\bin\$(PlatformTarget)\openal32.dll"  "$(TargetDir)openal32.dll"
@@ -294,7 +294,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)extlibs\asio;$(SolutionDir)FL_SharedLib;$(SolutionDir)extlibs\json;$(SolutionDir)$(ProjectName)\data;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)FL_SharedLib;$(SolutionDir)$(ProjectName)\data;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
@@ -334,7 +334,7 @@ xcopy /E /Y "$(SolutionDir)FL_Client\resources\*" "$(TargetDir)resources\"</Comm
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)extlibs\sfml\lib\$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-network-s.lib;ws2_32.lib;sfml-audio-s.lib;ogg.lib;vorbis.lib;vorbisfile.lib;vorbisenc.lib;flac.lib;openal32.lib;sfml-graphics-s.lib;freetype.lib;sfml-window-s.lib;gdi32.lib;opengl32.lib;sfml-system-s.lib;winmm.lib;kernel32.lib;user32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ws2_32.lib;gdi32.lib;opengl32.lib;winmm.lib;kernel32.lib;user32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>copy /Y "$(SolutionDir)extlibs\bin\$(PlatformTarget)\openal32.dll"  "$(TargetDir)openal32.dll"
@@ -429,64 +429,6 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <None Include="resources\Characters.json" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\flac.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\freetype.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\ogg.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\openal32.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-audio-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-audio-s-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-audio-s.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-audio.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-graphics-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-graphics-s-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-graphics-s.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-graphics.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-main-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-main.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-network-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-network-s-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-network-s.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-network.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-system-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-system-s-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-system-s.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-system.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-window-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-window-s-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-window-s.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\sfml-window.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\vorbis.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\vorbisenc.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x64\vorbisfile.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\flac.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\freetype.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\ogg.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\openal32.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-audio-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-audio-s-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-audio-s.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-audio.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-graphics-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-graphics-s-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-graphics-s.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-graphics.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-main-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-main.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-network-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-network-s-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-network-s.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-network.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-system-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-system-s-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-system-s.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-system.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-window-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-window-s-d.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-window-s.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\sfml-window.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\vorbis.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\vorbisenc.lib" />
-    <Library Include="$(SolutionDir)extlibs\sfml\lib\x86\vorbisfile.lib" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="data\Character.hpp" />
