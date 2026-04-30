@@ -8,7 +8,7 @@ namespace sf {
 	class RenderTarget;
 }
 
-/*Необходимо перенести этот класс в FL_Client. FL_Server не должен иметь доступ к этому файлу*/
+
 class RenderComponent: public sl::Component {
 public:
 	RenderComponent() = default;

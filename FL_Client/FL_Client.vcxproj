@@ -294,11 +294,12 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)FL_SharedLib;$(SolutionDir)$(ProjectName)\data;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)FL_SharedLib;$(SolutionDir)$(ProjectName)\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -429,19 +430,24 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <None Include="resources\Characters.json" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\Client.cpp" />
+    <ClCompile Include="source\ClientEntityFactory.cpp" />
+    <ClCompile Include="source\ClientMain.cpp" />
+    <ClCompile Include="source\ClientSession.cpp" />
+    <ClCompile Include="source\Controller.cpp" />
+    <ClCompile Include="source\IncomingDataManager.cpp" />
+    <ClCompile Include="source\InputManager.cpp" />
+    <ClCompile Include="source\NetManager.cpp" />
+    <ClCompile Include="source\OutputDataManager.cpp" />
+    <ClCompile Include="source\Packer.cpp" />
+    <ClCompile Include="source\pch.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Dynamic|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="source\RenderComponent.cpp" />
+    <ClCompile Include="source\TextureManager.cpp" />
+    <ClCompile Include="source\World.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="data\Character.hpp" />
-    <ClInclude Include="data\Client.hpp" />
-    <ClInclude Include="data\ClientSession.hpp" />
-    <ClInclude Include="data\Controller.hpp" />
-    <ClInclude Include="data\IncomingDataManager.hpp" />
-    <ClInclude Include="data\InputManager.hpp" />
-    <ClInclude Include="data\NetComponent.hpp" />
-    <ClInclude Include="data\OutputDataManager.hpp" />
-    <ClInclude Include="data\Packer.hpp" />
-    <ClInclude Include="data\pch.hpp" />
-    <ClInclude Include="data\World.hpp" />
     <ClInclude Include="extlibs\include\SFML\Audio.hpp" />
     <ClInclude Include="extlibs\include\SFML\Audio\AlResource.hpp" />
     <ClInclude Include="extlibs\include\SFML\Audio\Export.hpp" />
@@ -540,28 +546,28 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <ClInclude Include="extlibs\include\SFML\Window\Window.hpp" />
     <ClInclude Include="extlibs\include\SFML\Window\WindowHandle.hpp" />
     <ClInclude Include="extlibs\include\SFML\Window\WindowStyle.hpp" />
+    <ClInclude Include="source\Client.hpp" />
+    <ClInclude Include="source\ClientEntityFactory.hpp" />
+    <ClInclude Include="source\ClientSession.hpp" />
+    <ClInclude Include="source\Controller.hpp" />
+    <ClInclude Include="source\IncomingDataManager.hpp" />
+    <ClInclude Include="source\InputManager.hpp" />
+    <ClInclude Include="source\NetManager.hpp" />
+    <ClInclude Include="source\OutputDataManager.hpp" />
+    <ClInclude Include="source\Packer.hpp" />
+    <ClInclude Include="source\pch.hpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Dynamic|x64'">
+      </ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="source\RenderComponent.hpp" />
+    <ClInclude Include="source\TextureManager.hpp" />
+    <ClInclude Include="source\World.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FL_SharedLib\FL_SharedLib.vcxproj">
       <Project>{71235eed-ff94-4e07-94fd-1f7c9e1a1bd5}</Project>
       <Name>FL_SharedLib</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="data\Character.cpp" />
-    <ClCompile Include="data\Client.cpp" />
-    <ClCompile Include="data\ClientMain.cpp" />
-    <ClCompile Include="data\ClientSession.cpp" />
-    <ClCompile Include="data\Controller.cpp" />
-    <ClCompile Include="data\IncomingDataManager.cpp" />
-    <ClCompile Include="data\InputManager.cpp" />
-    <ClCompile Include="data\NetComponent.cpp" />
-    <ClCompile Include="data\OutputDataManager.cpp" />
-    <ClCompile Include="data\Packer.cpp" />
-    <ClCompile Include="data\pch.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Dynamic|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="data\World.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

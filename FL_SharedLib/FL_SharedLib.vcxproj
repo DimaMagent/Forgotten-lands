@@ -140,7 +140,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Component.hpp" />
-    <ClInclude Include="ComponentRegistry.hpp" />
     <ClInclude Include="DataLoader.hpp" />
     <ClInclude Include="DataQueue.hpp" />
     <ClInclude Include="Delegate.hpp" />
@@ -157,13 +156,10 @@
     <ClInclude Include="PacketDataTypes.hpp" />
     <ClInclude Include="PacketManager.hpp" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="RenderComponent.hpp" />
-    <ClInclude Include="TextureManager.hpp" />
     <ClInclude Include="TimerHandle.hpp" />
     <ClInclude Include="TransformComponent.hpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ComponentRegistry.cpp" />
     <ClCompile Include="DataLoader.cpp" />
     <ClCompile Include="DataQueue.cpp" />
     <ClCompile Include="Entity.cpp" />
@@ -181,8 +177,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="RenderComponent.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
     <ClCompile Include="TransformComponent.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

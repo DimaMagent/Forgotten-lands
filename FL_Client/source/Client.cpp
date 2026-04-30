@@ -1,15 +1,19 @@
 #include "pch.hpp"
 #include "Client.hpp"
-#include "NetComponent.hpp"
+#include "NetManager.hpp"
 #include "InputManager.hpp"
 #include "World.hpp"
-#include "EntityFactory.hpp"
+#include "ClientEntityFactory.hpp"
 #include "Entity.hpp"
 #include "Controller.hpp"
 
 Client::Client() :
-	clientContext(std::make_unique<asio::io_context>()), netComponent(std::make_unique<NetComponent>(*clientContext)),
-	inputManager(std::make_unique<InputManager>(isRunningFlag)), entityFactory(std::make_unique<sl::EntityFactory>()) {}
+	clientContext(std::make_unique<asio::io_context>()), netManager(std::make_unique<NetManager>(*clientContext)),
+	inputManager(std::make_unique<InputManager>(isRunningFlag)), 
+	entityFactory(std::make_unique<ClientEntityFactory>())
+{
+	entityFactory->initialize();
+}
 
 Client::~Client() = default;
 
@@ -18,7 +22,7 @@ void Client::start()
 	try {
 		setlocale(LC_ALL, "Russian");
 		isRunningFlag = true;
-		netComponent->doConnect();
+		netManager->doConnect();
 		std::thread ClientThread([this]() {clientContext->run(); });
 		window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "FL_Client.exe", sf::State::Windowed); // sf::State::Fullscreen
 		window->setVerticalSyncEnabled(true);

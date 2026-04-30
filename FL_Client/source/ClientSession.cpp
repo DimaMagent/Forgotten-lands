@@ -30,7 +30,6 @@ void ClientSession::doWrite()
 	auto self(shared_from_this());
 	std::shared_ptr<std::vector<uint8_t>> localBuffer = std::make_shared<std::vector<uint8_t>>(1024u);
 	if (!outgoingQueue->tryPop(*localBuffer)) {
-		std::cout << "No data to write, waiting..." << "\n";
 		return;
 	}
 

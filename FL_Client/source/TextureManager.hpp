@@ -7,7 +7,6 @@ namespace sf {
 	class Texture;
 }
 
-/*Необходимо перенести этот класс в FL_Client. FL_Server не должен иметь доступ к этому файлу*/
 class TextureManager {
 public:
 	TextureManager();

@@ -1,16 +1,15 @@
 #pragma once
 #include <unordered_map>
 #include <memory>
-#include <nlohmann/json.hpp> // TODO: как-то убрать это включение из hpp файла
 #include <functional>
-#include <string>
+#include <nlohmann/json.hpp>
 
-
+/*If the compilation time due to nlohmann/json.hpp header is significant,
+then PIMPL + component registration composition can be used to remove the inclusion from the .hpp file.
+However, such measures are currently redundant.*/
 
 class DataLoader;
 class TextureManager;
-class RenderComponent;
-
 
 namespace sl {
 	class Entity;
@@ -23,17 +22,21 @@ namespace sl {
 
 	using ComponentFactory = std::function<void(sl::Entity& entity, const json& js)>;
 
+	//before using you should use methos initialize for currect work
 	class EntityFactory {
 	public:
 		EntityFactory();
-		~EntityFactory();
-		std::unique_ptr<sl::Entity> createEntity(const EntityType EntityId);
+		EntityFactory(EntityFactory&&) = default;
+		virtual ~EntityFactory();
+
+		void initialize();
+
+		std::unique_ptr<sl::Entity> createEntity(const EntityType entityId);
 	protected:
 		std::unique_ptr<DataLoader> dataLoader;
-		std::unique_ptr<TextureManager> textureManager;
-		std::unordered_map<EntityType, std::string> characterIdToDataId;
+		std::unordered_map<sl::EntityType, std::string> characterIdToDataId;
 		std::unordered_map<std::string, ComponentFactory> registry;
-	
+
 		void InitializeCharacterIdToDataId();
 		virtual void registrationComponents();
 	};

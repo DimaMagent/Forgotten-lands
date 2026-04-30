@@ -2,7 +2,7 @@
 #include "asio\ip\tcp.hpp"
 #include <memory>
 
-class NetComponent;
+class NetManager;
 class InputManager;
 class World;
 
@@ -13,9 +13,9 @@ namespace asio {
 namespace sf {
 	class RenderWindow;
 }
-namespace sl {
-	class EntityFactory;
-}
+
+class ClientEntityFactory;
+
 
 
 class Client {
@@ -25,11 +25,11 @@ public:
 	void start();
 private:
 	std::unique_ptr<asio::io_context> clientContext;
-	std::unique_ptr<NetComponent> netComponent;
+	std::unique_ptr<NetManager> netManager;
 	std::unique_ptr<InputManager> inputManager;
 	std::unique_ptr<sf::RenderWindow> window;
 	std::unique_ptr<World> world;
 	std::unique_ptr<Controller> controller;
-	std::unique_ptr<sl::EntityFactory> entityFactory;
+	std::unique_ptr<ClientEntityFactory> entityFactory;
 	bool isRunningFlag = false;
 };

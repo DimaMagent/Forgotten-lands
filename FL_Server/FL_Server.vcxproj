@@ -104,10 +104,11 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)FL_SharedLib;$(SolutionDir)$(ProjectName)\data;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)FL_SharedLib;$(SolutionDir)$(ProjectName)\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.hpp</PrecompiledHeaderFile>
+      <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -136,21 +137,23 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="data\DataProcessorManager.cpp" />
-    <ClCompile Include="data\IncomingDataManager.cpp" />
-    <ClCompile Include="data\pch.cpp">
+    <ClCompile Include="source\DataProcessorManager.cpp" />
+    <ClCompile Include="source\IncomingDataManager.cpp" />
+    <ClCompile Include="source\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="data\Server.cpp" />
-    <ClCompile Include="data\ServerMain.cpp" />
-    <ClCompile Include="data\Session.cpp" />
+    <ClCompile Include="source\Server.cpp" />
+    <ClCompile Include="source\ServerMain.cpp" />
+    <ClCompile Include="source\Session.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="data\DataProcessorManager.hpp" />
-    <ClInclude Include="data\IncomingDataManager.hpp" />
-    <ClInclude Include="data\pch.hpp" />
-    <ClInclude Include="data\Server.hpp" />
-    <ClInclude Include="data\Session.hpp" />
+    <ClInclude Include="source\DataProcessorManager.hpp" />
+    <ClInclude Include="source\GameState.hpp" />
+    <ClInclude Include="source\IncomingDataManager.hpp" />
+    <ClInclude Include="source\pch.hpp" />
+    <ClInclude Include="source\PlayerManager.hpp" />
+    <ClInclude Include="source\Server.hpp" />
+    <ClInclude Include="source\Session.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -14,5 +14,8 @@
 #include <mutex>
 #include <cstdint>
 #include <iostream>
+#include <string>
+#include <memory>
+#include <unordered_map>
 
 #endif //PCH_H

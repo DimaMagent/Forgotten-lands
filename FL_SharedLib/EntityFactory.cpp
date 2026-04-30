@@ -2,16 +2,17 @@
 #include "EntityFactory.hpp"
 #include "Entity.hpp"
 #include "DataLoader.hpp"
-#include <nlohmann/json.hpp>
-#include "TextureManager.hpp"
 #include "TransformComponent.hpp"
 #include "MovementComponent.hpp"
-#include "RenderComponent.hpp"
 
 sl::EntityFactory::EntityFactory() {
+	
 	dataLoader = std::make_unique<DataLoader>();
-	textureManager = std::make_unique<TextureManager>();
 	InitializeCharacterIdToDataId();
+}
+
+void sl::EntityFactory::initialize()
+{
 	registrationComponents();
 }
 
@@ -37,7 +38,7 @@ std::unique_ptr<sl::Entity> sl::EntityFactory::createEntity(const EntityType Ent
 				std::cout << "Registry have not: " << key << "\n";
 			}
 		}
-		return std::move(entity);
+		return entity;
 }
 
 void sl::EntityFactory::InitializeCharacterIdToDataId()
@@ -53,14 +54,6 @@ void sl::EntityFactory::registrationComponents()
 	registry.try_emplace("movement", [](Entity& entity, const json& js) {
 		entity.addComponent<sl::MovementComponent>(js.value("maxVelocity", 20.0f));
 		});
-	registry.try_emplace("render", [this](Entity& entity, const json& js) {
-		std::shared_ptr<sf::Texture> texture = this->textureManager->getTexture(js.value("texturePath", ""));
-		auto& rectData = js.at("textureRect");
-		entity.addComponent<RenderComponent>(texture,
-			rectData.value("height", 0),
-			rectData.value("width", 0),
-			rectData.value("x", 0),
-			rectData.value("y", 0));
-		});
+
 }
 

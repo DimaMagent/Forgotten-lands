@@ -1,4 +1,4 @@
-#include "pch.h"
+#include "pch.hpp"
 #include "RenderComponent.hpp"
 #include <SFML/Graphics.hpp>
 
