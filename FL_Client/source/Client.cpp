@@ -2,7 +2,7 @@
 #include "Client.hpp"
 #include "NetManager.hpp"
 #include "InputManager.hpp"
-#include "World.hpp"
+#include "LocalWorld.hpp"
 #include "ClientEntityFactory.hpp"
 #include "Entity.hpp"
 #include "Controller.hpp"
@@ -26,7 +26,7 @@ void Client::start()
 		std::thread ClientThread([this]() {clientContext->run(); });
 		window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "FL_Client.exe", sf::State::Windowed); // sf::State::Fullscreen
 		window->setVerticalSyncEnabled(true);
-		world = std::make_unique<World>(*window);
+		world = std::make_unique<LocalWorld>(*window);
 		controller = std::make_unique<Controller>(*inputManager, *world);
 		world->setPlayerEntity(entityFactory->createEntity(sl::EntityType::Player));
 		sf::Clock timer;

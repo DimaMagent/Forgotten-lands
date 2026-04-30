@@ -4,7 +4,7 @@
 
 class NetManager;
 class InputManager;
-class World;
+class LocalWorld;
 
 class Controller;
 namespace asio {
@@ -28,7 +28,7 @@ private:
 	std::unique_ptr<NetManager> netManager;
 	std::unique_ptr<InputManager> inputManager;
 	std::unique_ptr<sf::RenderWindow> window;
-	std::unique_ptr<World> world;
+	std::unique_ptr<LocalWorld> world;
 	std::unique_ptr<Controller> controller;
 	std::unique_ptr<ClientEntityFactory> entityFactory;
 	bool isRunningFlag = false;

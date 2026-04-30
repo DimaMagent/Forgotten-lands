@@ -1,12 +1,12 @@
 #include "pch.hpp"
 #include "Controller.hpp"
 #include "InputManager.hpp"
-#include "World.hpp"
+#include "LocalWorld.hpp"
 #include "Entity.hpp"
 #include "Packer.hpp"
 #include "MovementComponent.hpp"
 
-Controller::Controller(InputManager& im, World& world)
+Controller::Controller(InputManager& im, LocalWorld& world)
 {
 	im.onEvent.addFunction([this](const sf::Event& event) { onEvent(event); });
 	world.OnSetPlayerEntity.addFunction([this](const std::weak_ptr<sl::Entity> playerEntity) { onPlayerEntitySet(playerEntity); });

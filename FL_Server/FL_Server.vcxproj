@@ -145,6 +145,7 @@
     <ClCompile Include="source\Server.cpp" />
     <ClCompile Include="source\ServerMain.cpp" />
     <ClCompile Include="source\Session.cpp" />
+    <ClCompile Include="source\World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="source\DataProcessorManager.hpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="source\PlayerManager.hpp" />
     <ClInclude Include="source\Server.hpp" />
     <ClInclude Include="source\Session.hpp" />
+    <ClInclude Include="source\World.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,7 +2,6 @@
 #include "DataProcessorManager.hpp"
 #include "PacketDataTypes.hpp"
 #include "InputStatePacket.hpp"
-#include <iostream>
 
 DataProcessorManager::DataProcessorManager()
 {

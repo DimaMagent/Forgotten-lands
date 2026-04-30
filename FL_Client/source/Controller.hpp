@@ -7,14 +7,14 @@
 #include "PacketDataTypes.hpp"
 
 class InputManager;
-class World;
+class LocalWorld;
 namespace sl {
 	class Entity;
 }
 
 class Controller {
 public:
-	Controller(InputManager& im, World& world);
+	Controller(InputManager& im, LocalWorld& world);
 	~Controller();
 private:
 	std::unordered_map<sf::Keyboard::Key, std::function<sl::InputState()>> keyBindings;

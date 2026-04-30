@@ -445,7 +445,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     </ClCompile>
     <ClCompile Include="source\RenderComponent.cpp" />
     <ClCompile Include="source\TextureManager.cpp" />
-    <ClCompile Include="source\World.cpp" />
+    <ClCompile Include="source\LocalWorld.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="extlibs\include\SFML\Audio.hpp" />
@@ -561,7 +561,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     </ClInclude>
     <ClInclude Include="source\RenderComponent.hpp" />
     <ClInclude Include="source\TextureManager.hpp" />
-    <ClInclude Include="source\World.hpp" />
+    <ClInclude Include="source\LocalWorld.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\FL_SharedLib\FL_SharedLib.vcxproj">
