@@ -4,8 +4,8 @@
 #include "IncomingDataManager.hpp"
 #include "OutputDataManager.hpp"
 
-ClientSession::ClientSession(asio::ip::tcp::socket socket)
-    : sessionSocket(std::move(socket)), sessionStrand(asio::make_strand(sessionSocket.get_executor()))
+ClientSession::ClientSession(asio::ip::tcp::socket socket, asio::ssl::context& sslContext)
+    : sessionSocket(std::move(socket), sslContext), sessionStrand(asio::make_strand(sessionSocket.get_executor()))
 {
 	incomingQueue = std::make_shared<sl::DataQueue>();
 	outgoingQueue = std::make_shared<sl::DataQueue>();
@@ -14,8 +14,7 @@ ClientSession::ClientSession(asio::ip::tcp::socket socket)
 ClientSession::~ClientSession() = default;
 
 void ClientSession::start() {
-    auto self = shared_from_this();
-    asio::post(sessionStrand, [self]() { self->doRead(); });
+	doHandshake();
 }
 
 void ClientSession::writeOnOutgoingData(std::vector<uint8_t>& data)
@@ -23,6 +22,20 @@ void ClientSession::writeOnOutgoingData(std::vector<uint8_t>& data)
 	auto self = shared_from_this();
     outgoingQueue->push(data);
     asio::post(sessionStrand, [self]() { self->doWrite(); });
+}
+
+void ClientSession::doHandshake() {
+	auto self = shared_from_this();
+	sessionSocket.async_handshake(
+		asio::ssl::stream_base::client,
+		asio::bind_executor(sessionStrand, [this, self](std::error_code ec) {
+			if (ec) {
+				std::cout << "Handshake error: " << ec.message() << std::endl;
+				return;
+			}
+			std::cout << "TLS handshake OK" << std::endl;
+			doRead();
+			}));
 }
 
 void ClientSession::doWrite()

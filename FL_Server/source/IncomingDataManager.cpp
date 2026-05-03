@@ -24,7 +24,7 @@ IncomingDataManager::IncomingDataManager(std::shared_ptr<sl::DataQueue> incQueue
 }
 
 namespace {
-	constexpr size_t WIRE_HEADER_SIZE = sizeof(uint32_t) + sizeof(uint16_t) + sizeof(uint8_t);
+	constexpr size_t WIRE_HEADER_SIZE = sizeof(uint32_t) + sizeof(uint16_t) + sizeof(uint8_t) + sizeof(uint32_t);
 }
 
 void IncomingDataManager::assemblePacket()
@@ -41,6 +41,8 @@ void IncomingDataManager::assemblePacket()
 		uint16_t sequenceNumber = sl::net::read_uint16_t(buffer, offset);
 
 		sl::PacketType ptype = static_cast<sl::PacketType>(sl::net::read_uint8_t(buffer, offset));
+
+		uint32_t token = sl::net::read_uint32_t(buffer, offset);
 
 		std::vector<uint8_t> packetBytes(buffer.begin(), buffer.begin() + totalPacketBytes);
 

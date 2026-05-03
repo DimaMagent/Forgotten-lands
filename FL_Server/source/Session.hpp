@@ -1,28 +1,31 @@
 #pragma once
+#include <asio.hpp>
+#include <asio/ssl.hpp> 
 #include <memory>
 #include <vector>
 #include <cstdint>
-#include "asio.hpp"
 
 namespace sl {
 	class DataQueue;
 	class NetData;
 }
 
+using ssl_socket = asio::ssl::stream<asio::ip::tcp::socket>;
 
 class Session: public std::enable_shared_from_this<Session> {
 public:
-	Session(asio::ip::tcp::socket socket);
+	Session(asio::ip::tcp::socket socket, asio::ssl::context& sslContext);
 	~Session() = default;
-	void start() { doRead(); }
+	void start() { doHandshake(); }
 	void writeOnOutgoingData(std::vector<uint8_t>& data);
 	std::shared_ptr<sl::DataQueue> getIncomingQueue() const { return incomingQueue; }
 private:
-	asio::ip::tcp::socket sessionSocket;
+	ssl_socket sessionSocket;
 	asio::strand<asio::ip::tcp::socket::executor_type> sessionStrand;
 	std::shared_ptr<sl::DataQueue> incomingQueue;
 	std::shared_ptr<sl::DataQueue> outgoingQueue;
 
+	void doHandshake();
 	void doRead();
 	void doWrite();
 };

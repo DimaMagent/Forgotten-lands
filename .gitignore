@@ -60,3 +60,6 @@ resources_cache/
 
 # Ignore package manager
 .vcpkg/
+
+*.key
+*.pem

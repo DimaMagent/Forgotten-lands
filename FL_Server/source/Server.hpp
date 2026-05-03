@@ -1,22 +1,23 @@
 #pragma once
-#include "asio\ip\tcp.hpp"
+#include <asio\ip\tcp.hpp>
+#include <asio/ssl.hpp>
 #include <vector>
 #include <memory>
+#include "TimerHandle.hpp"
 
-class Session;
-class IncomingDataManager;
 class DataProcessorManager;
+class NetManager;
 namespace asio {
 	class io_context;
 }
 class Server {
 public:
-	Server(asio::io_context& context, short port);
+	Server(short port);
 	~Server();
+	void start();
 private:
-	asio::ip::tcp::acceptor acceptor;
-	std::vector<std::weak_ptr<Session>> sessions;
-	std::shared_ptr<IncomingDataManager> incomingDataManager;
+	std::unique_ptr<asio::io_context> serverContext;
 	std::unique_ptr<DataProcessorManager> dataProcessorManager;
-	void doAccept();
+	std::unique_ptr<NetManager> netManager;
+	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;
 };

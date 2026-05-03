@@ -16,7 +16,8 @@ void Packer::packageInputStatePacket(sl::InputState inputState, bool pressingFla
 {
 	if (auto manager = staticOutputManager.lock()) {
 		sl::InputStatePacket packet;
-		packet.fillPacketData(sequenceNumber++, sl::PacketType::PT_InputState, static_cast<uint8_t>(inputState), pressingFlag);
+		uint32_t token = 0;
+		packet.fillPacketData(sequenceNumber++, sl::PacketType::PT_InputState, token, static_cast<uint8_t>(inputState), pressingFlag);
 		manager->writePacket(packet);
 	}
 	else {

@@ -1,8 +1,17 @@
 #pragma once
 
-#include <SFML/Graphics.hpp>
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#define ASIO_STANDALONE          // говорим что используем standalone asio, не boost
+#define ASIO_HAS_STD_CHRONO      // явно включаем std::chrono
+// убеждаемся что boost date_time НЕ используется
+#ifdef ASIO_HAS_BOOST_DATE_TIME
+#undef ASIO_HAS_BOOST_DATE_TIME
+#endif
+#include <asio.hpp>
+#include <asio/ssl.hpp>
 
-#include "asio.hpp"
+#include <SFML/Graphics.hpp>
 
 #include <memory>
 #include <string>

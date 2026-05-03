@@ -1,5 +1,6 @@
 #pragma once
 #include "asio\ip\tcp.hpp"
+#include "asio\ssl.hpp"
 #include <string>
 
 class ClientSession;
@@ -20,6 +21,7 @@ class NetManager {
 	private:
 		std::string serverAddress = "127.0.0.1";
 		unsigned short serverPort = 2001;
+		asio::ssl::context sslContext;
 		asio::ip::tcp::socket socket;
 		asio::ip::tcp::endpoint endpoint;
 		std::weak_ptr<ClientSession> session;

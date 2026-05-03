@@ -5,7 +5,7 @@
 #include "MovementComponent.hpp"
 #include "TransformComponent.hpp"
 
-LocalWorld::LocalWorld(sf::RenderTarget& renderTarget) : World(), renderTarget(renderTarget) {}
+LocalWorld::LocalWorld(sf::RenderTarget& renderTarget) : WorldBase(), renderTarget(renderTarget) {}
 
 LocalWorld::~LocalWorld() = default;
 

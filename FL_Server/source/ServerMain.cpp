@@ -7,10 +7,9 @@ int main()
 {
 	try {
 		setlocale(LC_ALL, "Russian");
-		asio::io_context serverContext;
-		Server server(serverContext, 2001);
+		Server server(2001);
 		std::cout << "Server start" << std::endl;
-		serverContext.run();
+		server.start();
 	}
 	catch (std::exception& e) {
 		std::cerr << "Exception: " << e.what() << std::endl;
