@@ -17,6 +17,7 @@ public:
 	Session(asio::ip::tcp::socket socket, asio::ssl::context& sslContext);
 	~Session() = default;
 	void start() { doHandshake(); }
+	void close();
 	void writeOnOutgoingData(std::vector<uint8_t>& data);
 	std::shared_ptr<sl::DataQueue> getIncomingQueue() const { return incomingQueue; }
 private:
@@ -24,6 +25,7 @@ private:
 	asio::strand<asio::ip::tcp::socket::executor_type> sessionStrand;
 	std::shared_ptr<sl::DataQueue> incomingQueue;
 	std::shared_ptr<sl::DataQueue> outgoingQueue;
+	asio::steady_timer handshakeTimer;
 
 	void doHandshake();
 	void doRead();

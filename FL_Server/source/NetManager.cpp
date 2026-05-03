@@ -10,7 +10,7 @@ acceptor(context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)), dataProce
 	cleaningTimer = std::make_unique<sl::TimerHandle<void>>(context,
 		asio::chrono::seconds(600),
 		asio::chrono::seconds(600),
-		[this]() {cleaningSessions(); },
+		[this]() {cleaning(); },
 		true);
 	initSSL();
 }
@@ -21,6 +21,30 @@ void NetManager::doAccept() {
 		[this](std::error_code ec, asio::ip::tcp::socket socket)
 		{
 			if (!ec) {
+				std::string ip = socket.remote_endpoint().address().to_string();
+
+				if (sessions.size() >= MAX_TOTAL_SESSIONS) {
+					std::cout << "Server full, rejecting: " << ip << "\n";
+					socket.close();
+					doAccept();
+					return;
+				}
+				auto now = std::chrono::steady_clock::now();
+				auto& [count, firstTime] = connectionAttempts[ip];
+				if (now - firstTime < std::chrono::seconds(60)) {
+					if (count >= MAX_CONNECTIONS_PER_IP) {
+						std::cout << "Rate limit exceeded for IP: " << ip << "\n";
+						socket.close();
+						doAccept();
+						return;
+					}
+					++count;
+				}
+				else {
+					firstTime = now;
+					count = 1;
+				}
+
 				std::cout << "Client connected" << std::endl;
 				std::shared_ptr<Session> sessionPtr = std::make_shared<Session>(std::move(socket), sslContext);
 				sessionPtr->start();
@@ -34,14 +58,26 @@ void NetManager::doAccept() {
 		});
 }
 
-void NetManager::cleaningSessions() {
-	if (sessions.size() == 0) { return; }
+void NetManager::cleaning() {
 
-	for (size_t i = 0; i < sessions.size(); ++i) {
-		if (sessions[i].expired()) {
-			sessions[i] = std::move(sessions.back());
-			sessions.pop_back();
-			--i;
+	auto now = std::chrono::steady_clock::now();
+
+	for (auto it = connectionAttempts.begin(); it != connectionAttempts.end(); ) {
+		if (now - it->second.second > std::chrono::seconds(300)) { // 5 минут не видели
+			it = connectionAttempts.erase(it);
+		}
+		else {
+			++it;
+		}
+	}
+
+	if (sessions.size() != 0) {
+		for (size_t i = 0; i < sessions.size(); ++i) {
+			if (sessions[i].expired()) {
+				sessions[i] = std::move(sessions.back());
+				sessions.pop_back();
+				--i;
+			}
 		}
 	}
 }

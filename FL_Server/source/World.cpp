@@ -5,3 +5,7 @@
 World::World() : WorldBase(){}
 
 World::~World() = default;
+
+void World::onUpdate(float updateTime)
+{
+}

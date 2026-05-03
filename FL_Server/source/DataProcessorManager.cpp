@@ -16,8 +16,6 @@ DataProcessorManager::DataProcessorManager()
 
 void DataProcessorManager::routeData(const std::vector<uint8_t>& data, sl::PacketType type)
 {
-	/*error Вызвано исключение: нарушение доступа для чтения.
-this было nullptr.*/
 	auto it = handlers.find(static_cast<uint8_t>(type));
 	if (it != handlers.end()) {
 		it->second(data);

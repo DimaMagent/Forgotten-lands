@@ -14,7 +14,8 @@ public:
 private:
 	std::weak_ptr<sl::DataQueue> incomingQueue;
 	DataProcessorManager& dataProcessorManager;
+	std::vector<uint8_t> buffer;
 
 	void assemblePacket();
-	std::vector<uint8_t> buffer;
+	void onDataPushed();
 };

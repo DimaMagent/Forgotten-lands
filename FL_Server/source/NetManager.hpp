@@ -30,7 +30,11 @@ private:
 	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;
 	DataProcessorManager& dataProcessorManager;
 
+	std::unordered_map<std::string, std::pair<int, std::chrono::steady_clock::time_point>> connectionAttempts;
+	static constexpr int MAX_CONNECTIONS_PER_IP = 5;
+	static constexpr int MAX_TOTAL_SESSIONS = 10000;
+
 	void initSSL();
-	void cleaningSessions();
+	void cleaning();
 
 };

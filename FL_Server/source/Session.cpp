@@ -2,11 +2,23 @@
 #include "Session.hpp"
 #include "DataQueue.hpp"
 
+namespace {
+	constexpr size_t MAX_PACKET_SIZE = 4096;
+	constexpr size_t MAX_BIG_PACKET_SIZE = 65535;
+}
+
+
 Session::Session(asio::ip::tcp::socket socket, asio::ssl::context& sslContext) :
-	sessionSocket(std::move(socket), sslContext), sessionStrand(asio::make_strand(sessionSocket.get_executor()))
+	sessionSocket(std::move(socket), sslContext), sessionStrand(asio::make_strand(sessionSocket.get_executor())),
+	handshakeTimer(sessionSocket.get_executor())
 {
 	incomingQueue = std::make_shared<sl::DataQueue>();
 	outgoingQueue = std::make_shared<sl::DataQueue>();
+}
+
+void Session::close() {
+	std::error_code ec;
+	sessionSocket.lowest_layer().close(ec);
 }
 
 void Session::writeOnOutgoingData(std::vector<uint8_t>& data)
@@ -19,9 +31,18 @@ void Session::writeOnOutgoingData(std::vector<uint8_t>& data)
 void Session::doHandshake()
 {
 	auto self = shared_from_this();
+	handshakeTimer.expires_after(asio::chrono::seconds(10));
+	handshakeTimer.async_wait([this, self](std::error_code ec) {
+		if (!ec) {
+			std::cout << "Handshake timeout, closing connection\n";
+			sessionSocket.lowest_layer().close();
+		}
+	});
+
 	sessionSocket.async_handshake(
 		asio::ssl::stream_base::server,
 		asio::bind_executor(sessionStrand, [this, self](std::error_code ec) {
+			handshakeTimer.cancel();
 			if (ec) {
 				std::cout << "Handshake error: " << ec.message() << std::endl;
 				return;
@@ -38,6 +59,11 @@ void Session::doRead()
 	sessionSocket.async_read_some(asio::buffer(*localBuffer), asio::bind_executor(sessionStrand, [this, self, localBuffer](std::error_code ec, size_t len) {
 		if (ec) {
 			std::cout << ec.value() << "::" << ec.message() << std::endl;
+			return;
+		}
+		if (len > MAX_PACKET_SIZE) {
+			std::cout << "package size is too big" << "\n";
+			close();
 			return;
 		}
 		localBuffer->resize(len);

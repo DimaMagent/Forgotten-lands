@@ -10,10 +10,9 @@ namespace sl {
 	};
 
 	enum PacketType : uint8_t {
-		PT_Unknown = 0,
-		PT_InputState = 1,
-		PT_Input = 2,
-		PT_PlayerPosition = 3,
-		PT_GameStateUpdate = 4,
+		PT_InputState = 0,
+		PT_Input = 1,
+		PT_PlayerPosition = 2,
+		PT_GameStateUpdate = 3,
 	};
 }

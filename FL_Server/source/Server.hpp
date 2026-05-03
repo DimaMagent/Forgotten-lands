@@ -7,6 +7,7 @@
 
 class DataProcessorManager;
 class NetManager;
+class World;
 namespace asio {
 	class io_context;
 }
@@ -19,5 +20,6 @@ private:
 	std::unique_ptr<asio::io_context> serverContext;
 	std::unique_ptr<DataProcessorManager> dataProcessorManager;
 	std::unique_ptr<NetManager> netManager;
+	std::unique_ptr<World> world;
 	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;
 };
