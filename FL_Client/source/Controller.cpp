@@ -5,6 +5,7 @@
 #include "Entity.hpp"
 #include "Packer.hpp"
 #include "MovementComponent.hpp"
+#include "InputStatePacket.hpp"
 
 Controller::Controller(InputManager& im, LocalWorld& world)
 {
@@ -20,7 +21,7 @@ void Controller::onEvent(const sf::Event& event) {
 		if (auto it = keyBindings.find(keyEvent->code); it != keyBindings.end()) {
 			std::cout << "Executed action for key: " << (int)keyEvent->code << std::endl;
 			reverseInputMultiplier = 1;
-			Packer::packageInputStatePacket(it->second(), true);
+			Packer::send<sl::InputStatePacket>(it->second(), true);
 		}
 		return;
 	}
@@ -28,7 +29,7 @@ void Controller::onEvent(const sf::Event& event) {
 		if (auto it = keyBindings.find(keyEvent->code); it != keyBindings.end()) {
 			std::cout << "Released action for key: " << (int)keyEvent->code << std::endl;
 			reverseInputMultiplier = -1;
-			Packer::packageInputStatePacket(it->second(), false);
+			Packer::send<sl::InputStatePacket>(it->second(), false);
 		}
 	}
 }

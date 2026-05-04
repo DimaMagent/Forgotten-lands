@@ -17,6 +17,7 @@ namespace sl{
 		public:
 			virtual bool write(std::vector<uint8_t>& out) const override;
 			virtual void read(const std::vector<uint8_t>& in, size_t& offset) override;
+			static constexpr PacketType type() { return PacketType::PT_InputState; }
 			virtual void fillPacketData(uint16_t sequenceNumber, PacketType type, uint32_t token, uint8_t inputState, bool pressingFlag);
 			const Header& getHeader() const override { return data.header; }
 			const InputStateData& getData() const override { return data; }

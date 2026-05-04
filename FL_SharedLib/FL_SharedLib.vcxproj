@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AuthPacket.hpp" />
     <ClInclude Include="Component.hpp" />
     <ClInclude Include="DataLoader.hpp" />
     <ClInclude Include="DataQueue.hpp" />

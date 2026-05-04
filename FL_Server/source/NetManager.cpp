@@ -8,8 +8,8 @@
 NetManager::NetManager(asio::io_context& context, short port, DataProcessorManager& dtm) : sslContext(asio::ssl::context::tls_server),
 acceptor(context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)), dataProcessorManager(dtm) {
 	cleaningTimer = std::make_unique<sl::TimerHandle<void>>(context,
-		asio::chrono::seconds(600),
-		asio::chrono::seconds(600),
+		asio::chrono::seconds(120),
+		asio::chrono::seconds(120),
 		[this]() {cleaning(); },
 		true);
 	initSSL();
@@ -63,7 +63,7 @@ void NetManager::cleaning() {
 	auto now = std::chrono::steady_clock::now();
 
 	for (auto it = connectionAttempts.begin(); it != connectionAttempts.end(); ) {
-		if (now - it->second.second > std::chrono::seconds(300)) { // 5 минут не видели
+		if (now - it->second.second > std::chrono::seconds(300)) {
 			it = connectionAttempts.erase(it);
 		}
 		else {
