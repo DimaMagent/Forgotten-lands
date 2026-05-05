@@ -1,12 +1,15 @@
 #include "pch.hpp"
 #include "NetManager.hpp"
 #include "Session.hpp"
-#include "IncomingDataManager.hpp"
 #include "DataProcessorManager.hpp"
+#include "OutputDataManager.hpp"
 #include <filesystem>
+#include <random>
 
 NetManager::NetManager(asio::io_context& context, short port, DataProcessorManager& dtm) : sslContext(asio::ssl::context::tls_server),
-acceptor(context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)), dataProcessorManager(dtm) {
+	acceptor(context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)), dataProcessorManager(dtm),
+	outputDataManager(std::make_unique<OutputDataManager>(sessions))
+{
 	cleaningTimer = std::make_unique<sl::TimerHandle<void>>(context,
 		asio::chrono::seconds(120),
 		asio::chrono::seconds(120),
@@ -45,11 +48,13 @@ void NetManager::doAccept() {
 					count = 1;
 				}
 
-				std::cout << "Client connected" << std::endl;
-				std::shared_ptr<Session> sessionPtr = std::make_shared<Session>(std::move(socket), sslContext);
+				uint32_t sessionToken = generateToken();
+
+				std::cout << "Client" << sessionToken << "connected" << std::endl;
+
+				std::shared_ptr<Session> sessionPtr = std::make_shared<Session>(std::move(socket), sslContext, sessionToken, dataProcessorManager);
 				sessionPtr->start();
-				sessions.push_back(sessionPtr);
-				incomingDataManagers.emplace_back(std::make_shared<IncomingDataManager>(sessionPtr->getIncomingQueue(), dataProcessorManager));
+				sessions.try_emplace(sessionToken, sessionPtr);
 			}
 			else {
 				std::cout << ec.value() << "::" << ec.message() << std::endl;
@@ -70,7 +75,7 @@ void NetManager::cleaning() {
 			++it;
 		}
 	}
-
+	/* TODO: реализовать систему очистки невалидных сессий
 	if (sessions.size() != 0) {
 		for (size_t i = 0; i < sessions.size(); ++i) {
 			if (sessions[i].expired()) {
@@ -80,6 +85,14 @@ void NetManager::cleaning() {
 			}
 		}
 	}
+	*/
+}
+
+uint32_t NetManager::generateToken() const
+{
+	std::random_device rd;
+	std::uniform_int_distribution<uint32_t> dist;
+	return dist(rd);
 }
 
 void NetManager::initSSL() {

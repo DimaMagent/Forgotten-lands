@@ -13,9 +13,12 @@ namespace {
 	constexpr size_t MAX_BUFFER_SIZE = 256 * 1024;
 }
 
-IncomingDataManager::IncomingDataManager(std::shared_ptr<sl::DataQueue> incQueue, DataProcessorManager& dpm) : incomingQueue(incQueue), dataProcessorManager(dpm)
+IncomingDataManager::IncomingDataManager(std::weak_ptr<sl::net::DataQueue> incQueue, DataProcessorManager& dpm, uint32_t token) :
+	incomingQueue(incQueue), dataProcessorManager(dpm), token(token)
 {
-	incQueue->onDataPushed.addFunction([this]() { onDataPushed(); });
+	if (auto iq = incQueue.lock()) {
+		iq->onDataPushed.addFunction([this]() { onDataPushed(); });
+	}
 }
 
 void IncomingDataManager::assemblePacket()
@@ -39,13 +42,13 @@ void IncomingDataManager::assemblePacket()
 		}
 		uint16_t sequenceNumber = sl::net::read_uint16_t(buffer, offset);
 
-		sl::PacketType ptype = static_cast<sl::PacketType>(sl::net::read_uint8_t(buffer, offset));
+		sl::net::PacketType ptype = static_cast<sl::net::PacketType>(sl::net::read_uint8_t(buffer, offset));
 
 		uint32_t token = sl::net::read_uint32_t(buffer, offset);
 
 		std::vector<uint8_t> packetBytes(buffer.begin(), buffer.begin() + totalPacketBytes);
 
-		dataProcessorManager.routeData(packetBytes, ptype);
+		dataProcessorManager.routeData(packetBytes, ptype, token);
 
 		buffer.erase(buffer.begin(), buffer.begin() + totalPacketBytes);
 

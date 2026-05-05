@@ -16,7 +16,7 @@ public:
 	static void setOutputManager(std::shared_ptr<OutputDataManager> manager);
 
 	template<typename PacketT, typename... Args>
-	static void send( Args&&... args) {
+	static void send(Args&&... args) {
 		static_assert(requires { PacketT::type(); }, "PacketT must have static type() method");
 		static_assert(requires { std::declval<PacketT>().fillPacketData(std::declval<uint16_t>(), std::declval<uint32_t>(), std::declval<Args>()...); },
 			"PacketT must have fillPacketData(uint16_t, uint32_t, args...) method.");
@@ -36,5 +36,5 @@ private:
 	static std::atomic<uint32_t> currentToken;
 	static std::weak_ptr<OutputDataManager> staticOutputManager;
 
-	static void callOutputManager(sl::net::Packet& packet);
+	static void callOutputManager(sl::net::Packet& packet, uint32_t token);
 };

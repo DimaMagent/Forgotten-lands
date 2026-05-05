@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <vector>
 
-namespace sl
+namespace sl::net
 {
 	class Packet;
 

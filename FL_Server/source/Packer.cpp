@@ -12,10 +12,9 @@ void Packer::setOutputManager(std::shared_ptr<OutputDataManager> manager)
 	staticOutputManager = manager;
 }
 
-void Packer::callOutputManager(sl::net::Packet& packet)
+void Packer::callOutputManager(sl::net::Packet& packet, uint32_t token)
 {
 	if (auto manager = staticOutputManager.lock()) {
-		manager->writePacket(packet);
+		manager->writePacket(packet, token);
 	}
 }
-

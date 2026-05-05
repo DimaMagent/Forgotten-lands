@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "DataQueue.hpp"
 
-namespace sl {
+namespace sl::net {
 	void DataQueue::push(const std::vector<uint8_t>& data) {
 		queueMutex.lock();
 		queue.push(data);

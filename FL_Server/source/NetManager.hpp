@@ -6,7 +6,6 @@
 #include "TimerHandle.hpp"
 
 class Session;
-class IncomingDataManager;
 class OutputDataManager;
 class DataProcessorManager;
 namespace sl {
@@ -24,9 +23,8 @@ public:
 private:
 	asio::ssl::context sslContext;
 	asio::ip::tcp::acceptor acceptor;
-	std::vector<std::weak_ptr<Session>> sessions;
-	// TODO: Если соединение прекратилось std::shared_ptr<IncomingDataManager> всё равно остаётся, надо как-то чистить
-	std::vector<std::shared_ptr<IncomingDataManager>> incomingDataManagers;
+	std::unordered_map<uint32_t, std::weak_ptr<Session>> sessions;
+	std::unique_ptr<OutputDataManager> outputDataManager;
 	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;
 	DataProcessorManager& dataProcessorManager;
 
@@ -36,5 +34,5 @@ private:
 
 	void initSSL();
 	void cleaning();
-
+	uint32_t generateToken() const;
 };

@@ -1,12 +1,11 @@
 #pragma once
 #include <queue>
 #include <mutex>
-#include "NetData.hpp"
 #include <vector>
 #include <cstdint>
 #include "LockFreeDelegate.hpp"
 
-namespace sl {
+namespace sl::net {
 	class DataQueue {
 	public:
 		LockFreeDelegate<> onDataPushed;

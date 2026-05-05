@@ -1,6 +1,7 @@
 #include "pch.hpp"
 #include "Session.hpp"
 #include "DataQueue.hpp"
+#include "IncomingDataManager.hpp"
 
 namespace {
 	constexpr size_t MAX_PACKET_SIZE = 4096;
@@ -8,13 +9,17 @@ namespace {
 }
 
 
-Session::Session(asio::ip::tcp::socket socket, asio::ssl::context& sslContext) :
-	sessionSocket(std::move(socket), sslContext), sessionStrand(asio::make_strand(sessionSocket.get_executor())),
+Session::Session(asio::ip::tcp::socket socket, asio::ssl::context& sslContext, uint32_t token, DataProcessorManager& dpm) :
+	token(token), sessionSocket(std::move(socket), sslContext),
+	sessionStrand(asio::make_strand(sessionSocket.get_executor())),
 	handshakeTimer(sessionSocket.get_executor())
 {
-	incomingQueue = std::make_shared<sl::DataQueue>();
-	outgoingQueue = std::make_shared<sl::DataQueue>();
+	incomingQueue = std::make_shared<sl::net::DataQueue>();
+	outgoingQueue = std::make_shared<sl::net::DataQueue>();
+	incomingManager = std::make_unique<IncomingDataManager>(incomingQueue, dpm, token);
 }
+
+Session::~Session() = default;
 
 void Session::close() {
 	std::error_code ec;

@@ -7,8 +7,8 @@
 ClientSession::ClientSession(asio::ip::tcp::socket socket, asio::ssl::context& sslContext)
     : sessionSocket(std::move(socket), sslContext), sessionStrand(asio::make_strand(sessionSocket.get_executor()))
 {
-	incomingQueue = std::make_shared<sl::DataQueue>();
-	outgoingQueue = std::make_shared<sl::DataQueue>();
+	incomingQueue = std::make_shared<sl::net::DataQueue>();
+	outgoingQueue = std::make_shared<sl::net::DataQueue>();
 }
 
 ClientSession::~ClientSession() = default;

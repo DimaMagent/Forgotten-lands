@@ -4,17 +4,18 @@
 #include <cstdint>
 
 class DataProcessorManager;
-namespace sl {
+namespace sl::net {
 	class DataQueue;
 }
 
 class IncomingDataManager {
 public:
-	IncomingDataManager(std::shared_ptr<sl::DataQueue> incQueue, DataProcessorManager& dpm);
+	IncomingDataManager(std::weak_ptr<sl::net::DataQueue> incQueue, DataProcessorManager& dpm, uint32_t token);
 private:
-	std::weak_ptr<sl::DataQueue> incomingQueue;
+	std::weak_ptr<sl::net::DataQueue> incomingQueue;
 	DataProcessorManager& dataProcessorManager;
 	std::vector<uint8_t> buffer;
+	uint32_t token;
 
 	void assemblePacket();
 	void onDataPushed();

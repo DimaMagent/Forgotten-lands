@@ -3,7 +3,7 @@
 #include "DataQueue.hpp"
 #include "PacketManager.hpp"
 
-IncomingDataManager::IncomingDataManager(std::shared_ptr<sl::DataQueue> incQueue):
-	incomingQueue(std::move(incQueue))
+IncomingDataManager::IncomingDataManager(std::weak_ptr<sl::net::DataQueue> incQueue):
+	incomingQueue(incQueue)
 {
 }

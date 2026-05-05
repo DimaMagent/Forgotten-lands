@@ -17,7 +17,7 @@ public:
 	Controller(InputManager& im, LocalWorld& world);
 	~Controller();
 private:
-	std::unordered_map<sf::Keyboard::Key, std::function<sl::InputState()>> keyBindings;
+	std::unordered_map<sf::Keyboard::Key, std::function<sl::net::InputState()>> keyBindings;
 	std::weak_ptr<sl::Entity> playerEntity;
 	int reverseInputMultiplier = -1;
 

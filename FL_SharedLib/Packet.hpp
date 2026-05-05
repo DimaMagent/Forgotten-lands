@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <optional>
 
-namespace sl
+namespace sl::net
 {
 	struct Data {
 		Header header;

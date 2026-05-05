@@ -4,8 +4,7 @@
 #include "NetUtils.hpp"
 #include "PacketDataTypes.hpp"
 
-namespace sl
-{
+namespace sl::net {
 	struct HeaderData {
 		uint32_t size = 0;
 		uint16_t sequenceNumber = 0;

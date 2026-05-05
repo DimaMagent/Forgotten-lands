@@ -4,15 +4,15 @@
 #include "PacketManager.hpp"
 #include "Packet.hpp"
 
-OutputDataManager::OutputDataManager(std::shared_ptr<ClientSession> session):
-	session(std::move(session))
+OutputDataManager::OutputDataManager(std::weak_ptr<ClientSession> session):
+	session(session)
 {
 }
 
-void OutputDataManager::writePacket(const sl::Packet& packetData)
+void OutputDataManager::writePacket(const sl::net::Packet& packetData)
 {
 	std::vector<uint8_t> outBuffer;
-	if (sl::PacketManager::write(outBuffer, packetData)) {
+	if (sl::net::PacketManager::write(outBuffer, packetData)) {
 		if (auto sessionPtr = session.lock()) {
 			sessionPtr->writeOnOutgoingData(outBuffer);
 		} else {

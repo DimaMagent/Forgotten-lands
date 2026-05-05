@@ -140,6 +140,8 @@
     <ClCompile Include="source\DataProcessorManager.cpp" />
     <ClCompile Include="source\IncomingDataManager.cpp" />
     <ClCompile Include="source\NetManager.cpp" />
+    <ClCompile Include="source\OutputDataManager.cpp" />
+    <ClCompile Include="source\Packer.cpp" />
     <ClCompile Include="source\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
@@ -152,6 +154,8 @@
     <ClInclude Include="source\DataProcessorManager.hpp" />
     <ClInclude Include="source\GameState.hpp" />
     <ClInclude Include="source\IncomingDataManager.hpp" />
+    <ClInclude Include="source\OutputDataManager.hpp" />
+    <ClInclude Include="source\Packer.hpp" />
     <ClInclude Include="source\pch.hpp" />
     <ClInclude Include="source\PlayerManager.hpp" />
     <ClInclude Include="source\Server.hpp" />

@@ -21,7 +21,7 @@ void Controller::onEvent(const sf::Event& event) {
 		if (auto it = keyBindings.find(keyEvent->code); it != keyBindings.end()) {
 			std::cout << "Executed action for key: " << (int)keyEvent->code << std::endl;
 			reverseInputMultiplier = 1;
-			Packer::send<sl::InputStatePacket>(it->second(), true);
+			Packer::send<sl::net::InputStatePacket>(it->second(), true);
 		}
 		return;
 	}
@@ -29,7 +29,7 @@ void Controller::onEvent(const sf::Event& event) {
 		if (auto it = keyBindings.find(keyEvent->code); it != keyBindings.end()) {
 			std::cout << "Released action for key: " << (int)keyEvent->code << std::endl;
 			reverseInputMultiplier = -1;
-			Packer::send<sl::InputStatePacket>(it->second(), false);
+			Packer::send<sl::net::InputStatePacket>(it->second(), false);
 		}
 	}
 }
@@ -48,19 +48,19 @@ void Controller::onPlayerEntitySet(std::weak_ptr<sl::Entity> playerEntity)
 void Controller::initKeyBindings(){
 	keyBindings[sf::Keyboard::Key::W] = [this]() {
 		moveEntity(sf::Vector2i(0, -1));
-		return sl::IS_MoveUp; };
+		return sl::net::IS_MoveUp; };
 
 	keyBindings[sf::Keyboard::Key::A] = [this]() {
 		moveEntity(sf::Vector2i(-1, 0));
-		return sl::IS_MoveLeft; };
+		return sl::net::IS_MoveLeft; };
 
 	keyBindings[sf::Keyboard::Key::S] = [this]() {
 		moveEntity(sf::Vector2i(0, 1));
-		return sl::IS_MoveDown; };
+		return sl::net::IS_MoveDown; };
 
 	keyBindings[sf::Keyboard::Key::D] = [this]() {
 		moveEntity(sf::Vector2i(1, 0));
-		return sl::IS_MoveRight; };
+		return sl::net::IS_MoveRight; };
 }
 
 void Controller::moveEntity(sf::Vector2i direction)

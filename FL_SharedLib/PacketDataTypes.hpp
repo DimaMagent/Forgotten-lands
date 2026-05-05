@@ -1,6 +1,6 @@
 #pragma once
 #include <cstdint>
-namespace sl {
+namespace sl::net {
 	enum InputState : uint8_t {
 		IS_None = 0,
 		IS_MoveUp = 1 << 0,

@@ -150,7 +150,6 @@
     <ClInclude Include="Header.hpp" />
     <ClInclude Include="LockFreeDelegate.hpp" />
     <ClInclude Include="MovementComponent.hpp" />
-    <ClInclude Include="NetData.hpp" />
     <ClInclude Include="InputStatePacket.hpp" />
     <ClInclude Include="Packet.hpp" />
     <ClInclude Include="NetUtils.hpp" />
@@ -162,6 +161,7 @@
     <ClInclude Include="WorldBase.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AuthPacket.cpp" />
     <ClCompile Include="DataLoader.cpp" />
     <ClCompile Include="DataQueue.cpp" />
     <ClCompile Include="Entity.cpp" />

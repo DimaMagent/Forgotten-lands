@@ -1,13 +1,13 @@
 #pragma once
 #include <memory>
 
-namespace sl {
+namespace sl::net {
 	class DataQueue;
 }
 
 class IncomingDataManager {
 public:
-	IncomingDataManager(std::shared_ptr<sl::DataQueue> incQueue);
+	IncomingDataManager(std::weak_ptr<sl::net::DataQueue> incQueue);
 private:
-	std::weak_ptr<sl::DataQueue> incomingQueue;
+	std::weak_ptr<sl::net::DataQueue> incomingQueue;
 };

@@ -4,7 +4,7 @@
 #include "asio\ip\tcp.hpp"
 #include "asio/ssl.hpp"
 
-namespace sl {
+namespace sl::net {
 	class DataQueue;
 }
 class IncomingDataManager;
@@ -19,13 +19,13 @@ public:
 
 	void writeOnOutgoingData(std::vector<uint8_t>& data);
 	void start();
-	std::shared_ptr<sl::DataQueue> getIncomingQueue() { return incomingQueue; }
-	std::shared_ptr<sl::DataQueue> getOutgoingQueue() { return outgoingQueue; }
+	std::weak_ptr<sl::net::DataQueue> getIncomingQueue() { return incomingQueue; }
+	std::weak_ptr<sl::net::DataQueue> getOutgoingQueue() { return outgoingQueue; }
 private:
 	ssl_socket sessionSocket;
 	asio::strand<asio::ip::tcp::socket::executor_type> sessionStrand;
-	std::shared_ptr<sl::DataQueue> incomingQueue;
-	std::shared_ptr<sl::DataQueue> outgoingQueue;
+	std::shared_ptr<sl::net::DataQueue> incomingQueue;
+	std::shared_ptr<sl::net::DataQueue> outgoingQueue;
 
 	void doHandshake();
 	void doWrite();
