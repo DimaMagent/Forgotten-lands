@@ -31,7 +31,7 @@ void IncomingDataManager::assemblePacket()
 		if (headerSize == 0 || headerSize > MAX_PACKET_PAYLOAD) {
 			std::cerr << "Invalid packet size: " << headerSize << ", dropping client\n";
 			buffer.clear();
-			// TODO: закрыть сессию
+			OnWrongData.broadcast();
 			return;
 		}
 
@@ -63,7 +63,7 @@ void IncomingDataManager::onDataPushed()
 			if (buffer.size() + chunk.size() > MAX_BUFFER_SIZE) {
 				std::cerr << "Buffer overflow from client, dropping connection\n";
 				buffer.clear();
-				// TODO: закрыть сессию (передай weak_ptr на Session в IncomingDataManager)
+				OnWrongData.broadcast();
 				return;
 			}
 			buffer.insert(buffer.end(), chunk.begin(), chunk.end());

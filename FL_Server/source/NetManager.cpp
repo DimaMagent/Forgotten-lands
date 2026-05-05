@@ -50,7 +50,7 @@ void NetManager::doAccept() {
 
 				uint32_t sessionToken = generateToken();
 
-				std::cout << "Client" << sessionToken << "connected" << std::endl;
+				std::cout << "Client " << sessionToken << " connected" << std::endl;
 
 				std::shared_ptr<Session> sessionPtr = std::make_shared<Session>(std::move(socket), sslContext, sessionToken, dataProcessorManager);
 				sessionPtr->start();

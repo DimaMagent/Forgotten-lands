@@ -13,7 +13,7 @@ void LocalWorld::setPlayerEntity(std::unique_ptr<sl::Entity>&& entity)
 {
 	if (!entity) { return; }
 
-	playerEntity = std::make_shared<sl::Entity>(std::move(*entity));
+	playerEntity = std::move(entity);
 	OnSetPlayerEntity.broadcast(playerEntity);
 	
 }
