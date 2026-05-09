@@ -34,9 +34,6 @@ std::unique_ptr<sl::Entity> sl::EntityFactory::createEntity(const EntityType Ent
 			if (registry.contains(key)) {
 				registry[key](*entity, value);
 			}
-			else {
-				std::cout << "Registry have not: " << key << "\n";
-			}
 		}
 		return entity;
 }

@@ -114,6 +114,11 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>if not exist "$(TargetDir)resources" mkdir "$(TargetDir)resources"
+
+xcopy /E /Y "$(SolutionDir)sharedData\resources\*" "$(TargetDir)resources\"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -145,6 +150,7 @@
     <ClCompile Include="source\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="source\PlayerManager.cpp" />
     <ClCompile Include="source\Server.cpp" />
     <ClCompile Include="source\ServerMain.cpp" />
     <ClCompile Include="source\Session.cpp" />

@@ -1,12 +1,22 @@
 #pragma once
 #include <cstdint>
 #include <map>
+#include <memory>
+#include <unordered_map>
+#include <functional>
+#include "PacketDataTypes.hpp"
+
+class World;
+namespace sl {
+	class Entity;
+}
 
 class PlayerManager {
 public:
-	PlayerManager();
-	void updatePlayerInputState(uint32_t playerId, uint8_t inputState, bool pressingFlag);
+	PlayerManager(World& world);
+	void updatePlayerInputState(uint32_t playerToken, uint8_t inputState, bool pressingFlag);
 private:
-	// Здесь можно хранить состояние игроков, например, в виде словаря playerId -> PlayerState
-	// PlayerState может включать позицию, направление движения и другие параметры
+	World& world;
+	std::unordered_map<sl::net::InputState, std::function<void(sl::Entity& entity, bool pressingFlag)>> PlayerActions;
+	void initPlayerActions();
 };

@@ -8,8 +8,12 @@
 class DataProcessorManager;
 class NetManager;
 class World;
+class PlayerManager;
 namespace asio {
 	class io_context;
+}
+namespace sl {
+	class EntityFactory;
 }
 class Server {
 public:
@@ -18,8 +22,12 @@ public:
 	void start();
 private:
 	std::unique_ptr<asio::io_context> serverContext;
+	std::unique_ptr<World> world;
+	std::unique_ptr<PlayerManager> playerManager;
 	std::unique_ptr<DataProcessorManager> dataProcessorManager;
 	std::unique_ptr<NetManager> netManager;
-	std::unique_ptr<World> world;
+	std::unique_ptr<sl::EntityFactory> entityFactory;
 	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;
+
+	void onClientAccept(uint32_t token);
 };

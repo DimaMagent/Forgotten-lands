@@ -3,7 +3,9 @@
 #include <asio\ssl.hpp>
 #include <string>
 #include <memory>
+#include <cstdint>
 #include "TimerHandle.hpp"
+#include "LockFreeDelegate.hpp"
 
 class Session;
 class OutputDataManager;
@@ -16,6 +18,8 @@ namespace asio {
 }
 class NetManager {
 public:
+	sl::LockFreeDelegate<const uint32_t> OnAccept;
+
 	NetManager(asio::io_context& context, short port, DataProcessorManager& dtm);
 	~NetManager();
 

@@ -51,6 +51,8 @@ void LocalWorld::onUpdate(float updateTime)
 	sl::TransformComponent* trComp = playerEntity->getComponent<sl::TransformComponent>();
 
 	if (!movComp || !trComp) { return; }
+	if (!movComp->isMoving()) { return; }
 
 	trComp->setPosition(movComp->move(updateTime, trComp->getPosition()));
+	std::cout << "entity is moving to^ " << trComp->getPosition().x << ";" << trComp->getPosition().y << "\n";
 }

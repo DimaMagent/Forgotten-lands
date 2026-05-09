@@ -22,6 +22,8 @@ namespace sl {
 		sf::Vector2f getVelocity() const { return velocityVector; }
 		void resetVelocity() { velocityVector = sf::Vector2f(0.f, 0.f); }
 
+		bool isMoving() const { return directionVector != sf::Vector2i(0, 0); }
+
 	private:
 		sf::Vector2f velocityVector;
 		sf::Vector2i directionVector;

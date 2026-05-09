@@ -4,9 +4,7 @@
 #include "TransformComponent.hpp"
 #include "Entity.hpp"
 
-sl::WorldBase::~WorldBase() {
-
-}
+sl::WorldBase::~WorldBase() = default;
 
 void sl::WorldBase::addEntity(std::unique_ptr<sl::Entity>&& entity) {
 	if (entity) {
@@ -23,12 +21,13 @@ void sl::WorldBase::update(float deltaTime) {
 
 		for (auto& en : Entities) {
 
-			if (!en) { break; }
+			if (!en) { continue; }
 
 			sl::MovementComponent* movComp = en->getComponent<sl::MovementComponent>();
-			sl::TransformComponent* trComp = en->getComponent<sl::TransformComponent>();
+			if (!movComp || !movComp->isMoving()) { continue; }
 
-			if (!movComp || !trComp) { break; }
+			sl::TransformComponent* trComp = en->getComponent<sl::TransformComponent>();
+			if (!trComp) { continue; }
 
 			trComp->setPosition(movComp->move(updateTime.asSeconds(), trComp->getPosition()));
 		}

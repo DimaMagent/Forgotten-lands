@@ -316,7 +316,9 @@ copy /Y "$(SolutionDir)extlibs\sfml\bin\x64\sfml-network-d-2.dll" "$(TargetDir)"
 copy /Y "$(SolutionDir)extlibs\sfml\bin\x64\openal32.dll" "$(TargetDir)"
 if not exist "$(TargetDir)resources" mkdir "$(TargetDir)resources"
 
-xcopy /E /Y "$(SolutionDir)FL_Client\resources\*" "$(TargetDir)resources\"</Command>
+xcopy /E /Y "$(SolutionDir)FL_Client\resources\*" "$(TargetDir)resources\"
+
+xcopy /E /Y "$(SolutionDir)sharedData\resources\*" "$(TargetDir)resources\"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release Static|x64'">

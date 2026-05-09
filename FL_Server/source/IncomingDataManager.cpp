@@ -48,7 +48,7 @@ void IncomingDataManager::assemblePacket()
 
 		std::vector<uint8_t> packetBytes(buffer.begin(), buffer.begin() + totalPacketBytes);
 
-		dataProcessorManager.routeData(packetBytes, ptype, token);
+		dataProcessorManager.routeData(packetBytes, ptype, this->token);
 
 		buffer.erase(buffer.begin(), buffer.begin() + totalPacketBytes);
 
