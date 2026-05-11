@@ -19,7 +19,6 @@ Controller::~Controller() = default;
 void Controller::onEvent(const sf::Event& event) {
 	if (const auto* keyEvent = event.getIf<sf::Event::KeyPressed>()) {
 		if (auto it = keyBindings.find(keyEvent->code); it != keyBindings.end()) {
-			std::cout << "Executed action for key: " << (int)keyEvent->code << std::endl;
 			reverseInputMultiplier = 1;
 			Packer::send<sl::net::InputStatePacket>(it->second(), true);
 		}
@@ -27,7 +26,6 @@ void Controller::onEvent(const sf::Event& event) {
 	}
 	if (const auto* keyEvent = event.getIf<sf::Event::KeyReleased>()) {
 		if (auto it = keyBindings.find(keyEvent->code); it != keyBindings.end()) {
-			std::cout << "Released action for key: " << (int)keyEvent->code << std::endl;
 			reverseInputMultiplier = -1;
 			Packer::send<sl::net::InputStatePacket>(it->second(), false);
 		}

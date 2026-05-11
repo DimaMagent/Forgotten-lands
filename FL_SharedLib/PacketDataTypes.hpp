@@ -13,7 +13,7 @@ namespace sl::net {
 		PT_Auth = 0,
 		PT_InputState = 1,
 		PT_Input = 2,
-		PT_PlayerPosition = 3,
+		PT_Status = 3,
 		PT_GameStateUpdate = 4,
 	};
 }

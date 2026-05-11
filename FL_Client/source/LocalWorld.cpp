@@ -54,5 +54,4 @@ void LocalWorld::onUpdate(float updateTime)
 	if (!movComp->isMoving()) { return; }
 
 	trComp->setPosition(movComp->move(updateTime, trComp->getPosition()));
-	std::cout << "entity is moving to^ " << trComp->getPosition().x << ";" << trComp->getPosition().y << "\n";
 }

@@ -28,7 +28,7 @@ private:
 	asio::ssl::context sslContext;
 	asio::ip::tcp::acceptor acceptor;
 	std::unordered_map<uint32_t, std::weak_ptr<Session>> sessions;
-	std::unique_ptr<OutputDataManager> outputDataManager;
+	std::shared_ptr<OutputDataManager> outputDataManager;
 	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;
 	DataProcessorManager& dataProcessorManager;
 

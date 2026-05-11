@@ -3,8 +3,9 @@
 #include "Entity.hpp"
 #include "MovementComponent.hpp"
 #include "TransformComponent.hpp"
+#include "Serializer.hpp"
 
-World::World() : WorldBase(){}
+World::World() : WorldBase(), serializer(std::make_unique<Serializer>()){}
 
 World::~World() = default;
 
@@ -20,7 +21,23 @@ void World::onUpdate(float updateTime)
 		if (!trComp) { continue; }
 
 		trComp->setPosition(movComp->move(updateTime, trComp->getPosition()));
-		std::cout << "entity is moving to^ " << trComp->getPosition().x << ";" << trComp->getPosition().y << "\n";
+	}
+
+	if (serializationFrequency <= ++serializationCounter) {
+		std::vector<sl::Serializable*> buf;
+		for (auto& entity : playerEntities) {
+			sl::TransformComponent* trComp = entity->getComponent<sl::TransformComponent>();
+			if (!trComp) { continue; }
+
+			buf.push_back(trComp);
+		}
+		serializer->serializeObjects(buf);
+		for (size_t i = 0; i < playerEntities.size(); ++i) {
+			if (auto it = indexToToken.find(i); it != indexToToken.end())
+				serializer->sendSerializeData(it->second);
+		}
+		serializer->clearLocalBuf();
+		serializationCounter = 0;
 	}
 }
 

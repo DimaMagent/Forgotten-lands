@@ -63,7 +63,6 @@ void ClientSession::doRead() {
 			std::cout << ec.value() << "::" << ec.message() << std::endl;
 			return;
 		}
-		std::cout << "Received data from server" << "\n";
 		localBuffer->resize(len);
 		incomingQueue->push(*localBuffer);
 		doRead();

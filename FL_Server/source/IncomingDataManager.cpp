@@ -40,18 +40,19 @@ void IncomingDataManager::assemblePacket()
 		if (buffer.size() < totalPacketBytes) {
 			return;
 		}
-		uint16_t sequenceNumber = sl::net::read_uint16_t(buffer, offset);
+		sl::net::Header header;
 
-		sl::net::PacketType ptype = static_cast<sl::net::PacketType>(sl::net::read_uint8_t(buffer, offset));
+		offset = 0;
 
-		uint32_t token = sl::net::read_uint32_t(buffer, offset);
+		header.read(buffer, offset);
+
+		sl::net::PacketType ptype = static_cast<sl::net::PacketType>(header.getData().type);
 
 		std::vector<uint8_t> packetBytes(buffer.begin(), buffer.begin() + totalPacketBytes);
 
 		dataProcessorManager.routeData(packetBytes, ptype, this->token);
 
 		buffer.erase(buffer.begin(), buffer.begin() + totalPacketBytes);
-
 	}
 }
 

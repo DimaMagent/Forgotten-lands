@@ -13,13 +13,14 @@ void OutputDataManager::writePacket(const sl::net::Packet& packetData, uint32_t 
 {
 	std::vector<uint8_t> outBuffer;
 	if (sl::net::PacketManager::write(outBuffer, packetData)) {
-		if (auto it = tokenToSessions.find(token); it != tokenToSessions.end())
+		if (auto it = tokenToSessions.find(token); it != tokenToSessions.end()) {
 			if (auto session = it->second.lock()) {
 				session->writeOnOutgoingData(outBuffer);
 			}
 			else {
 				std::cerr << "Failed to write packet data: session expired\n";
 			}
+		}
 		else {
 			std::cerr << "Failed to write packet data: wrong token\n";
 		}

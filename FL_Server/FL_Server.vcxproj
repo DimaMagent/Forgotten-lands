@@ -151,6 +151,7 @@ xcopy /E /Y "$(SolutionDir)sharedData\resources\*" "$(TargetDir)resources\"</Com
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="source\PlayerManager.cpp" />
+    <ClCompile Include="source\Serializer.cpp" />
     <ClCompile Include="source\Server.cpp" />
     <ClCompile Include="source\ServerMain.cpp" />
     <ClCompile Include="source\Session.cpp" />
@@ -164,6 +165,7 @@ xcopy /E /Y "$(SolutionDir)sharedData\resources\*" "$(TargetDir)resources\"</Com
     <ClInclude Include="source\Packer.hpp" />
     <ClInclude Include="source\pch.hpp" />
     <ClInclude Include="source\PlayerManager.hpp" />
+    <ClInclude Include="source\Serializer.hpp" />
     <ClInclude Include="source\Server.hpp" />
     <ClInclude Include="source\NetManager.hpp" />
     <ClInclude Include="source\Session.hpp" />

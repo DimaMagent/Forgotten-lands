@@ -1,22 +1,25 @@
 #include "pch.h"
 #include "NetUtils.hpp"
 
-void sl::net::write_uint8_t(std::vector<uint8_t>& out, uint8_t value) {
+uint32_t sl::net::write_uint8_t(std::vector<uint8_t>& out, uint8_t value) {
 	 out.push_back(value);
+	 return 8;
 }
 
-void sl::net::write_uint16_t(std::vector<uint8_t>& out, uint16_t value)
+uint32_t sl::net::write_uint16_t(std::vector<uint8_t>& out, uint16_t value)
 {
 	out.push_back((value >> 8) & 0xFF);
 	out.push_back(value & 0xFF);
+	return 16;
 }
 
-void sl::net::write_uint32_t(std::vector<uint8_t>& out, uint32_t value)
+uint32_t sl::net::write_uint32_t(std::vector<uint8_t>& out, uint32_t value)
 {
 	out.push_back((value >> 24) & 0xFF);
 	out.push_back((value >> 16) & 0xFF);
 	out.push_back((value >> 8) & 0xFF);
 	out.push_back(value & 0xFF);
+	return 32;
 }
 
 uint8_t sl::net::read_uint8_t(const std::vector<uint8_t>& in, size_t& offset)

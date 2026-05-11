@@ -1,11 +1,12 @@
 #pragma once
 #include <SFML/System/Vector2.hpp>
 #include "Component.hpp"
+#include "Serializable.hpp"
 
 namespace sl {
 
 	/*Component that stores position of an entity. Can be extended in the future to include rotation, scale, etc.*/
-	class TransformComponent: public Component {
+	class TransformComponent: public Component, public Serializable {
 	public:
 		TransformComponent();
 		TransformComponent(sf::Vector2f startPosition);
@@ -13,6 +14,9 @@ namespace sl {
 		void setPosition(float x, float y);
 		void setPosition(const sf::Vector2f& position);
 		sf::Vector2f& getPosition();
+		virtual void serialize(std::vector<uint8_t>& out) const override;
+		virtual bool deserialize(const std::vector<uint8_t>& out, size_t& offset) override;
+		virtual uint32_t getSerializeDataSize() const override;
 	private:
 		sf::Vector2f position;
 	};

@@ -5,10 +5,11 @@
 #include "OutputDataManager.hpp"
 #include <filesystem>
 #include <random>
+#include "Packer.hpp"
 
 NetManager::NetManager(asio::io_context& context, short port, DataProcessorManager& dtm) : sslContext(asio::ssl::context::tls_server),
 	acceptor(context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)), dataProcessorManager(dtm),
-	outputDataManager(std::make_unique<OutputDataManager>(sessions))
+	outputDataManager(std::make_shared<OutputDataManager>(sessions))
 {
 	cleaningTimer = std::make_unique<sl::TimerHandle<void>>(context,
 		asio::chrono::seconds(120),
@@ -16,6 +17,7 @@ NetManager::NetManager(asio::io_context& context, short port, DataProcessorManag
 		[this]() {cleaning(); },
 		true);
 	initSSL();
+	Packer::setOutputManager(outputDataManager);
 }
 NetManager::~NetManager() = default;
 

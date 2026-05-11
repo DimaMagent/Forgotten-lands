@@ -17,7 +17,11 @@ namespace sl::net {
 	bool DataQueue::tryPop(std::vector<uint8_t>& out) {
 		std::lock_guard<std::mutex> lock(queueMutex);
 		if (queue.empty()) { return false; }
-		out.resize(queue.front().size());
+
+		if (out.size() != queue.size()) {
+			out.resize(queue.size());
+		}
+
 		out = std::move(queue.front());
 		queue.pop();
 		return true;
