@@ -1,17 +1,25 @@
 #pragma once
 #include <vector>
 #include <cstdint>
+#include <memory>
 #include "Serializable.hpp"
+#include "LockFreeDelegate.hpp"
 
+struct PlayerEntityStorage;
+namespace sl {
+	class Entity;
+}
 
-// This class needs to be rewritten. Because he is not independent
 class Serializer {
 public:
-	Serializer() = default;
-	void serializeObjects(const std::vector<sl::Serializable*>& serializableObject);
-	void sendSerializeData(uint32_t token)const;
-	void clearLocalBuf();
+	Serializer(sl::LockFreeDelegate<float>& onUpdateDelegate, const PlayerEntityStorage& serializedData);
 private:
+	const PlayerEntityStorage& entitiesStorage;
 	std::vector<uint8_t> localBuf;
-	bool isBufAlreadyFull = false;
+	static int serializationFrequency;
+	int serializationCounter = 0;
+
+	void serializeObjects();
+	void onUpdate(float updateTime);
+
 };

@@ -19,5 +19,6 @@
 #include <string>
 #include <memory>
 #include <unordered_map>
+#include <algorithm>
 
 #endif //PCH_H

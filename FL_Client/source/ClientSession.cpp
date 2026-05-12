@@ -51,7 +51,7 @@ void ClientSession::doWrite()
 			std::cout << ec.value() << "::" << ec.message() << std::endl;
 			return;
 		}
-		std::cout << "Write, sizeof: " << sizeof(*localBuffer) << "\n";
+		//std::cout << "Write, sizeof: " << sizeof(*localBuffer) << "\n";
 		doWrite();
 		}));
 }

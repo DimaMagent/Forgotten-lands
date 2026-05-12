@@ -3,6 +3,7 @@
 #include "NetUtils.hpp"
 
 namespace sl {
+
 	void Serializable::serializeVector2f(std::vector<uint8_t>& out, const sf::Vector2f& vec) const{
 		net::write_uint32_t(out, vec.x);
 		net::write_uint32_t(out, vec.y);

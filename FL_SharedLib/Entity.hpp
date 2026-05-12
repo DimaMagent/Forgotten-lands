@@ -5,22 +5,27 @@
 #include "Component.hpp"
 
 namespace sl {
+    
+    class Serializable;
 
     class Entity {
     public:
 		Entity() = default;
         ~Entity();
 
-        Entity(const Entity&) = delete;             // запрет копирования
+        Entity(const Entity&) = delete;
         Entity& operator=(const Entity&) = delete;
 
-        Entity(Entity&&) = default;                 // разрешить перемещение
+        Entity(Entity&&) = default;
         Entity& operator=(Entity&&) = default;
 
         template<typename T>
         T* getComponent() {
-            auto it = components.find(typeid(T));
-            if (it == components.end()) return nullptr;
+            auto it = std::lower_bound(components.begin(), components.end(), typeid(T),
+                [](const auto& pair, const std::type_index& tid) {
+                    return pair.first < tid;
+                });
+            if (it == components.end() || it->first != typeid(T)) return nullptr;
             return static_cast<T*>(it->second.get());
         }
 
@@ -28,11 +33,25 @@ namespace sl {
         T& addComponent(Args&&... args) {
             auto comp = std::make_unique<T>(std::forward<Args>(args)...);
             T& ref = *comp;
-            components.try_emplace(typeid(T), std::move(comp));
+            auto it = std::lower_bound(components.begin(), components.end(), typeid(T),
+                [](const auto& pair, const std::type_index& tid) {
+                    return pair.first < tid;
+                });
+            components.emplace(it, typeid(T), std::move(comp));
             return ref;
         }
 
+        template<typename Fn>
+        void forEachSerialization(Fn&& fn) {
+            static_assert(std::is_invocable_v<Fn, const Serializable&>);
+            for (auto& [tid, comp] : components) {
+                if (auto* c = dynamic_cast<sl::Serializable*>(comp.get())) {
+                    fn(*c);
+                }
+            }
+        }
+
     private:
-        std::unordered_map<std::type_index, std::unique_ptr<sl::Component>> components;
+        std::vector<std::pair<std::type_index, std::unique_ptr<sl::Component>>> components;
     };
 }

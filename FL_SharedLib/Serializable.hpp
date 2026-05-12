@@ -5,7 +5,6 @@
 namespace sl {
 	class Serializable {
 	public:
-		//serialize functions return the size of the serialized data
 		virtual void serialize(std::vector<uint8_t>& out) const = 0;
 		virtual bool deserialize(const std::vector<uint8_t>& out, size_t& offset) = 0;
 		virtual uint32_t getSerializeDataSize() const = 0;

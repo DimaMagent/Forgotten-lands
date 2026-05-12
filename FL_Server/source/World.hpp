@@ -1,12 +1,17 @@
 #pragma once
 #include "WorldBase.hpp"
+#include "LockFreeDelegate.hpp"
+#include "PlayerEntityStorage.hpp"
 #include <unordered_map>
 #include <cstdint>
 
 class Serializer;
 
+
+
 class World : public sl::WorldBase {
 public:
+	sl::LockFreeDelegate<float> OnUpdate;
 	World();
 	virtual ~World();
 	void addPlayerEntity(std::unique_ptr<sl::Entity>&& entity, const uint32_t& sessionToken);
@@ -18,10 +23,5 @@ protected:
 
 private:
 	std::unique_ptr<Serializer> serializer;
-	std::vector<std::shared_ptr<sl::Entity>> playerEntities;
-	std::unordered_map<uint32_t, size_t> tokenToIndex;
-	std::unordered_map<size_t, uint32_t> indexToToken;
-	int serializationFrequency = 20;
-	int serializationCounter = 0;
-
+	PlayerEntityStorage playerEntityStorage;
 };

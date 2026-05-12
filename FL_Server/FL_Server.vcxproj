@@ -164,6 +164,7 @@ xcopy /E /Y "$(SolutionDir)sharedData\resources\*" "$(TargetDir)resources\"</Com
     <ClInclude Include="source\OutputDataManager.hpp" />
     <ClInclude Include="source\Packer.hpp" />
     <ClInclude Include="source\pch.hpp" />
+    <ClInclude Include="source\PlayerEntityStorage.hpp" />
     <ClInclude Include="source\PlayerManager.hpp" />
     <ClInclude Include="source\Serializer.hpp" />
     <ClInclude Include="source\Server.hpp" />

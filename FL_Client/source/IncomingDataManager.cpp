@@ -32,7 +32,6 @@ void IncomingDataManager::onDataPushed()
 	}
 }
 
-// Сервер отправляет слишком много данных
 void IncomingDataManager::assemblePacket() {
 	while (buffer.size() >= WIRE_HEADER_SIZE) {
 		size_t offset = 0;
