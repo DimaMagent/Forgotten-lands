@@ -4,11 +4,12 @@
 #include "IncomingDataManager.hpp"
 #include "OutputDataManager.hpp"
 
-ClientSession::ClientSession(asio::ip::tcp::socket socket, asio::ssl::context& sslContext)
+ClientSession::ClientSession(asio::ip::tcp::socket socket, asio::ssl::context& sslContext, DataProcessorManager& dpm)
     : sessionSocket(std::move(socket), sslContext), sessionStrand(asio::make_strand(sessionSocket.get_executor()))
 {
 	incomingQueue = std::make_shared<sl::net::DataQueue>();
 	outgoingQueue = std::make_shared<sl::net::DataQueue>();
+	incomingManager = std::make_unique<IncomingDataManager>(incomingQueue, dpm);
 }
 
 ClientSession::~ClientSession() = default;

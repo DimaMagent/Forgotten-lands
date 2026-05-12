@@ -9,12 +9,13 @@ namespace sl::net {
 }
 class IncomingDataManager;
 class OutputDataManager;
+class DataProcessorManager;
 
 using ssl_socket = asio::ssl::stream<asio::ip::tcp::socket>;
 
 class ClientSession : public std::enable_shared_from_this<ClientSession> {
 public:
-	ClientSession(asio::ip::tcp::socket socket, asio::ssl::context& sslContext);
+	ClientSession(asio::ip::tcp::socket socket, asio::ssl::context& sslContext, DataProcessorManager& dpm);
 	~ClientSession();
 
 	void writeOnOutgoingData(std::vector<uint8_t>& data);
@@ -26,6 +27,7 @@ private:
 	asio::strand<asio::ip::tcp::socket::executor_type> sessionStrand;
 	std::shared_ptr<sl::net::DataQueue> incomingQueue;
 	std::shared_ptr<sl::net::DataQueue> outgoingQueue;
+	std::unique_ptr<IncomingDataManager> incomingManager;
 
 	void doHandshake();
 	void doWrite();

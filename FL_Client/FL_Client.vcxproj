@@ -437,6 +437,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <ClCompile Include="source\ClientMain.cpp" />
     <ClCompile Include="source\ClientSession.cpp" />
     <ClCompile Include="source\Controller.cpp" />
+    <ClCompile Include="source\DataProcessorManager.cpp" />
     <ClCompile Include="source\IncomingDataManager.cpp" />
     <ClCompile Include="source\InputManager.cpp" />
     <ClCompile Include="source\NetManager.cpp" />
@@ -552,6 +553,7 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <ClInclude Include="source\ClientEntityFactory.hpp" />
     <ClInclude Include="source\ClientSession.hpp" />
     <ClInclude Include="source\Controller.hpp" />
+    <ClInclude Include="source\DataProcessorManager.hpp" />
     <ClInclude Include="source\IncomingDataManager.hpp" />
     <ClInclude Include="source\InputManager.hpp" />
     <ClInclude Include="source\NetManager.hpp" />

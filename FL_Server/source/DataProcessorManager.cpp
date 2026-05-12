@@ -6,7 +6,7 @@
 
 DataProcessorManager::DataProcessorManager(PlayerManager& playerManager): playerManager(playerManager)
 {
-	registerHandler<sl::net::InputStatePacket>(sl::net::PT_InputState,
+	registerHandler<sl::net::InputStatePacket>(sl::net::InputStatePacket::type(),
     [this](const uint32_t& token, const sl::net::InputStatePacket& p){
         const auto& data = p.getData();
 
@@ -14,11 +14,11 @@ DataProcessorManager::DataProcessorManager(PlayerManager& playerManager): player
     });
 }
 
-void DataProcessorManager::routeData(const std::vector<uint8_t>& data, sl::net::PacketType type, uint32_t token)
+void DataProcessorManager::routeData(std::vector<uint8_t>&& data, sl::net::PacketType type, uint32_t token)
 {
 	auto it = handlers.find(static_cast<uint8_t>(type));
 	if (it != handlers.end()) {
-		it->second(token, data);
+		it->second(token, std::move(data));
 	}
 	else {
 		std::cerr << "Unknown packet type: " << static_cast<int>(type) << "\n";

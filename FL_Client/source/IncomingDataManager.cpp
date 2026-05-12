@@ -5,13 +5,14 @@
 #include "NetUtils.hpp"
 #include "Header.hpp"
 #include "StatusPacket.hpp"
+#include "DataProcessorManager.hpp"
 
 namespace {
 	constexpr size_t WIRE_HEADER_SIZE = sizeof(uint32_t) + sizeof(uint16_t) + sizeof(uint8_t) + sizeof(uint32_t);
 }
 
-IncomingDataManager::IncomingDataManager(std::weak_ptr<sl::net::DataQueue> incQueue):
-	incomingQueue(incQueue)
+IncomingDataManager::IncomingDataManager(std::weak_ptr<sl::net::DataQueue> incQueue, DataProcessorManager& dpm):
+	incomingQueue(incQueue), dataProcessorManager(dpm)
 {
 	if (auto iq = incQueue.lock()) {
 		iq->onDataPushed.addFunction([this]() { onDataPushed(); });
@@ -43,33 +44,18 @@ void IncomingDataManager::assemblePacket() {
 		if (buffer.size() < totalPacketBytes) {
 			return;
 		}
-		//temporary solution
-		sl::net::StatusPacket packet;
+		sl::net::Header header;
 
 		offset = 0;
 
-		packet.read(buffer, offset);
-
-		sl::net::Header header = packet.getHeader();
-
-		sl::net::StatusData data = packet.getData();
-
-		statusDataDecipher(data.data);
+		header.read(buffer, offset);
 
 		sl::net::PacketType ptype = static_cast<sl::net::PacketType>(header.getData().type);
 
 		std::vector<uint8_t> packetBytes(buffer.begin(), buffer.begin() + totalPacketBytes);
 
+		dataProcessorManager.routeData(std::move(packetBytes), ptype);
+
 		buffer.erase(buffer.begin(), buffer.begin() + totalPacketBytes);
 	}
-}
-
-void IncomingDataManager::statusDataDecipher(const std::vector<uint8_t>& data)
-{
-	size_t offset = 0;
-	uint32_t size = sl::net::read_uint32_t(data, offset);
-	float x = (float)sl::net::read_uint32_t(data, offset);
-	float y = (float)sl::net::read_uint32_t(data, offset);
-
-	std::cout << "Received server data: " << x << " ; " << y << "\n";
 }

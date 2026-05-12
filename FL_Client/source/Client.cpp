@@ -6,9 +6,11 @@
 #include "ClientEntityFactory.hpp"
 #include "Entity.hpp"
 #include "Controller.hpp"
+#include "DataProcessorManager.hpp"
 
 Client::Client() :
-	clientContext(std::make_unique<asio::io_context>()), netManager(std::make_unique<NetManager>(*clientContext)),
+	clientContext(std::make_unique<asio::io_context>()), dataProcessorManager(std::make_unique<DataProcessorManager>()),
+	netManager(std::make_unique<NetManager>(*clientContext, *dataProcessorManager)),
 	inputManager(std::make_unique<InputManager>(isRunningFlag)), 
 	entityFactory(std::make_unique<ClientEntityFactory>())
 {

@@ -5,7 +5,8 @@
 #include "IncomingDataManager.hpp"
 #include "OutputDataManager.hpp"
 
-NetManager::NetManager(asio::io_context& context) : sslContext(asio::ssl::context::tls_client),
+NetManager::NetManager(asio::io_context& context, DataProcessorManager& dataProcessorManager) : sslContext(asio::ssl::context::tls_client),
+	dataProcessorManager(dataProcessorManager),
 	socket(context), endpoint(asio::ip::make_address(serverAddress), serverPort)
 {
 	try {
@@ -29,10 +30,9 @@ void NetManager::doConnect()
 			return;
 		}
 		std::cout << "Connect to server" << std::endl;
-		std::shared_ptr<ClientSession> sessionPtr = std::make_shared<ClientSession>(std::move(socket), sslContext);
+		std::shared_ptr<ClientSession> sessionPtr = std::make_shared<ClientSession>(std::move(socket), sslContext, dataProcessorManager);
 		session = sessionPtr;
 		sessionPtr->start();
-		inputManager = std::make_unique<IncomingDataManager>(sessionPtr->getIncomingQueue());
 		outputManager = std::make_shared<OutputDataManager>(sessionPtr);
 		Packer::setOutputManager(outputManager);
 		});

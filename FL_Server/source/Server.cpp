@@ -14,7 +14,7 @@
 #include "PlayerManager.hpp"
 
 
-Server::Server( short port) : serverContext(std::make_unique<asio::io_context>()),
+Server::Server(short port) : serverContext(std::make_unique<asio::io_context>()),
 	world(std::make_unique<World>()),
 	playerManager(std::make_unique<PlayerManager>(*world)),
 	dataProcessorManager(std::make_unique<DataProcessorManager>(*playerManager)),

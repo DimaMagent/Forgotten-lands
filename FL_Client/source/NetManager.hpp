@@ -6,6 +6,7 @@
 class ClientSession;
 class IncomingDataManager;
 class OutputDataManager;
+class DataProcessorManager;
 namespace sl {
 	class NetData;
 }
@@ -14,7 +15,7 @@ namespace asio {
 }
 class NetManager {
 	public:
-		NetManager(asio::io_context& context);
+		NetManager(asio::io_context& context, DataProcessorManager& dataProcessorManager);
 		~NetManager();
 
 		void doConnect();
@@ -25,7 +26,7 @@ class NetManager {
 		asio::ip::tcp::socket socket;
 		asio::ip::tcp::endpoint endpoint;
 		std::weak_ptr<ClientSession> session;
-		std::unique_ptr<IncomingDataManager> inputManager;
 		std::shared_ptr<OutputDataManager> outputManager;
+		DataProcessorManager& dataProcessorManager;
 
 };

@@ -13,7 +13,7 @@ class DataProcessorManager {
 public:
 	DataProcessorManager(PlayerManager& playerManager);
 
-	void routeData(const std::vector<uint8_t>& data, sl::net::PacketType type, uint32_t token);
+	void routeData(std::vector<uint8_t>&& data, sl::net::PacketType type, uint32_t token);
 
 	template<typename PacketT>
 	void registerHandler(sl::net::PacketType type, std::function<void(const uint32_t&, const PacketT&)> handler) {
@@ -26,6 +26,6 @@ public:
 	}
 
 private:
-	std::unordered_map<uint8_t, std::function<void(const uint32_t&, const std::vector<uint8_t>&)>> handlers;
+	std::unordered_map<uint8_t, std::function<void(const uint32_t&, std::vector<uint8_t>&&)>> handlers;
 	PlayerManager& playerManager;
 };
