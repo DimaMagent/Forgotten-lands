@@ -2,18 +2,16 @@
 #include "DataProcessorManager.hpp"
 #include "PacketDataTypes.hpp"
 #include "StatusPacket.hpp"
+#include "PlayerStateManager.hpp"
 
 DataProcessorManager::DataProcessorManager()
 {
 	registerHandler<sl::net::StatusPacket>(sl::net::StatusPacket::type(),
 		[this](const sl::net::StatusPacket& p) {
 			const auto& data = p.getData();
-			size_t offset = 0;
-			uint32_t size = sl::net::read_uint32_t(data.data, offset);
-			float x = (float)sl::net::read_uint32_t(data.data, offset);
-			float y = (float)sl::net::read_uint32_t(data.data, offset);
-
-			std::cout << "Received server data: " << x << " ; " << y << "\n";
+			auto psm = playerStateManager.lock();
+			if (!psm) { return; }
+			psm->recordRollback(data);
 		});
 }
 
@@ -26,4 +24,9 @@ void DataProcessorManager::routeData(std::vector<uint8_t>&& data, sl::net::Packe
 	else {
 		std::cerr << "Unknown packet type: " << static_cast<int>(type) << "\n";
 	}
+}
+
+void DataProcessorManager::SetPlayerStateManager(std::weak_ptr<PlayerStateManager> psm)
+{
+	playerStateManager = psm;
 }

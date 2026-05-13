@@ -7,6 +7,7 @@
 #include "Entity.hpp"
 #include "Controller.hpp"
 #include "DataProcessorManager.hpp"
+#include "PlayerStateManager.hpp"
 
 Client::Client() :
 	clientContext(std::make_unique<asio::io_context>()), dataProcessorManager(std::make_unique<DataProcessorManager>()),
@@ -30,6 +31,8 @@ void Client::start()
 		window->setVerticalSyncEnabled(true);
 		world = std::make_unique<LocalWorld>(*window);
 		controller = std::make_unique<Controller>(*inputManager, *world);
+		playerStateManager = std::make_shared<PlayerStateManager>(world->OnSetPlayerEntity);
+		dataProcessorManager->SetPlayerStateManager(playerStateManager);
 		world->setPlayerEntity(entityFactory->createEntity(sl::EntityType::Player));
 		sf::Clock timer;
 		for (;;) {

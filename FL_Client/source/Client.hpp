@@ -16,7 +16,9 @@ namespace sf {
 
 class ClientEntityFactory;
 class DataProcessorManager;
+class PlayerStateManager;
 
+//TODO: необходиомо заняться структуризацией классов клиента и их зависимоcтями
 
 class Client {
 public:
@@ -31,6 +33,7 @@ private:
 	std::unique_ptr<sf::RenderWindow> window;
 	std::unique_ptr<LocalWorld> world;
 	std::unique_ptr<Controller> controller;
+	std::shared_ptr<PlayerStateManager> playerStateManager;
 	std::unique_ptr<ClientEntityFactory> entityFactory;
 	bool isRunningFlag = false;
 };
