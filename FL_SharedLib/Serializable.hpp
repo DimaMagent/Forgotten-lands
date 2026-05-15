@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include <SFML/System/Vector2.hpp>
-
+#include <string>
 namespace sl {
 	class Serializable {
 	public:

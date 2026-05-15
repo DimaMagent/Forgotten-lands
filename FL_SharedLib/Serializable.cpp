@@ -10,9 +10,8 @@ namespace sl {
 	}
 
 	sf::Vector2f Serializable::deserializeVector2f(const std::vector<uint8_t>& out, size_t& offset) const {
-		sf::Vector2f vec;
-		vec.x = net::read_uint32_t(out, offset);
-		vec.y = net::read_uint32_t(out, offset);
-		return vec;
+		float x = net::read_uint32_t(out, offset);
+		float y = net::read_uint32_t(out, offset);
+		return sf::Vector2f(x, y);
 	}
 }

@@ -165,6 +165,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AuthPacket.cpp" />
+    <ClCompile Include="Component.cpp" />
     <ClCompile Include="DataLoader.cpp" />
     <ClCompile Include="DataQueue.cpp" />
     <ClCompile Include="Entity.cpp" />

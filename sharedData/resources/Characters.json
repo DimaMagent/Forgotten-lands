@@ -1,6 +1,6 @@
 {
   "player": {
-    "render": {
+    "RenderComponent": {
       "texturePath": "resources/assets/unarmed_character/steht0000.bmp",
       "textureRect": {
         "height": 96,
@@ -9,13 +9,13 @@
         "y": 0
       }
     },
-    "transform": {
+    "TransformComponent": {
       "position": {
         "x": 0,
         "y": 0
       }
     },
-    "movement": {
+    "MovementComponent": {
       "maxVelocity": 200.0
     }
   }

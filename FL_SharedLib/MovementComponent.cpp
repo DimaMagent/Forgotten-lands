@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "MovementComponent.hpp"
 #include <cmath>
+#include "NetUtils.hpp"
 
 sl::MovementComponent::MovementComponent(float maxSpeed, sf::Time maxAccelerationTime) : maxSpeed(maxSpeed), maxAccelerationTime(maxAccelerationTime)
-{
-}
+{}
+
 void sl::MovementComponent::addVelocityVector(sf::Vector2i direction, float speed)
 {
 	addVelocity(asNormalized(sf::Vector2f(direction)) * speed);
@@ -37,6 +38,24 @@ sf::Vector2f sl::MovementComponent::move(float deltaTime, const sf::Vector2f& po
 	sf::Vector2f newPosition = position + velocityVector;
 	resetVelocity();
 	return newPosition;
+}
+
+void sl::MovementComponent::serialize(std::vector<uint8_t>& out) const
+{
+	sl::net::write_uint32_t(out, TypeId);
+	sl::net::write_uint32_t(out, currentSpeed);
+}
+
+bool sl::MovementComponent::deserialize(const std::vector<uint8_t>& out, size_t& offset)
+{
+	if (offset + getSerializeDataSize() < out.size()) { return false; }
+	currentSpeed = sl::net::read_uint32_t(out, offset);
+	return false;
+}
+
+uint32_t sl::MovementComponent::getSerializeDataSize() const
+{
+	return sizeof(float) + sizeof(TypeId);
 }
 
 void sl::MovementComponent::addVelocity(const sf::Vector2f& velocity)

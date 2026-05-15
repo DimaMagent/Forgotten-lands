@@ -429,7 +429,6 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <None Include="extlibs\lib\x86\sfml-system-s-d.pdb" />
     <None Include="extlibs\lib\x86\sfml-window-d.pdb" />
     <None Include="extlibs\lib\x86\sfml-window-s-d.pdb" />
-    <None Include="resources\Characters.json" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Client.cpp" />

@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "TransformComponent.hpp"
 
-sl::TransformComponent::TransformComponent()
-{ 
+sl::TransformComponent::TransformComponent(){
 	setPosition(0.f, 0.f);
 }
 
@@ -34,17 +33,19 @@ sf::Vector2f& sl::TransformComponent::getPosition()
 
 void sl::TransformComponent::serialize(std::vector<uint8_t>& out) const
 {
+	sl::net::write_uint32_t(out, TypeId);
 	serializeVector2f(out, position);
 }
 
 bool sl::TransformComponent::deserialize(const std::vector<uint8_t>& out, size_t& offset)
 {
-	if ( offset + 8 > out.size()) { return false; }
+	if ( offset + getSerializeDataSize() > out.size()) { return false; }
 	position = deserializeVector2f(out, offset);
 	return true;
 }
 
 uint32_t sl::TransformComponent::getSerializeDataSize() const
 {
-	return sizeof(sf::Vector2f);
+	return sizeof(sf::Vector2f) + sizeof(TypeId);
 }
+

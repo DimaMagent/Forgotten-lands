@@ -2,6 +2,7 @@
 #include "RenderComponent.hpp"
 #include <SFML/Graphics.hpp>
 
+
 RenderComponent::RenderComponent(std::shared_ptr<const sf::Texture> texturePtr, const sf::IntRect& rc) :
 	texture(texturePtr), rectTransform(rc)
 {

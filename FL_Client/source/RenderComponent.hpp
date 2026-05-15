@@ -15,6 +15,7 @@ public:
 	RenderComponent(std::shared_ptr<const sf::Texture> texturePtr, const sf::IntRect& rc);
 	RenderComponent(std::shared_ptr<const sf::Texture> texturePtr, int height, int width, int x, int y);
 	void render(sf::RenderTarget& target, sf::Vector2f position) const;
+	COMPONENT_TYPE(RenderComponent);
 private:
 	std::shared_ptr<const sf::Texture> texture;
 	sf::IntRect rectTransform;

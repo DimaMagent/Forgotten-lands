@@ -5,6 +5,7 @@
 #include "StatusPacket.hpp"
 #include "PlayerEntityStorage.hpp"
 #include "Entity.hpp"
+#include "Serializable.hpp"
 
 int Serializer::serializationFrequency = 20;
 
@@ -17,8 +18,10 @@ Serializer::Serializer(sl::LockFreeDelegate<float>& onUpdateDelegate, const Play
 
 void Serializer::serializeObjects()
 {
+	std::vector<uint8_t> localBuf;
+
 	for (size_t i = 0; i < entitiesStorage.playerEntities.size(); ++i) {
-		entitiesStorage.playerEntities[i]->forEachSerialization([this](const sl::Serializable& s) {
+		entitiesStorage.playerEntities[i]->forEachSerialization([&localBuf](const sl::Serializable& s) {
 			uint32_t size = s.getSerializeDataSize();
 			sl::net::write_uint32_t(localBuf, size);
 			s.serialize(localBuf);

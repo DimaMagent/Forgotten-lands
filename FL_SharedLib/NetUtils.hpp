@@ -11,4 +11,14 @@ namespace sl::net
 	uint8_t read_uint8_t(const std::vector<uint8_t>& in, size_t& offset);
 	uint16_t read_uint16_t(const std::vector<uint8_t>& in, size_t& offset);
 	uint32_t read_uint32_t(const std::vector<uint8_t>& in, size_t& offset);
+
+	constexpr uint32_t fnv1a(const char* str) {
+		uint32_t hash = 2166136261u;
+		while (*str) {
+			hash ^= (uint8_t)*str++;
+			hash *= 16777619u;
+		}
+		return hash;
+	}
+
 }

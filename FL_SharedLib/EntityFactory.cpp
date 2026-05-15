@@ -45,10 +45,10 @@ void sl::EntityFactory::InitializeCharacterIdToDataId()
 
 void sl::EntityFactory::registrationComponents()
 {
-	registry.try_emplace("transform", [](Entity& entity, const json& js) {
+	registry.try_emplace("TransformComponent", [](Entity& entity, const json& js) {
 		entity.addComponent<sl::TransformComponent>(js.at("position").value("x", 0.0f), js.at("position").value("y", 0.0f));
 		});
-	registry.try_emplace("movement", [](Entity& entity, const json& js) {
+	registry.try_emplace("MovementComponent", [](Entity& entity, const json& js) {
 		entity.addComponent<sl::MovementComponent>(js.value("maxVelocity", 20.0f));
 		});
 
