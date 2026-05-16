@@ -39,7 +39,7 @@ void sl::TransformComponent::serialize(std::vector<uint8_t>& out) const
 
 bool sl::TransformComponent::deserialize(const std::vector<uint8_t>& out, size_t& offset)
 {
-	if ( offset + getSerializeDataSize() > out.size()) { return false; }
+	if ( offset + getDeserializeDataSize() > out.size()) { return false; }
 	position = deserializeVector2f(out, offset);
 	return true;
 }
@@ -47,5 +47,10 @@ bool sl::TransformComponent::deserialize(const std::vector<uint8_t>& out, size_t
 uint32_t sl::TransformComponent::getSerializeDataSize() const
 {
 	return sizeof(sf::Vector2f) + sizeof(TypeId);
+}
+
+uint32_t sl::TransformComponent::getDeserializeDataSize() const
+{
+	return getSerializeDataSize() - sizeof(TypeId);
 }
 

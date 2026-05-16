@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <memory>
 #include <functional>
+#include <string_view>
 #include <nlohmann/json.hpp>
 
 /*If the compilation time due to nlohmann/json.hpp header is significant,
@@ -35,7 +36,7 @@ namespace sl {
 	protected:
 		std::unique_ptr<DataLoader> dataLoader;
 		std::unordered_map<sl::EntityType, std::string> characterIdToDataId;
-		std::unordered_map<std::string, ComponentFactory> registry;
+		std::unordered_map<std::string_view, ComponentFactory> registry;
 
 		void InitializeCharacterIdToDataId();
 		virtual void registrationComponents();

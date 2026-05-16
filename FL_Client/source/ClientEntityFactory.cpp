@@ -17,7 +17,7 @@ void ClientEntityFactory::registrationComponents()
 {
 	sl::EntityFactory::registrationComponents();
 
-	registry.try_emplace("RenderComponent", [this](sl::Entity& entity, const json& js) {
+	registry.try_emplace(RenderComponent::ComponentName, [this](sl::Entity& entity, const json& js) {
 		std::shared_ptr<sf::Texture> texture = textureManager->getTexture(js.value("texturePath", ""));
 		auto& rectData = js.at("textureRect");
 		entity.addComponent<RenderComponent>(texture,

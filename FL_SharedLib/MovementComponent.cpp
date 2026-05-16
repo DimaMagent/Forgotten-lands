@@ -48,14 +48,19 @@ void sl::MovementComponent::serialize(std::vector<uint8_t>& out) const
 
 bool sl::MovementComponent::deserialize(const std::vector<uint8_t>& out, size_t& offset)
 {
-	if (offset + getSerializeDataSize() < out.size()) { return false; }
+	if (offset + getDeserializeDataSize() > out.size()) { return false; }
 	currentSpeed = sl::net::read_uint32_t(out, offset);
-	return false;
+	return true;
 }
 
 uint32_t sl::MovementComponent::getSerializeDataSize() const
 {
 	return sizeof(float) + sizeof(TypeId);
+}
+
+uint32_t sl::MovementComponent::getDeserializeDataSize() const
+{
+	return getSerializeDataSize() - sizeof(TypeId);
 }
 
 void sl::MovementComponent::addVelocity(const sf::Vector2f& velocity)

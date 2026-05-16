@@ -4,7 +4,7 @@
 #include "Packet.hpp"
 #include "OutputDataManager.hpp"
 
-std::atomic<uint16_t> Packer::sequenceNumber = 0;
+std::atomic<uint16_t> Packer::sequenceNumber = 1;
 std::weak_ptr<OutputDataManager> Packer::staticOutputManager;
 
 void Packer::setOutputManager(std::shared_ptr<OutputDataManager> manager)
