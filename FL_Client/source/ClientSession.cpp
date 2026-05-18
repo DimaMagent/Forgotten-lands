@@ -35,6 +35,7 @@ void ClientSession::doHandshake() {
 				return;
 			}
 			std::cout << "TLS handshake OK" << std::endl;
+			OnAcceptSucceeded.broadcast();
 			doRead();
 			}));
 }
@@ -64,6 +65,7 @@ void ClientSession::doRead() {
 			std::cout << ec.value() << "::" << ec.message() << std::endl;
 			return;
 		}
+		//std::cout << "read " << len << "\n";
 		localBuffer->resize(len);
 		incomingQueue->push(*localBuffer);
 		doRead();

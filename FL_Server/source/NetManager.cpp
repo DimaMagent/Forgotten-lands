@@ -56,8 +56,9 @@ void NetManager::doAccept() {
 
 				std::shared_ptr<Session> sessionPtr = std::make_shared<Session>(std::move(socket), sslContext, sessionToken, dataProcessorManager);
 				sessionPtr->start();
+				sessionPtr->OnAcceptSucceeded.addFunction([this, sessionToken]() { OnAccept.broadcast(sessionToken); });
 				sessions.try_emplace(sessionToken, sessionPtr);
-				OnAccept.broadcast(sessionToken);
+				
 			}
 			else {
 				std::cout << ec.value() << "::" << ec.message() << std::endl;

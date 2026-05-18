@@ -8,16 +8,13 @@
 #include "PacketManager.hpp"
 
 namespace sl::net { class Packet; }
-class PlayerStateManager;
+class StateManager;
 
 class DataProcessorManager {
 public:
-	DataProcessorManager();
+	DataProcessorManager(std::weak_ptr<StateManager> manager);
 
 	void routeData(std::vector<uint8_t>&& data, sl::net::PacketType type);
-
-	// temporary solution
-	void SetPlayerStateManager(std::weak_ptr<PlayerStateManager> psm);
 
 	template<typename PacketT>
 	void registerHandler(sl::net::PacketType type, std::function<void( const PacketT&)> handler) {
@@ -31,5 +28,5 @@ public:
 
 private:
 	std::unordered_map<uint8_t, std::function<void(std::vector<uint8_t>&&)>> handlers;
-	std::weak_ptr<PlayerStateManager> playerStateManager;
+	std::weak_ptr<StateManager> stateManager;
 };

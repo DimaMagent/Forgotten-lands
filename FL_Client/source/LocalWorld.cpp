@@ -1,13 +1,18 @@
 #include "pch.hpp"
 #include "LocalWorld.hpp"
 #include "Entity.hpp"
-#include "RenderComponent.hpp"
 #include "MovementComponent.hpp"
 #include "TransformComponent.hpp"
+#include "RenderManager.hpp"
 
-LocalWorld::LocalWorld(sf::RenderTarget& renderTarget) : WorldBase(), renderTarget(renderTarget) {}
+LocalWorld::LocalWorld() : WorldBase() {}
 
 LocalWorld::~LocalWorld() = default;
+
+void LocalWorld::initializeRender(sf::RenderTarget& renderTarget)
+{
+	renderManager = std::make_unique<RenderManager>(renderTarget, playerEntity, entities, OnSetPlayerEntity);
+}
 
 void LocalWorld::setPlayerEntity(std::unique_ptr<sl::Entity>&& entity)
 {
@@ -20,27 +25,11 @@ void LocalWorld::setPlayerEntity(std::unique_ptr<sl::Entity>&& entity)
 
 void LocalWorld::render()
 {
-	if (!Entities.empty()) {
-		for (const auto& entity : Entities) {
-			if (!entity) { continue; }
-
-			RenderComponent* comp = entity->getComponent<RenderComponent>();
-			sl::TransformComponent* trComp = entity->getComponent<sl::TransformComponent>();
-
-			if (!comp || !trComp) { continue; }
-
-			comp->render(renderTarget, trComp->getPosition());
-			
-		}
+	if (!renderManager) {
+		std::cerr << "LocalWorld::render: renderManager is no valid" << "\n";
+		return; 
 	}
-	if (playerEntity) {
-		RenderComponent* comp = playerEntity->getComponent<RenderComponent>();
-		sl::TransformComponent* trComp = playerEntity->getComponent<sl::TransformComponent>();
-		if (comp && trComp) {
-			comp->render(renderTarget, trComp->getPosition());
-		}
-	}
-
+	renderManager->render();
 }
 
 void LocalWorld::onUpdate(float updateTime)

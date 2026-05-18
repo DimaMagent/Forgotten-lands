@@ -16,7 +16,7 @@ namespace sl {
 		void update(float deltaTime);
 		void removeEntity(size_t index);
 	protected:
-		std::vector<std::unique_ptr<sl::Entity>> Entities;
+		std::vector<std::unique_ptr<sl::Entity>> entities;
 		const sf::Time updateTime = sf::seconds(1.f / 60.f);
 		sf::Time timeSinceLastUpdate = sf::Time::Zero;
 

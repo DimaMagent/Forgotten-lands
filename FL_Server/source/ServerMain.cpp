@@ -2,14 +2,15 @@
 //
 #include "pch.hpp"
 #include "Server.hpp"
+#include <memory>
 
 int main()
 {
 	try {
 		setlocale(LC_ALL, "Russian");
-		Server server(2001);
+		std::unique_ptr<Server> server = std::make_unique<Server>(2001);
 		std::cout << "Server start" << std::endl;
-		server.start();
+		server->start();
 	}
 	catch (std::exception& e) {
 		std::cerr << "Exception: " << e.what() << std::endl;

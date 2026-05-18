@@ -2,6 +2,7 @@
 #include "asio\ip\tcp.hpp"
 #include "asio\ssl.hpp"
 #include <string>
+#include "LockFreeDelegate.hpp"
 
 class ClientSession;
 class IncomingDataManager;
@@ -15,6 +16,8 @@ namespace asio {
 }
 class NetManager {
 	public:
+		sl::LockFreeDelegate<> OnAccept;
+
 		NetManager(asio::io_context& context, DataProcessorManager& dataProcessorManager);
 		~NetManager();
 

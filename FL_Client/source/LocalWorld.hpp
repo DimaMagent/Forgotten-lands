@@ -8,20 +8,19 @@
 namespace sl {
 	class Entity;
 }
-namespace sf {
-	class RenderTarget;
-}
+class RenderManager;
 
 class LocalWorld: public sl::WorldBase {
 public:
 	sl::Delegate<const std::weak_ptr<sl::Entity>> OnSetPlayerEntity;
-	LocalWorld(sf::RenderTarget& renderTarget);
+	LocalWorld();
 	~LocalWorld();
+	void initializeRender(sf::RenderTarget& renderTarget);
 	void setPlayerEntity(std::unique_ptr<sl::Entity>&& entity);
 	void render();
 protected:
 	std::shared_ptr<sl::Entity> playerEntity;
-	sf::RenderTarget& renderTarget;
+	std::unique_ptr<RenderManager> renderManager;
 
 	virtual void onUpdate(float updateTime) override;
 };

@@ -2,7 +2,8 @@
 #include <memory>
 #include <vector>
 #include "asio\ip\tcp.hpp"
-#include "asio/ssl.hpp"
+#include "asio\ssl.hpp"
+#include "Delegate.hpp"
 
 namespace sl::net {
 	class DataQueue;
@@ -15,6 +16,7 @@ using ssl_socket = asio::ssl::stream<asio::ip::tcp::socket>;
 
 class ClientSession : public std::enable_shared_from_this<ClientSession> {
 public:
+	sl::Delegate<> OnAcceptSucceeded;
 	ClientSession(asio::ip::tcp::socket socket, asio::ssl::context& sslContext, DataProcessorManager& dpm);
 	~ClientSession();
 

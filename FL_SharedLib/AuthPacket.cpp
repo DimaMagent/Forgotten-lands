@@ -5,7 +5,7 @@ namespace sl::net {
     bool AuthData::write(std::vector<uint8_t>& out) const
     {
         header.write(out);
-        net::write_uint32_t(out, token);
+        net::write_uint32_t(out, playerEntityID);
         return true;
     }
 
@@ -13,14 +13,14 @@ namespace sl::net {
     {
         if (offset < in.size()) {
             header.read(in, offset);
-            token = net::read_uint32_t(in, offset);
+            playerEntityID = net::read_uint32_t(in, offset);
         }
     }
 
-    void AuthData::fillPacketData(uint16_t sequenceNumber, PacketType type, uint32_t fromToken, uint32_t token)
+    void AuthData::fillPacketData(uint16_t sequenceNumber, PacketType type, uint32_t fromToken, uint32_t playerEntityID)
     {
-        this->token = token;
-        header.fillHeader(sequenceNumber, type, fromToken, sizeof(this->token));
+        this->playerEntityID = playerEntityID;
+        header.fillHeader(sequenceNumber, type, fromToken, sizeof(this->playerEntityID));
     }
 
     bool AuthPacket::write(std::vector<uint8_t>& out) const
@@ -33,9 +33,9 @@ namespace sl::net {
         data.read(in, offset);
     }
 
-    void AuthPacket::fillPacketData(uint16_t sequenceNumber, uint32_t FromToken, uint32_t token)
+    void AuthPacket::fillPacketData(uint16_t sequenceNumber, uint32_t FromToken, uint32_t playerEntityID)
     {
-        data.fillPacketData(sequenceNumber, type(), FromToken, token);
+        data.fillPacketData(sequenceNumber, type(), FromToken, playerEntityID);
     }
 }
 

@@ -30,7 +30,7 @@ void Session::close() {
 void Session::writeOnOutgoingData(std::vector<uint8_t>& data)
 {
 	auto self = shared_from_this();
-	std::cout << "push data size:" << data.size() << "\n";
+	//std::cout << "push data size:" << data.size() << "\n";
 	outgoingQueue->push(data);
 	asio::post(sessionStrand, [self]() { self->doWrite(); });
 }
@@ -55,6 +55,7 @@ void Session::doHandshake()
 				return;
 			}
 			std::cout << "TLS handshake OK" << std::endl;
+			OnAcceptSucceeded.broadcast();
 			doRead();
 			}));
 }

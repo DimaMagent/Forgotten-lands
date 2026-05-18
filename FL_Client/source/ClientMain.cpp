@@ -1,11 +1,12 @@
 #include "pch.hpp"
-
-
+#include <memory>
 #include "Client.hpp"
+
+
 int main()
 {
-	Client client;
-	client.start();
+	std::unique_ptr<Client> client = std::make_unique<Client>();
+	client->start();
 	return 0;
 }
 

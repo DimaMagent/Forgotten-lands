@@ -7,14 +7,19 @@
 #include "Entity.hpp"
 #include "Controller.hpp"
 #include "DataProcessorManager.hpp"
-#include "PlayerStateManager.hpp"
+#include "StateManager.hpp"
 
 Client::Client() :
-	clientContext(std::make_unique<asio::io_context>()), dataProcessorManager(std::make_unique<DataProcessorManager>()),
+	clientContext(std::make_unique<asio::io_context>()),
+	world(std::make_unique<LocalWorld>()),
+	stateManager(std::make_shared<StateManager>(world->OnSetPlayerEntity)),
+	dataProcessorManager(std::make_unique<DataProcessorManager>(stateManager)),
 	netManager(std::make_unique<NetManager>(*clientContext, *dataProcessorManager)),
 	inputManager(std::make_unique<InputManager>(isRunningFlag)), 
-	entityFactory(std::make_unique<ClientEntityFactory>())
+	entityFactory(std::make_unique<ClientEntityFactory>()),
+	controller(std::make_unique<Controller>(*inputManager, *world))
 {
+	netManager->OnAccept.addFunction([this]() {this->onClientAccept(); });
 	entityFactory->initialize();
 }
 
@@ -29,11 +34,7 @@ void Client::start()
 		std::thread ClientThread([this]() {clientContext->run(); });
 		window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "FL_Client.exe", sf::State::Windowed); // sf::State::Fullscreen
 		window->setVerticalSyncEnabled(true);
-		world = std::make_unique<LocalWorld>(*window);
-		controller = std::make_unique<Controller>(*inputManager, *world);
-		playerStateManager = std::make_shared<PlayerStateManager>(world->OnSetPlayerEntity);
-		dataProcessorManager->SetPlayerStateManager(playerStateManager);
-		world->setPlayerEntity(entityFactory->createEntity(sl::EntityType::Player));
+		world->initializeRender(*window);
 		sf::Clock timer;
 		for (;;) {
 			while (const std::optional<sf::Event> event = window->pollEvent()) {
@@ -61,4 +62,9 @@ void Client::start()
 		std::cerr << "Exception: " << e.what() << std::endl;
 		std::cin.get();
 	}
+}
+
+void Client::onClientAccept()
+{
+	world->setPlayerEntity(entityFactory->createEntity(sl::EntityType::Player));
 }

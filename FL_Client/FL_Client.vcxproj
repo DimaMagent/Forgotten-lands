@@ -445,7 +445,8 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
     <ClCompile Include="source\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug Dynamic|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="source\PlayerStateManager.cpp" />
+    <ClCompile Include="source\RenderManager.cpp" />
+    <ClCompile Include="source\StateManager.cpp" />
     <ClCompile Include="source\RenderComponent.cpp" />
     <ClCompile Include="source\TextureManager.cpp" />
     <ClCompile Include="source\LocalWorld.cpp" />
@@ -563,7 +564,8 @@ copy /Y "$(SolutionDir)resources"  "$(TargetDir)resources\"</Command>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug Dynamic|x64'">
       </ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="source\PlayerStateManager.hpp" />
+    <ClInclude Include="source\RenderManager.hpp" />
+    <ClInclude Include="source\StateManager.hpp" />
     <ClInclude Include="source\RenderComponent.hpp" />
     <ClInclude Include="source\TextureManager.hpp" />
     <ClInclude Include="source\LocalWorld.hpp" />

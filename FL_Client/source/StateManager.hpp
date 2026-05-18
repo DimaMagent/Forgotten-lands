@@ -9,14 +9,16 @@ namespace sl {
 	class Entity;
 	namespace net {
 		struct StatusData;
+		struct AuthData;
 	}
 }
 
 //stores the sequence of player actions
-class PlayerStateManager {
+class StateManager {
 public:
-	PlayerStateManager(sl::Delegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntityDelegate);
+	StateManager(sl::Delegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntityDelegate);
 	void recordRollback(const sl::net::StatusData& data);
+	void auth(const sl::net::AuthData& data);
 private:
 	uint32_t lastAppliedSequence = 0;
 	std::weak_ptr<sl::Entity> playerEntity;

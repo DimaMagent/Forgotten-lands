@@ -21,11 +21,18 @@ void Serializer::serializeObjects()
 	std::vector<uint8_t> localBuf;
 
 	for (size_t i = 0; i < entitiesStorage.playerEntities.size(); ++i) {
-		entitiesStorage.playerEntities[i]->forEachSerialization([&localBuf](const sl::Serializable& s) {
-			uint32_t size = s.getSerializeDataSize();
-			sl::net::write_uint32_t(localBuf, size);
-			s.serialize(localBuf);
+		uint32_t entityId = entitiesStorage.playerEntities[i]->getId();
+		sl::net::write_uint32_t(localBuf, entityId);
+		std::vector<uint8_t> entityLocalBuf;
+		uint32_t size = 0;
+		entitiesStorage.playerEntities[i]->forEachSerialization([&entityLocalBuf, &size](const sl::Serializable& s) {
+			size += s.getSerializeDataSize();
+			s.serialize(entityLocalBuf);
 		});
+		sl::net::write_uint32_t(localBuf, size);
+		localBuf.insert(localBuf.end(), entityLocalBuf.begin(), entityLocalBuf.end());
+	}
+	for (size_t i = 0; i < entitiesStorage.playerEntities.size(); ++i) {
 		if (auto it = entitiesStorage.indexToToken.find(i); it != entitiesStorage.indexToToken.end()) {
 			Packer::send<sl::net::StatusPacket>(it->second, localBuf);
 		}

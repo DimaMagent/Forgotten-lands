@@ -20,6 +20,12 @@ namespace sl {
         Entity(Entity&&) = default;
         Entity& operator=(Entity&&) = default;
 
+        uint32_t getId() const { return id; }
+
+        uint32_t getGlobalId() const { return globalId; }
+
+        void setGlobalId(uint32_t newId) { globalId = newId; }
+
         template<typename T>
         T* getComponent() {
             static_assert(std::is_base_of_v<sl::Component, T>, "T must inherit from Component.");
@@ -75,6 +81,7 @@ namespace sl {
     private:
         static uint32_t nextId;
         uint32_t id;
+        uint32_t globalId = 0;
         std::vector<std::pair<uint32_t, std::unique_ptr<sl::Component>>> components;
     };
 }

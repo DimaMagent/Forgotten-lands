@@ -2,16 +2,26 @@
 #include "DataProcessorManager.hpp"
 #include "PacketDataTypes.hpp"
 #include "StatusPacket.hpp"
-#include "PlayerStateManager.hpp"
+#include "AuthPacket.hpp"
+#include "StateManager.hpp"
 
-DataProcessorManager::DataProcessorManager()
+DataProcessorManager::DataProcessorManager(std::weak_ptr<StateManager> manager)
 {
+	this->stateManager = manager;
+
 	registerHandler<sl::net::StatusPacket>(sl::net::StatusPacket::type(),
 		[this](const sl::net::StatusPacket& p) {
 			const auto& data = p.getData();
-			auto psm = playerStateManager.lock();
-			if (!psm) { return; }
-			psm->recordRollback(data);
+			auto sm = stateManager.lock();
+			if (!sm) { return; }
+			sm->recordRollback(data);
+		});
+	registerHandler<sl::net::AuthPacket>(sl::net::AuthPacket::type(),
+		[this](const sl::net::AuthPacket& p) {
+			const auto& data = p.getData();
+			auto sm = stateManager.lock();
+			if (!sm) { return; }
+			sm->auth(data);
 		});
 }
 
@@ -26,7 +36,3 @@ void DataProcessorManager::routeData(std::vector<uint8_t>&& data, sl::net::Packe
 	}
 }
 
-void DataProcessorManager::SetPlayerStateManager(std::weak_ptr<PlayerStateManager> psm)
-{
-	playerStateManager = psm;
-}

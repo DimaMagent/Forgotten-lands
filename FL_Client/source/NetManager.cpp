@@ -33,6 +33,7 @@ void NetManager::doConnect()
 		std::shared_ptr<ClientSession> sessionPtr = std::make_shared<ClientSession>(std::move(socket), sslContext, dataProcessorManager);
 		session = sessionPtr;
 		sessionPtr->start();
+		sessionPtr->OnAcceptSucceeded.addFunction([this]() {OnAccept.broadcast(); });
 		outputManager = std::make_shared<OutputDataManager>(sessionPtr);
 		Packer::setOutputManager(outputManager);
 		});
