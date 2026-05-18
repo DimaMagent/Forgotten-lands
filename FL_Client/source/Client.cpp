@@ -11,15 +11,14 @@
 
 Client::Client() :
 	clientContext(std::make_unique<asio::io_context>()),
-	world(std::make_unique<LocalWorld>()),
-	stateManager(std::make_shared<StateManager>(world->OnSetPlayerEntity)),
-	dataProcessorManager(std::make_unique<DataProcessorManager>(stateManager)),
+	entityFactory(std::make_shared<ClientEntityFactory>()),
+	world(std::make_unique<LocalWorld>(entityFactory)),
+	dataProcessorManager(std::make_unique<DataProcessorManager>(world->getStateManager())),
 	netManager(std::make_unique<NetManager>(*clientContext, *dataProcessorManager)),
 	inputManager(std::make_unique<InputManager>(isRunningFlag)), 
-	entityFactory(std::make_unique<ClientEntityFactory>()),
 	controller(std::make_unique<Controller>(*inputManager, *world))
 {
-	netManager->OnAccept.addFunction([this]() {this->onClientAccept(); });
+	netManager->OnAccept.addFunction([this]() {this->whenClientAccepted(); });
 	entityFactory->initialize();
 }
 
@@ -64,7 +63,7 @@ void Client::start()
 	}
 }
 
-void Client::onClientAccept()
+void Client::whenClientAccepted()
 {
 	world->setPlayerEntity(entityFactory->createEntity(sl::EntityType::Player));
 }

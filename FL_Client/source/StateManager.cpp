@@ -5,7 +5,8 @@
 #include "AuthPacket.hpp"
 #include "Serializable.hpp"
 
-StateManager::StateManager(sl::Delegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntityDelegate): playerEntity(playerEntity)
+StateManager::StateManager(std::weak_ptr<sl::Entity> playerEntity, std::vector<std::unique_ptr<sl::Entity>>& entities,
+		sl::Delegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntityDelegate): playerEntity(playerEntity), entities(entities)
 {
 	onSetPlayerEntityDelegate.addFunction([this](const std::weak_ptr<sl::Entity> playerEntity) {this->playerEntity = playerEntity; });
 }
@@ -31,12 +32,23 @@ void StateManager::recordRollback(const sl::net::StatusData& data)
 		}
 		uint32_t type = sl::net::read_uint32_t(data.data, offset);
 
+		std::cout << "recordRollback " << entityId << " " << player->getGlobalId() << "\n";
 		if (entityId == player->getGlobalId()) {
-			std::cout << "decerialize " << entityId << player->getGlobalId() << "\n";
+			std::cout << "decerialize " << entityId << " " << player->getGlobalId() << "\n";
 			player->forCurrentSerialization(type, [this, &offset, &data, &size](sl::Serializable& s) {
 				s.deserialize(data.data, offset);
 				size -= s.getDeserializeDataSize();
+				});
+		}
+		else if (auto it = std::lower_bound(entities.begin(), entities.end(), entityId,
+			[](std::unique_ptr<sl::Entity>& entity, uint32_t id){ return entity->getGlobalId() < id; }); it != entities.end()) {
+			(*it)->forCurrentSerialization(type, [this, &offset, &data, &size](sl::Serializable& s) {
+				s.deserialize(data.data, offset);
+				size -= s.getDeserializeDataSize();
 			});
+		}
+		else {
+			OnAbsenceEntity.broadcast(entityId);
 		}
 	}
 	

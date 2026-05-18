@@ -4,8 +4,16 @@
 #include "MovementComponent.hpp"
 #include "TransformComponent.hpp"
 #include "RenderManager.hpp"
+#include "StateManager.hpp"
+#include "LockFreeDelegate.hpp"
+#include "ClientEntityFactory.hpp"
 
-LocalWorld::LocalWorld() : WorldBase() {}
+LocalWorld::LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory) : WorldBase() ,
+	stateManager(std::make_shared<StateManager>(playerEntity, entities, OnSetPlayerEntity)),
+	entityFactory(entityFactory)
+{
+	stateManager->OnAbsenceEntity.addFunction([this](uint32_t globalId) {this->onAbsenceEntity(globalId); });
+}
 
 LocalWorld::~LocalWorld() = default;
 
@@ -43,4 +51,13 @@ void LocalWorld::onUpdate(float updateTime)
 	if (!movComp->isMoving()) { return; }
 
 	trComp->setPosition(movComp->move(updateTime, trComp->getPosition()));
+}
+
+void LocalWorld::onAbsenceEntity(uint32_t globalId)
+{
+	auto ef = entityFactory.lock();
+	if (!ef) { return; }
+	std::unique_ptr<sl::Entity> en = ef->createEntity(sl::EntityType::Player);
+	en->setGlobalId(globalId);
+	addEntity(std::move(en));
 }

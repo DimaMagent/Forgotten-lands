@@ -27,16 +27,16 @@ public:
 	void start();
 private:
 	std::unique_ptr<asio::io_context> clientContext;
+	// ¬озможно, стоит переместить фабрику в LocalWorld
+	std::shared_ptr<ClientEntityFactory> entityFactory;
 	std::unique_ptr<LocalWorld> world;
-	std::shared_ptr<StateManager> stateManager;
 	std::unique_ptr<DataProcessorManager> dataProcessorManager;
 	std::unique_ptr<NetManager> netManager;
 	std::unique_ptr<InputManager> inputManager;
 	std::unique_ptr<sf::RenderWindow> window;
 	std::unique_ptr<Controller> controller;
 
-	std::unique_ptr<ClientEntityFactory> entityFactory;
 	bool isRunningFlag = false;
 
-	void onClientAccept();
+	void whenClientAccepted();
 };

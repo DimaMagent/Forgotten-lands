@@ -26,7 +26,7 @@ void Serializer::serializeObjects()
 		std::vector<uint8_t> entityLocalBuf;
 		uint32_t size = 0;
 		entitiesStorage.playerEntities[i]->forEachSerialization([&entityLocalBuf, &size](const sl::Serializable& s) {
-			size += s.getSerializeDataSize();
+			size += s.getDeserializeDataSize();
 			s.serialize(entityLocalBuf);
 		});
 		sl::net::write_uint32_t(localBuf, size);
