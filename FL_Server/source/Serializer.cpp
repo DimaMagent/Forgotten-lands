@@ -7,7 +7,7 @@
 #include "Entity.hpp"
 #include "Serializable.hpp"
 
-int Serializer::serializationFrequency = 20;
+int Serializer::serializationFrequency = 5;
 
 Serializer::Serializer(sl::LockFreeDelegate<float>& onUpdateDelegate, const PlayerEntityStorage& serializedData):
 	entitiesStorage(serializedData)
@@ -23,20 +23,25 @@ void Serializer::serializeObjects()
 	for (size_t i = 0; i < entitiesStorage.playerEntities.size(); ++i) {
 		uint32_t entityId = entitiesStorage.playerEntities[i]->getId();
 		sl::net::write_uint32_t(localBuf, entityId);
+
 		std::vector<uint8_t> entityLocalBuf;
-		uint32_t size = 0;
-		entitiesStorage.playerEntities[i]->forEachSerialization([&entityLocalBuf, &size](const sl::Serializable& s) {
-			size += s.getDeserializeDataSize();
+		uint32_t entityDataSize = 0;
+
+		entitiesStorage.playerEntities[i]->forEachSerialization([&entityLocalBuf, &entityDataSize](const sl::Serializable& s) {
+			entityDataSize += s.getSerializeDataSize();
 			s.serialize(entityLocalBuf);
 		});
-		sl::net::write_uint32_t(localBuf, size);
+
+		sl::net::write_uint32_t(localBuf, entityDataSize);
 		localBuf.insert(localBuf.end(), entityLocalBuf.begin(), entityLocalBuf.end());
 	}
+
 	for (size_t i = 0; i < entitiesStorage.playerEntities.size(); ++i) {
 		if (auto it = entitiesStorage.indexToToken.find(i); it != entitiesStorage.indexToToken.end()) {
 			Packer::send<sl::net::StatusPacket>(it->second, localBuf);
 		}
 	}
+
 	localBuf.clear();
 	
 }

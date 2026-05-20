@@ -34,6 +34,7 @@ sf::Vector2f& sl::TransformComponent::getPosition()
 void sl::TransformComponent::serialize(std::vector<uint8_t>& out) const
 {
 	sl::net::write_uint32_t(out, TypeId);
+	sl::net::write_uint32_t(out, getDeserializeDataSize());
 	serializeVector2f(out, position);
 }
 
@@ -46,11 +47,11 @@ bool sl::TransformComponent::deserialize(const std::vector<uint8_t>& out, size_t
 
 uint32_t sl::TransformComponent::getSerializeDataSize() const
 {
-	return sizeof(sf::Vector2f) + sizeof(TypeId);
+	return sizeof(sf::Vector2f) + sizeof(TypeId) + sizeof(uint32_t);
 }
 
 uint32_t sl::TransformComponent::getDeserializeDataSize() const
 {
-	return getSerializeDataSize() - sizeof(TypeId);
+	return getSerializeDataSize() - sizeof(TypeId) - sizeof(uint32_t);
 }
 

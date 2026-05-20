@@ -26,7 +26,11 @@ void IncomingDataManager::assemblePacket()
 	while (buffer.size() >= WIRE_HEADER_SIZE) {
 		size_t offset = 0;
 
-		uint32_t headerSize = sl::net::read_uint32_t(buffer, offset);
+		sl::net::Header header;
+
+		header.read(buffer, offset);
+
+		uint32_t headerSize = header.getData().size;
 
 		if (headerSize == 0 || headerSize > MAX_PACKET_PAYLOAD) {
 			std::cerr << "Invalid packet size: " << headerSize << ", dropping client\n";
@@ -40,11 +44,6 @@ void IncomingDataManager::assemblePacket()
 		if (buffer.size() < totalPacketBytes) {
 			return;
 		}
-		sl::net::Header header;
-
-		offset = 0;
-
-		header.read(buffer, offset);
 
 		sl::net::PacketType ptype = static_cast<sl::net::PacketType>(header.getData().type);
 

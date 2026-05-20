@@ -37,18 +37,17 @@ void IncomingDataManager::assemblePacket() {
 	while (buffer.size() >= WIRE_HEADER_SIZE) {
 		size_t offset = 0;
 
-		uint32_t headerSize = sl::net::read_uint32_t(buffer, offset);
+		sl::net::Header header;
+
+		header.read(buffer, offset);
+
+		uint32_t headerSize = header.getData().size;
 
 		uint32_t totalPacketBytes = sizeof(uint32_t) + headerSize;
 
 		if (buffer.size() < totalPacketBytes) {
 			return;
 		}
-		sl::net::Header header;
-
-		offset = 0;
-
-		header.read(buffer, offset);
 
 		sl::net::PacketType ptype = static_cast<sl::net::PacketType>(header.getData().type);
 

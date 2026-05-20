@@ -43,6 +43,7 @@ sf::Vector2f sl::MovementComponent::move(float deltaTime, const sf::Vector2f& po
 void sl::MovementComponent::serialize(std::vector<uint8_t>& out) const
 {
 	sl::net::write_uint32_t(out, TypeId);
+	sl::net::write_uint32_t(out, getDeserializeDataSize());
 	sl::net::write_uint32_t(out, currentSpeed);
 }
 
@@ -55,12 +56,12 @@ bool sl::MovementComponent::deserialize(const std::vector<uint8_t>& out, size_t&
 
 uint32_t sl::MovementComponent::getSerializeDataSize() const
 {
-	return sizeof(float) + sizeof(TypeId);
+	return sizeof(float) + sizeof(TypeId) + sizeof(uint32_t);
 }
 
 uint32_t sl::MovementComponent::getDeserializeDataSize() const
 {
-	return getSerializeDataSize() - sizeof(TypeId);
+	return getSerializeDataSize() - sizeof(TypeId) - sizeof(uint32_t);
 }
 
 void sl::MovementComponent::addVelocity(const sf::Vector2f& velocity)
