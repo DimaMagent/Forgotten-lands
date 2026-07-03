@@ -1,0 +1,32 @@
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "debug-x64",
+      "displayName": "Debug x64",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/x64/Debug",
+      "toolchainFile": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "VCPKG_OVERLAY_TRIPLETS": "C:/vcpkg/custom-triplets",
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "TARGET_ARCH": "x64"
+      }
+    },
+    {
+      "name": "release-x64",
+      "displayName": "Release x64",
+      "generator": "Visual Studio 17 2022",
+      "architecture": "x64",
+      "binaryDir": "${sourceDir}/build/x64/release",
+      "toolchainFile": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "cacheVariables": {
+        "VCPKG_OVERLAY_TRIPLETS": "C:/vcpkg/custom-triplets",
+        "VCPKG_TARGET_TRIPLET": "x64-windows",
+        "TARGET_ARCH": "x64"
+      }
+
+    }
+  ]
+}

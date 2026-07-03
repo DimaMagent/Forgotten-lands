@@ -1,0 +1,16 @@
+{
+  "name": "forgotten-lands",
+
+  "dependencies": [
+    {
+      "name": "sfml",
+      "features": [ "audio", "graphics", "window" ]
+    },
+    "nlohmann-json",
+    "asio",
+    "libpqxx",
+    "spdlog",
+    "openssl"
+  ]
+
+}
