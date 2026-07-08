@@ -32,3 +32,18 @@ add_custom_command(TARGET FL_Client POST_BUILD
         $<TARGET_FILE_DIR:FL_Client>
     COMMAND_EXPAND_LISTS
 )
+
+add_custom_command(
+    TARGET FL_Client POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/FL_Client/resources"
+            "$<TARGET_FILE_DIR:FL_Client>"
+    COMMENT "Копирование ресурсов рядом с exe"
+)
+add_custom_command(
+    TARGET FL_Client POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/sharedData/resources"
+            "$<TARGET_FILE_DIR:FL_Client>"
+    COMMENT "Копирование общих ресурсов рядом с exe"
+)

@@ -1,5 +1,4 @@
 {
-  "overlay-triplets": [ "C:/vcpkg/custom-triplets" ],
   "default-registry": {
     "kind": "git",
     "baseline": "1ea949145db9db7c9b254062f94acdaeed947767",

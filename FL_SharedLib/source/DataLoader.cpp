@@ -10,7 +10,7 @@ DataLoader::~DataLoader() = default;
 json DataLoader::getData(const std::string& id)
 {
 	try {
-		std::ifstream file("resources/Characters.json");
+		std::ifstream file("entityManifests/Characters.json");
 		if (file.is_open()) {
 			nlohmann::json data;
 			file >> data;

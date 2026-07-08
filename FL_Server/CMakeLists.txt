@@ -32,3 +32,11 @@ add_custom_command(TARGET FL_Server POST_BUILD
         $<TARGET_FILE_DIR:FL_Server>
     COMMAND_EXPAND_LISTS
 )
+
+add_custom_command(
+    TARGET FL_Server POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            "${CMAKE_SOURCE_DIR}/sharedData/resources"
+            "$<TARGET_FILE_DIR:FL_Server>"
+    COMMENT "Копирование общих ресурсов рядом с exe"
+)
