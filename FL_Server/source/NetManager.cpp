@@ -11,6 +11,7 @@ NetManager::NetManager(asio::io_context& context, short port, DataProcessorManag
 	acceptor(context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)), dataProcessorManager(dtm),
 	outputDataManager(std::make_shared<OutputDataManager>(sessions))
 {
+	logger = spdlog::get("network");
 	cleaningTimer = std::make_unique<sl::TimerHandle<void>>(context,
 		asio::chrono::seconds(120),
 		asio::chrono::seconds(120),
@@ -25,11 +26,15 @@ void NetManager::doAccept() {
 	acceptor.async_accept(
 		[this](std::error_code ec, asio::ip::tcp::socket socket)
 		{
+
+			logger->info("Incoming connection from: {}", socket.remote_endpoint().address().to_string());
+
 			if (!ec) {
 				std::string ip = socket.remote_endpoint().address().to_string();
 
 				if (sessions.size() >= MAX_TOTAL_SESSIONS) {
-					std::cout << "Server full, rejecting: " << ip << "\n";
+
+					logger->warn("Server full, rejecting: {}", ip);
 					socket.close();
 					doAccept();
 					return;
@@ -38,7 +43,7 @@ void NetManager::doAccept() {
 				auto& [count, firstTime] = connectionAttempts[ip];
 				if (now - firstTime < std::chrono::seconds(60)) {
 					if (count >= MAX_CONNECTIONS_PER_IP) {
-						std::cout << "Rate limit exceeded for IP: " << ip << "\n";
+						logger->warn("Rate limit exceeded for IP: {} ", ip);
 						socket.close();
 						doAccept();
 						return;
@@ -52,7 +57,7 @@ void NetManager::doAccept() {
 
 				uint32_t sessionToken = generateToken();
 
-				std::cout << "Client " << sessionToken << " connected" << std::endl;
+				logger->info("Client {} connected", sessionToken);
 
 				std::shared_ptr<Session> sessionPtr = std::make_shared<Session>(std::move(socket), sslContext, sessionToken, dataProcessorManager);
 				sessionPtr->start();
@@ -61,7 +66,7 @@ void NetManager::doAccept() {
 				
 			}
 			else {
-				std::cout << ec.value() << "::" << ec.message() << std::endl;
+				logger->error("{} :: {}", ec.value(), ec.message());
 			}
 			doAccept();
 		});
@@ -74,6 +79,7 @@ void NetManager::cleaning() {
 	for (auto it = connectionAttempts.begin(); it != connectionAttempts.end(); ) {
 		if (now - it->second.second > std::chrono::seconds(300)) {
 			it = connectionAttempts.erase(it);
+			logger->info("Cleared connection attempts for IP: {}", it->first);
 		}
 		else {
 			++it;
@@ -100,8 +106,11 @@ uint32_t NetManager::generateToken() const
 }
 
 void NetManager::initSSL() {
+
 	if (!std::filesystem::exists("server.key") || !std::filesystem::exists("server.crt")) {
-		std::cout << "Generating TLS certificates..." << std::endl;
+
+		logger->info("Generating TLS certificates...");
+
 		int result = std::system(
 			"openssl req -x509 -newkey rsa:4096 "
 			"-keyout server.key -out server.crt "

@@ -3,6 +3,7 @@
 #include <asio/ssl.hpp>
 #include <vector>
 #include <memory>
+#include <spdlog/spdlog.h>
 #include "TimerHandle.hpp"
 
 class DataProcessorManager;
@@ -29,5 +30,10 @@ private:
 	std::unique_ptr<sl::EntityFactory> entityFactory;
 	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;
 
+	//loggers
+	std::shared_ptr<spdlog::logger> net_logger;
+
 	void onClientAccept(uint32_t token);
+	
+	void initLogging();
 };

@@ -13,4 +13,6 @@ public:
 	void writePacket(const sl::net::Packet& packetData, uint32_t token);
 private:
 	std::unordered_map<uint32_t, std::weak_ptr<Session>>& tokenToSessions;
+
+	std::shared_ptr<spdlog::logger> logger;
 };

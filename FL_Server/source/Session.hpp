@@ -33,6 +33,8 @@ private:
 	std::unique_ptr<IncomingDataManager> incomingManager;
 	asio::steady_timer handshakeTimer;
 
+	std::shared_ptr<spdlog::logger> logger;
+
 	void doHandshake();
 	void doRead();
 	void doWrite();

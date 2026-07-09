@@ -14,6 +14,9 @@
 #include "PlayerManager.hpp"
 #include "Packer.hpp"
 #include "AuthPacket.hpp"
+#include <spdlog/async.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/rotating_file_sink.h> 
 
 
 Server::Server(short port) : serverContext(std::make_unique<asio::io_context>()),
@@ -23,11 +26,15 @@ Server::Server(short port) : serverContext(std::make_unique<asio::io_context>())
 	netManager(std::make_unique<NetManager>(*serverContext, port, *dataProcessorManager)),
 	entityFactory(std::make_unique<sl::EntityFactory>())
 {
+	initLogging();
 	entityFactory->initialize();
 	netManager->OnAccept.addFunction([this](uint32_t token) {onClientAccept(token); });
 }
 
-Server::~Server() = default;
+Server::~Server() {
+	spdlog::info("Сервер останавливается...");
+	spdlog::shutdown();
+}
 
 void Server::start() {
 	netManager->doAccept();
@@ -59,4 +66,26 @@ void Server::onClientAccept(uint32_t token)
 	uint32_t entityGlobalId = playerEntity->getId();
 	world->addPlayerEntity(std::move(playerEntity), token);
 	Packer::send<sl::net::AuthPacket>(token, entityGlobalId);
+}
+
+void Server::initLogging()
+{
+	spdlog::init_thread_pool(8192, 1);
+
+	auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+	auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+		"logs/server.log", 1024 * 1024 * 10, 5);
+
+	console_sink->set_level(spdlog::level::warn);
+	file_sink->set_level(spdlog::level::trace);
+	std::vector<spdlog::sink_ptr> sinks{ console_sink, file_sink };
+
+	net_logger = std::make_shared<spdlog::async_logger>(
+		"network", sinks.begin(), sinks.end(),
+		spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+
+	spdlog::register_logger(net_logger);
+
+	spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%n] %v");
+	spdlog::flush_every(std::chrono::seconds(3));
 }

@@ -7,6 +7,7 @@
 OutputDataManager::OutputDataManager(std::unordered_map<uint32_t, std::weak_ptr<Session>>& sessions) :
 	tokenToSessions(sessions)
 {
+	logger = spdlog::get("network");
 }
 
 void OutputDataManager::writePacket(const sl::net::Packet& packetData, uint32_t token)
@@ -18,14 +19,14 @@ void OutputDataManager::writePacket(const sl::net::Packet& packetData, uint32_t 
 				session->writeOnOutgoingData(outBuffer);
 			}
 			else {
-				std::cerr << "Failed to write packet data: session expired\n";
+				logger->warn("Failed to write packet data: session expired for token {}", token);
 			}
 		}
 		else {
-			std::cerr << "Failed to write packet data: wrong token\n";
+			logger->warn("Failed to write packet data: no session found for token {}", token);
 		}
 	}
 	else {
-		std::cerr << "Failed to write packet data.\n";
+		logger->warn("Failed to write packet data: serialization failed for token {}", token);
 	}
 }

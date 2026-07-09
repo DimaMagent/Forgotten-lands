@@ -16,6 +16,7 @@ namespace {
 IncomingDataManager::IncomingDataManager(std::weak_ptr<sl::net::DataQueue> incQueue, DataProcessorManager& dpm, uint32_t token) :
 	incomingQueue(incQueue), dataProcessorManager(dpm), token(token)
 {
+	logger = spdlog::get("network");
 	if (auto iq = incQueue.lock()) {
 		iq->onDataPushed.addFunction([this]() { onDataPushed(); });
 	}
@@ -33,7 +34,7 @@ void IncomingDataManager::assemblePacket()
 		uint32_t headerSize = header.getData().size;
 
 		if (headerSize == 0 || headerSize > MAX_PACKET_PAYLOAD) {
-			std::cerr << "Invalid packet size: " << headerSize << ", dropping client\n";
+			logger->warn("Invalid packet size: {}, dropping client {}", headerSize, token);
 			buffer.clear();
 			OnWrongData.broadcast();
 			return;
@@ -61,7 +62,7 @@ void IncomingDataManager::onDataPushed()
 		std::vector<uint8_t> chunk;
 		while (queue->tryPop(chunk)) {
 			if (buffer.size() + chunk.size() > MAX_BUFFER_SIZE) {
-				std::cerr << "Buffer overflow from client, dropping connection\n";
+				logger->warn("Buffer overflow from client {}, dropping connection", token);
 				buffer.clear();
 				OnWrongData.broadcast();
 				return;
@@ -71,6 +72,6 @@ void IncomingDataManager::onDataPushed()
 		}
 	}
 	else {
-		std::cerr << "Failed to process incoming data: DataQueue is no longer available." << "\n";
+		logger->error("Failed to process incoming data: DataQueue is no longer available for client {}", token);
 	}
 }

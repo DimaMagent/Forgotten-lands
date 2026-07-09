@@ -17,6 +17,8 @@ private:
 	std::weak_ptr<sl::net::DataQueue> incomingQueue;
 	DataProcessorManager& dataProcessorManager;
 
+	std::shared_ptr<spdlog::logger> logger;
+
 	std::vector<uint8_t> buffer;
 	uint32_t token;
 
