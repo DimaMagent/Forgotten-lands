@@ -78,8 +78,9 @@ void NetManager::cleaning() {
 
 	for (auto it = connectionAttempts.begin(); it != connectionAttempts.end(); ) {
 		if (now - it->second.second > std::chrono::seconds(300)) {
+			std::string ip = it->first;
 			it = connectionAttempts.erase(it);
-			logger->info("Cleared connection attempts for IP: {}", it->first);
+			logger->info("Cleared connection attempts for IP: {}", ip);
 		}
 		else {
 			++it;

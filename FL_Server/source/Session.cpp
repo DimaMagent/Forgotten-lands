@@ -46,6 +46,7 @@ void Session::doHandshake()
 	handshakeTimer.async_wait([this, self](std::error_code ec) {
 		if (!ec) {
 			logger->warn("Handshake timeout for session: {}. Closing connection", token);
+			
 			sessionSocket.lowest_layer().close();
 		}
 	});

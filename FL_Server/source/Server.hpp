@@ -22,6 +22,9 @@ public:
 	~Server();
 	void start();
 private:
+	//loggers
+	std::shared_ptr<spdlog::logger> net_logger;
+
 	std::unique_ptr<asio::io_context> serverContext;
 	std::unique_ptr<World> world;
 	std::unique_ptr<PlayerManager> playerManager;
@@ -30,8 +33,7 @@ private:
 	std::unique_ptr<sl::EntityFactory> entityFactory;
 	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;
 
-	//loggers
-	std::shared_ptr<spdlog::logger> net_logger;
+
 
 	void onClientAccept(uint32_t token);
 	

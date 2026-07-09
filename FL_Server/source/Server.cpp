@@ -19,14 +19,17 @@
 #include <spdlog/sinks/rotating_file_sink.h> 
 
 
-Server::Server(short port) : serverContext(std::make_unique<asio::io_context>()),
-	world(std::make_unique<World>()),
-	playerManager(std::make_unique<PlayerManager>(*world)),
-	dataProcessorManager(std::make_unique<DataProcessorManager>(*playerManager)),
-	netManager(std::make_unique<NetManager>(*serverContext, port, *dataProcessorManager)),
-	entityFactory(std::make_unique<sl::EntityFactory>())
+Server::Server(short port)
 {
 	initLogging();
+
+	serverContext = std::make_unique<asio::io_context>();
+	world = std::make_unique<World>();
+	playerManager = std::make_unique<PlayerManager>(*world);
+	dataProcessorManager = std::make_unique<DataProcessorManager>(*playerManager);
+	netManager = std::make_unique<NetManager>(*serverContext, port, *dataProcessorManager);
+	entityFactory = std::make_unique<sl::EntityFactory>();
+
 	entityFactory->initialize();
 	netManager->OnAccept.addFunction([this](uint32_t token) {onClientAccept(token); });
 }
@@ -76,8 +79,8 @@ void Server::initLogging()
 	auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
 		"logs/server.log", 1024 * 1024 * 10, 5);
 
-	console_sink->set_level(spdlog::level::warn);
-	file_sink->set_level(spdlog::level::trace);
+	//console_sink->set_level(spdlog::level::warn);
+	//file_sink->set_level(spdlog::level::trace);
 	std::vector<spdlog::sink_ptr> sinks{ console_sink, file_sink };
 
 	net_logger = std::make_shared<spdlog::async_logger>(
