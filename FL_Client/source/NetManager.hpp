@@ -28,6 +28,9 @@ class NetManager {
 		asio::ssl::context sslContext;
 		asio::ip::tcp::socket socket;
 		asio::ip::tcp::endpoint endpoint;
+
+		std::shared_ptr<spdlog::logger> logger;
+
 		std::weak_ptr<ClientSession> session;
 		std::shared_ptr<OutputDataManager> outputManager;
 		DataProcessorManager& dataProcessorManager;

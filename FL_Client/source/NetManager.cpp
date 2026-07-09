@@ -9,12 +9,14 @@ NetManager::NetManager(asio::io_context& context, DataProcessorManager& dataProc
 	dataProcessorManager(dataProcessorManager),
 	socket(context), endpoint(asio::ip::make_address(serverAddress), serverPort)
 {
+	logger = spdlog::get("network");
+
 	try {
 		sslContext.load_verify_file("server.crt");
 		sslContext.set_verify_mode(asio::ssl::verify_peer);
 	}
 	catch (std::exception& e) {
-		std::cerr << e.what() << std::endl;
+		logger->error("Error loading SSL certificate: {}", e.what());
 	}
 }
 
@@ -22,14 +24,14 @@ NetManager::~NetManager() = default;
 
 void NetManager::doConnect()
 {
-	std::cout << "client started connecting address: " << serverAddress << ":" << serverPort << std::endl;
+	logger->info("client started connecting address: {}:{}", serverAddress, serverPort);
 
 	socket.async_connect(endpoint, [this](std::error_code ec) {
 		if (ec) {
-			std::cout << ec.value() << "::" << ec.message() << std::endl;
+			logger->error("Error connecting to server: {}: {}", ec.value(), ec.message());
 			return;
 		}
-		std::cout << "Connect to server" << std::endl;
+		logger->info("Connected to server: {}:{}", serverAddress, serverPort);
 		std::shared_ptr<ClientSession> sessionPtr = std::make_shared<ClientSession>(std::move(socket), sslContext, dataProcessorManager);
 		session = sessionPtr;
 		sessionPtr->start();

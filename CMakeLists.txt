@@ -6,3 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_subdirectory(FL_SharedLib)
 add_subdirectory(FL_Client)
 add_subdirectory(FL_Server)
+
+if(MSVC)
+    target_compile_options(FL_Client PRIVATE /utf-8)
+    target_compile_options(FL_Server PRIVATE /utf-8)
+endif()

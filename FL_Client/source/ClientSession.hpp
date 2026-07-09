@@ -22,9 +22,11 @@ public:
 
 	void writeOnOutgoingData(std::vector<uint8_t>& data);
 	void start();
-	std::weak_ptr<sl::net::DataQueue> getIncomingQueue() { return incomingQueue; }
-	std::weak_ptr<sl::net::DataQueue> getOutgoingQueue() { return outgoingQueue; }
+	std::weak_ptr<sl::net::DataQueue> getIncomingQueue() const { return incomingQueue; }
+	std::weak_ptr<sl::net::DataQueue> getOutgoingQueue() const { return outgoingQueue; }
 private:
+	std::shared_ptr<spdlog::logger> logger;
+
 	ssl_socket sessionSocket;
 	asio::strand<asio::ip::tcp::socket::executor_type> sessionStrand;
 	std::shared_ptr<sl::net::DataQueue> incomingQueue;

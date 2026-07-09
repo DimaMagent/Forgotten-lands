@@ -14,6 +14,7 @@ namespace {
 IncomingDataManager::IncomingDataManager(std::weak_ptr<sl::net::DataQueue> incQueue, DataProcessorManager& dpm):
 	incomingQueue(incQueue), dataProcessorManager(dpm)
 {
+	logger = spdlog::get("network");
 	if (auto iq = incQueue.lock()) {
 		iq->onDataPushed.addFunction([this]() { onDataPushed(); });
 	}
@@ -29,7 +30,7 @@ void IncomingDataManager::onDataPushed()
 		}
 	}
 	else {
-		std::cerr << "Failed to process incoming data: DataQueue is no longer available." << "\n";
+		logger->error("Failed to process incoming data: DataQueue is no longer available.");
 	}
 }
 

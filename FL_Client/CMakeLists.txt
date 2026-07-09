@@ -2,6 +2,7 @@
 find_package(SFML COMPONENTS Graphics Window Audio System REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(asio CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS "source/*.cpp")
 file(GLOB_RECURSE HEADERS CONFIGURE_DEPENDS "source/*.hpp")
@@ -24,6 +25,7 @@ target_link_libraries(FL_Client PRIVATE
     asio::asio
     OpenSSL::SSL
     OpenSSL::Crypto
+    spdlog::spdlog
 )
 
 add_custom_command(TARGET FL_Client POST_BUILD
@@ -38,12 +40,10 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_SOURCE_DIR}/FL_Client/resources"
             "$<TARGET_FILE_DIR:FL_Client>"
-    COMMENT "Копирование ресурсов рядом с exe"
 )
 add_custom_command(
     TARGET FL_Client POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_SOURCE_DIR}/sharedData/resources"
             "$<TARGET_FILE_DIR:FL_Client>"
-    COMMENT "Копирование общих ресурсов рядом с exe"
 )

@@ -15,6 +15,7 @@ ClientSession::ClientSession(asio::ip::tcp::socket socket, asio::ssl::context& s
 ClientSession::~ClientSession() = default;
 
 void ClientSession::start() {
+	logger = spdlog::get("network");
 	doHandshake();
 }
 
@@ -31,10 +32,10 @@ void ClientSession::doHandshake() {
 		asio::ssl::stream_base::client,
 		asio::bind_executor(sessionStrand, [this, self](std::error_code ec) {
 			if (ec) {
-				std::cout << "Handshake error: " << ec.message() << std::endl;
+				logger->error("Handshake error: {}: {}", ec.value(), ec.message());
 				return;
 			}
-			std::cout << "TLS handshake OK" << std::endl;
+			logger->info("TLS handshake OK");
 			OnAcceptSucceeded.broadcast();
 			doRead();
 			}));
@@ -50,7 +51,7 @@ void ClientSession::doWrite()
 
 	asio::async_write(sessionSocket, asio::buffer(*localBuffer, localBuffer->size()), asio::bind_executor(sessionStrand, [this, self, localBuffer](std::error_code ec, size_t len) {
 		if (ec) {
-			std::cout << ec.value() << "::" << ec.message() << std::endl;
+			logger->error("Write error: {}: {}", ec.value(), ec.message());
 			return;
 		}
 		//std::cout << "Write, sizeof: " << sizeof(*localBuffer) << "\n";
@@ -62,7 +63,7 @@ void ClientSession::doRead() {
 	std::shared_ptr <std::vector<uint8_t>> localBuffer = std::make_shared<std::vector<uint8_t>>(8192u);
 	sessionSocket.async_read_some(asio::buffer(*localBuffer, localBuffer->size()), asio::bind_executor(sessionStrand, [this, self, localBuffer](std::error_code ec, size_t len) {
 		if (ec) {
-			std::cout << ec.value() << "::" << ec.message() << std::endl;
+			logger->error("Read error: {}: {}", ec.value(), ec.message());
 			return;
 		}
 		//std::cout << "read " << len << "\n";

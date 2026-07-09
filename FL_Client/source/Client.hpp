@@ -18,7 +18,7 @@ class ClientEntityFactory;
 class DataProcessorManager;
 class StateManager;
 
-//TODO: необходимо зан€тьс€ структуризацией классов клиента и их зависимоcт€ми
+//TODO: It is necessary to structure the client's classes and their dependencies.
 
 class Client {
 public:
@@ -26,8 +26,11 @@ public:
 	~Client();
 	void start();
 private:
+	//loggers
+	std::shared_ptr<spdlog::logger> net_logger;
+
 	std::unique_ptr<asio::io_context> clientContext;
-	// ¬озможно, стоит переместить фабрику в LocalWorld
+	// It might be worth moving the factory to LocalWorld
 	std::shared_ptr<ClientEntityFactory> entityFactory;
 	std::unique_ptr<LocalWorld> world;
 	std::unique_ptr<DataProcessorManager> dataProcessorManager;
@@ -39,4 +42,6 @@ private:
 	bool isRunningFlag = false;
 
 	void whenClientAccepted();
+
+	void initLogging();
 };

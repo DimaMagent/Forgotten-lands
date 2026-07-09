@@ -7,6 +7,7 @@
 OutputDataManager::OutputDataManager(std::weak_ptr<ClientSession> session):
 	session(session)
 {
+	logger = spdlog::get("network");
 }
 
 void OutputDataManager::writePacket(const sl::net::Packet& packetData)
@@ -16,10 +17,10 @@ void OutputDataManager::writePacket(const sl::net::Packet& packetData)
 		if (auto sessionPtr = session.lock()) {
 			sessionPtr->writeOnOutgoingData(outBuffer);
 		} else {
-			std::cerr << "Failed to write packet data: session is no longer available." << "\n";
+			logger->error("Failed to write packet data: session is no longer available.");
 		}
 	}
 	else {
-		std::cerr << "Failed to write packet data." << "\n";
+		logger->warn("Failed to write packet data.");
 	}
 }

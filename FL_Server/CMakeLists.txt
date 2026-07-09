@@ -38,5 +38,4 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND} -E copy_directory
             "${CMAKE_SOURCE_DIR}/sharedData/resources"
             "$<TARGET_FILE_DIR:FL_Server>"
-    COMMENT "Копирование общих ресурсов рядом с exe"
 )

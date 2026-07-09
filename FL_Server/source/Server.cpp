@@ -35,7 +35,7 @@ Server::Server(short port)
 }
 
 Server::~Server() {
-	spdlog::info("Сервер останавливается...");
+	spdlog::info("Server stopping...");
 	spdlog::shutdown();
 }
 
@@ -77,10 +77,10 @@ void Server::initLogging()
 
 	auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 	auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-		"logs/server.log", 1024 * 1024 * 10, 5);
+		"logs/server/server.log", 1024 * 1024 * 10, 5);
 
-	//console_sink->set_level(spdlog::level::warn);
-	//file_sink->set_level(spdlog::level::trace);
+	console_sink->set_level(spdlog::level::warn);
+	file_sink->set_level(spdlog::level::trace);
 	std::vector<spdlog::sink_ptr> sinks{ console_sink, file_sink };
 
 	net_logger = std::make_shared<spdlog::async_logger>(

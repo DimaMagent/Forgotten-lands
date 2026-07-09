@@ -11,6 +11,8 @@ class IncomingDataManager {
 public:
 	IncomingDataManager(std::weak_ptr<sl::net::DataQueue> incQueue, DataProcessorManager& dpm);
 private:
+	std::shared_ptr<spdlog::logger> logger;
+
 	std::weak_ptr<sl::net::DataQueue> incomingQueue;
 	std::vector<uint8_t> buffer;
 	DataProcessorManager& dataProcessorManager;

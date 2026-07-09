@@ -10,5 +10,7 @@ public:
 	OutputDataManager(std::weak_ptr<ClientSession> session);
 	void writePacket(const sl::net::Packet& packetData);
 private:
+	std::shared_ptr<spdlog::logger> logger;
+
 	std::weak_ptr<ClientSession> session;
 };

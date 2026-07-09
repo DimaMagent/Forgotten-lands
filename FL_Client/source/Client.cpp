@@ -8,26 +8,34 @@
 #include "Controller.hpp"
 #include "DataProcessorManager.hpp"
 #include "StateManager.hpp"
+#include <spdlog/async.h>
+#include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/sinks/rotating_file_sink.h> 
 
-Client::Client() :
-	clientContext(std::make_unique<asio::io_context>()),
-	entityFactory(std::make_shared<ClientEntityFactory>()),
-	world(std::make_unique<LocalWorld>(entityFactory)),
-	dataProcessorManager(std::make_unique<DataProcessorManager>(world->getStateManager())),
-	netManager(std::make_unique<NetManager>(*clientContext, *dataProcessorManager)),
-	inputManager(std::make_unique<InputManager>(isRunningFlag)), 
-	controller(std::make_unique<Controller>(*inputManager, *world))
+Client::Client() 
 {
+	initLogging();
+
+	clientContext = std::make_unique<asio::io_context>();
+	entityFactory = std::make_shared<ClientEntityFactory>();
+	world = std::make_unique<LocalWorld>(entityFactory);
+	dataProcessorManager = std::make_unique<DataProcessorManager>(world->getStateManager());
+	netManager = std::make_unique<NetManager>(*clientContext, *dataProcessorManager);
+	inputManager = std::make_unique<InputManager>(isRunningFlag);
+	controller = std::make_unique<Controller>(*inputManager, *world);
+
 	netManager->OnAccept.addFunction([this]() {this->whenClientAccepted(); });
 	entityFactory->initialize();
 }
 
-Client::~Client() = default;
+Client::~Client() {
+	spdlog::info("Client shutdown...");
+	spdlog::shutdown();
+}
 
 void Client::start()
 {
 	try {
-		setlocale(LC_ALL, "Russian");
 		isRunningFlag = true;
 		netManager->doConnect();
 		std::thread ClientThread([this]() {clientContext->run(); });
@@ -54,7 +62,6 @@ void Client::start()
 		isRunningFlag = false;
 		clientContext->stop();
 		ClientThread.join();
-		std::cout << "Client stopped" << std::endl;
 		return;
 	}
 	catch (std::exception& e) {
@@ -66,4 +73,24 @@ void Client::start()
 void Client::whenClientAccepted()
 {
 	world->setPlayerEntity(entityFactory->createEntity(sl::EntityType::Player));
+}
+void Client::initLogging() {
+	spdlog::init_thread_pool(8192, 1);
+
+	auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+	auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+		"logs/client/client.log", 1024 * 1024 * 10, 5);
+
+	console_sink->set_level(spdlog::level::warn);
+	file_sink->set_level(spdlog::level::trace);
+	std::vector<spdlog::sink_ptr> sinks{ console_sink, file_sink };
+
+	net_logger = std::make_shared<spdlog::async_logger>(
+		"network", sinks.begin(), sinks.end(),
+		spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+
+	spdlog::register_logger(net_logger);
+
+	spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%n] %v");
+	spdlog::flush_every(std::chrono::seconds(3));
 }
