@@ -24,8 +24,10 @@ Session::Session(asio::ip::tcp::socket socket, asio::ssl::context& sslContext, u
 Session::~Session() = default;
 
 void Session::close() {
+	logger->info("Session {} closed", token);
 	std::error_code ec;
 	sessionSocket.lowest_layer().close(ec);
+	OnClientDisconnected.broadcast(token);
 }
 
 void Session::writeOnOutgoingData(std::vector<uint8_t>& data)
@@ -71,7 +73,13 @@ void Session::doRead()
 	std::shared_ptr<std::vector<uint8_t>> localBuffer = std::make_shared<std::vector<uint8_t>>(8192u);
 	sessionSocket.async_read_some(asio::buffer(*localBuffer), asio::bind_executor(sessionStrand, [this, self, localBuffer](std::error_code ec, size_t len) {
 		if (ec) {
-			logger->error("Session {} read error {}: {}", token, ec.value(), ec.message());
+			if (ec == asio::error::eof || ec == asio::ssl::error::stream_truncated) {
+				logger->info("Session {} closed by peer", token);
+			}
+			else {
+				logger->error("Session {} read error {}: {}", token, ec.value(), ec.message());
+			}
+			close();
 			return;
 		}
 		if (len > MAX_PACKET_SIZE) {
@@ -96,6 +104,7 @@ void Session::doWrite()
 	asio::async_write(sessionSocket, asio::buffer(*localBuffer), asio::bind_executor(sessionStrand, [this, self, localBuffer](std::error_code ec, size_t len) {
 		if (ec) {
 			logger->error("Session {} write error {}: {}", token, ec.value(), ec.message());
+			close();
 			return;
 		}
 		doWrite();

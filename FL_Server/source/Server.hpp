@@ -9,6 +9,7 @@ class DataProcessorManager;
 class NetManager;
 class World;
 class PlayerManager;
+class ConnectionEvents;
 namespace asio {
 	class io_context;
 }
@@ -25,6 +26,8 @@ private:
 	std::shared_ptr<spdlog::logger> net_logger;
 
 	std::unique_ptr<asio::io_context> serverContext;
+
+	std::unique_ptr<ConnectionEvents> connectionEvents;
 	std::unique_ptr<World> world;
 	std::unique_ptr<PlayerManager> playerManager;
 	std::unique_ptr<DataProcessorManager> dataProcessorManager;

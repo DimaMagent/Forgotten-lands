@@ -6,13 +6,13 @@
 #include <cstdint>
 
 class Serializer;
-
+class ConnectionEvents;
 
 
 class World : public sl::WorldBase {
 public:
 	sl::LockFreeDelegate<float> OnUpdate;
-	World();
+	World(ConnectionEvents& connectionEvents);
 	virtual ~World();
 	void addPlayerEntity(std::unique_ptr<sl::Entity>&& entity, const uint32_t& sessionToken);
 	bool removePlayerEntityUsingToken(const uint32_t& sessionToken);

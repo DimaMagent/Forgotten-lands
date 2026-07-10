@@ -10,6 +10,7 @@
 class Session;
 class OutputDataManager;
 class DataProcessorManager;
+class ConnectionEvents;
 namespace sl {
 	class NetData;
 }
@@ -20,7 +21,7 @@ class NetManager {
 public:
 	sl::LockFreeDelegate<const uint32_t> OnAccept;
 
-	NetManager(asio::io_context& context, short port, DataProcessorManager& dtm);
+	NetManager(asio::io_context& context, short port, DataProcessorManager& dtm, ConnectionEvents& connectionEvents);
 	~NetManager();
 
 	void doAccept();
@@ -33,6 +34,7 @@ private:
 	std::shared_ptr<OutputDataManager> outputDataManager;
 	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;
 	DataProcessorManager& dataProcessorManager;
+	ConnectionEvents& connectionEvents;
 
 	std::unordered_map<std::string, std::pair<int, std::chrono::steady_clock::time_point>> connectionAttempts;
 	static constexpr int MAX_CONNECTIONS_PER_IP = 5;

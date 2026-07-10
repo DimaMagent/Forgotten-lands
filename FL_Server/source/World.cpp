@@ -4,8 +4,15 @@
 #include "MovementComponent.hpp"
 #include "TransformComponent.hpp"
 #include "Serializer.hpp"
+#include "ConnectionEvents.hpp"
 
-World::World() : WorldBase(), serializer(std::make_unique<Serializer>(OnUpdate, playerEntityStorage)){}
+World::World(ConnectionEvents& connectionEvents) : WorldBase(),
+serializer(std::make_unique<Serializer>(OnUpdate, playerEntityStorage))
+{
+	connectionEvents.OnClientDisconnected.addFunction([this](uint32_t token) {
+		removePlayerEntityUsingToken(token);
+		});
+}
 
 World::~World() = default;
 

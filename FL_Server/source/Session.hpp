@@ -5,6 +5,7 @@
 #include <vector>
 #include <cstdint>
 #include "Delegate.hpp"
+#include "LockFreeDelegate.hpp"
 
 namespace sl::net {
 	class DataQueue;
@@ -18,6 +19,7 @@ using ssl_socket = asio::ssl::stream<asio::ip::tcp::socket>;
 class Session: public std::enable_shared_from_this<Session> {
 public:
 	sl::Delegate<> OnAcceptSucceeded;
+	sl::LockFreeDelegate<uint32_t> OnClientDisconnected;
 	Session(asio::ip::tcp::socket socket, asio::ssl::context& sslContext, uint32_t token, DataProcessorManager& dpm);
 	~Session();
 	void start() { doHandshake(); }

@@ -20,6 +20,7 @@ void OutputDataManager::writePacket(const sl::net::Packet& packetData, uint32_t 
 			}
 			else {
 				logger->warn("Failed to write packet data: session expired for token {}", token);
+				tokenToSessions.erase(it);
 			}
 		}
 		else {

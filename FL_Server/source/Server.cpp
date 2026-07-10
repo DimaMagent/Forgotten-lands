@@ -17,6 +17,7 @@
 #include <spdlog/async.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h> 
+#include "connectionEvents.hpp"
 
 
 Server::Server(short port)
@@ -24,10 +25,11 @@ Server::Server(short port)
 	initLogging();
 
 	serverContext = std::make_unique<asio::io_context>();
-	world = std::make_unique<World>();
+	connectionEvents = std::make_unique<ConnectionEvents>();
+	world = std::make_unique<World>(*connectionEvents);
 	playerManager = std::make_unique<PlayerManager>(*world);
 	dataProcessorManager = std::make_unique<DataProcessorManager>(*playerManager);
-	netManager = std::make_unique<NetManager>(*serverContext, port, *dataProcessorManager);
+	netManager = std::make_unique<NetManager>(*serverContext, port, *dataProcessorManager, *connectionEvents);
 	entityFactory = std::make_unique<sl::EntityFactory>();
 
 	entityFactory->initialize();

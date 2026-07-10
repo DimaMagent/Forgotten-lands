@@ -6,10 +6,12 @@
 #include <filesystem>
 #include <random>
 #include "Packer.hpp"
+#include "ConnectionEvents.hpp"
 
-NetManager::NetManager(asio::io_context& context, short port, DataProcessorManager& dtm) : sslContext(asio::ssl::context::tls_server),
+NetManager::NetManager(asio::io_context& context, short port, DataProcessorManager& dtm, ConnectionEvents& connectionEvents) : sslContext(asio::ssl::context::tls_server),
 	acceptor(context, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port)), dataProcessorManager(dtm),
-	outputDataManager(std::make_shared<OutputDataManager>(sessions))
+	outputDataManager(std::make_shared<OutputDataManager>(sessions)),
+	connectionEvents(connectionEvents)
 {
 	logger = spdlog::get("network");
 	cleaningTimer = std::make_unique<sl::TimerHandle<void>>(context,
@@ -61,6 +63,7 @@ void NetManager::doAccept() {
 
 				std::shared_ptr<Session> sessionPtr = std::make_shared<Session>(std::move(socket), sslContext, sessionToken, dataProcessorManager);
 				sessionPtr->start();
+				sessionPtr->OnClientDisconnected.addFunction([this](uint32_t token) {connectionEvents.OnClientDisconnected.broadcast(token); });
 				sessionPtr->OnAcceptSucceeded.addFunction([this, sessionToken]() { OnAccept.broadcast(sessionToken); });
 				sessions.try_emplace(sessionToken, sessionPtr);
 				
