@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "NetUtils.hpp"
+#include <bit>
 
 uint32_t sl::net::write_uint8_t(std::vector<uint8_t>& out, uint8_t value) {
 	 out.push_back(value);
@@ -48,4 +49,14 @@ uint32_t sl::net::read_uint32_t(const std::vector<uint8_t>& in, size_t& offset)
 		return value;
 	}
 	return 0;
+}
+
+uint32_t sl::net::write_float(std::vector<uint8_t>& out, float value)
+{
+	return sl::net::write_uint32_t(out, std::bit_cast<uint32_t>(value));
+}
+
+float sl::net::read_float(const std::vector<uint8_t>& in, size_t& offset)
+{
+	return std::bit_cast<float>(sl::net::read_uint32_t(in, offset));
 }

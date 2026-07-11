@@ -24,5 +24,6 @@ namespace sl {
 		COMPONENT_TYPE(TransformComponent);
 	private:
 		sf::Vector2f position;
+		sf::Vector2i rotation;
 	};
 }

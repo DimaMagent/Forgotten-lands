@@ -73,7 +73,8 @@ void Session::doRead()
 	std::shared_ptr<std::vector<uint8_t>> localBuffer = std::make_shared<std::vector<uint8_t>>(8192u);
 	sessionSocket.async_read_some(asio::buffer(*localBuffer), asio::bind_executor(sessionStrand, [this, self, localBuffer](std::error_code ec, size_t len) {
 		if (ec) {
-			if (ec == asio::error::eof || ec == asio::ssl::error::stream_truncated) {
+			if (ec == asio::error::eof || ec == asio::ssl::error::stream_truncated ||
+				ec == asio::error::connection_reset) {
 				logger->info("Session {} closed by peer", token);
 			}
 			else {
