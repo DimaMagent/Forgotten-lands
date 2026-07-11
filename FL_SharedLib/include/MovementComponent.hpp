@@ -24,9 +24,10 @@ namespace sl {
 
 		sf::Vector2f move(float deltaTime, const sf::Vector2f& position);
 		sf::Vector2f getVelocity() const { return velocityVector; }
+		sf::Vector2i getVelocityDirection() const { return velocityDirectionVector; }
 		void resetVelocity() { velocityVector = sf::Vector2f(0.f, 0.f); }
 
-		bool isMoving() const { return directionVector != sf::Vector2i(0, 0); }
+		bool isMoving() const { return velocityDirectionVector != sf::Vector2i(0, 0); }
 
 		virtual void serialize(std::vector<uint8_t>& out) const override;
 		virtual bool deserialize(const std::vector<uint8_t>& out, size_t& offset) override;
@@ -36,7 +37,7 @@ namespace sl {
 		COMPONENT_TYPE(MovementComponent);
 	private:
 		sf::Vector2f velocityVector;
-		sf::Vector2i directionVector;
+		sf::Vector2i velocityDirectionVector;
 		float maxSpeed;
 		float currentSpeed = 0.f;
 		sf::Time maxAccelerationTime;

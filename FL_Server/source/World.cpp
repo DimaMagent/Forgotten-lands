@@ -28,6 +28,7 @@ void World::onUpdate(float updateTime)
 		if (!trComp) { continue; }
 
 		trComp->setPosition(movComp->move(updateTime, trComp->getPosition()));
+		trComp->setRotation(movComp->getVelocityDirection());
 	}
 	OnUpdate.broadcast(updateTime);
 }

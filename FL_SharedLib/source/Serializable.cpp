@@ -8,10 +8,19 @@ namespace sl {
 		net::write_float(out, vec.x);
 		net::write_float(out, vec.y);
 	}
+	void Serializable::serializeVector2i(std::vector<uint8_t>& out, const sf::Vector2i& vec) const{
+		net::write_uint32_t(out, vec.x);
+		net::write_uint32_t(out, vec.y);
+	}
 
 	sf::Vector2f Serializable::deserializeVector2f(const std::vector<uint8_t>& out, size_t& offset) const {
 		float x = net::read_float(out, offset);
 		float y = net::read_float(out, offset);
 		return sf::Vector2f(x, y);
+	}
+	sf::Vector2i Serializable::deserializeVector2i(const std::vector<uint8_t>& out, size_t& offset) const {
+		float x = net::read_uint32_t(out, offset);
+		float y = net::read_uint32_t(out, offset);
+		return sf::Vector2i(x, y);
 	}
 }

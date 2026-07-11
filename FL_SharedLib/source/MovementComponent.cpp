@@ -13,12 +13,12 @@ void sl::MovementComponent::addVelocityVector(sf::Vector2i direction, float spee
 
 void sl::MovementComponent::addDirection(sf::Vector2i direction)
 {
-	directionVector = inBounds(asNormalized(direction) + directionVector, sf::Vector2i(-1, -1), sf::Vector2i(1, 1));
+	velocityDirectionVector = inBounds(asNormalized(direction) + velocityDirectionVector, sf::Vector2i(-1, -1), sf::Vector2i(1, 1));
 }
 
 sf::Vector2f sl::MovementComponent::move(float deltaTime, const sf::Vector2f& position)
 {
-	if (directionVector != sf::Vector2i(0, 0)) {
+	if (velocityDirectionVector != sf::Vector2i(0, 0)) {
 		currentAccelerationTime > maxAccelerationTime ? currentAccelerationTime = maxAccelerationTime :
 			currentAccelerationTime += std::min(sf::seconds(deltaTime), maxAccelerationTime);
 		float t = currentAccelerationTime.asSeconds() / maxAccelerationTime.asSeconds();
@@ -30,10 +30,10 @@ sf::Vector2f sl::MovementComponent::move(float deltaTime, const sf::Vector2f& po
 		currentSpeed = maxSpeed * (3 * t * t - 2 * t * t * t);
 	}
 	if (currentSpeed > 0.f) {
-		if (directionVector == sf::Vector2i(1, 1) || directionVector == sf::Vector2i(-1, 1) || directionVector == sf::Vector2i(1, -1) || directionVector == sf::Vector2i(-1, -1)) {
-			currentSpeed /= std::sqrt(directionVector.x * directionVector.x + directionVector.y * directionVector.y);
+		if (velocityDirectionVector == sf::Vector2i(1, 1) || velocityDirectionVector == sf::Vector2i(-1, 1) || velocityDirectionVector == sf::Vector2i(1, -1) || velocityDirectionVector == sf::Vector2i(-1, -1)) {
+			currentSpeed /= std::sqrt(velocityDirectionVector.x * velocityDirectionVector.x + velocityDirectionVector.y * velocityDirectionVector.y);
 		}
-		velocityVector += sf::Vector2f(directionVector) * currentSpeed * deltaTime;
+		velocityVector += sf::Vector2f(velocityDirectionVector) * currentSpeed * deltaTime;
 	}
 	sf::Vector2f newPosition = position + velocityVector;
 	resetVelocity();

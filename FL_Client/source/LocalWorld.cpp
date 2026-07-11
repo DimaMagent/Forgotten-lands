@@ -51,6 +51,7 @@ void LocalWorld::onUpdate(float updateTime)
 	if (!movComp->isMoving()) { return; }
 
 	trComp->setPosition(movComp->move(updateTime, trComp->getPosition()));
+	trComp->setRotation(movComp->getVelocityDirection());
 }
 
 void LocalWorld::onAbsenceEntity(uint32_t globalId)

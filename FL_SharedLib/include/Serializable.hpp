@@ -11,6 +11,8 @@ namespace sl {
 		virtual uint32_t getDeserializeDataSize() const = 0;
 	protected:
 		void serializeVector2f(std::vector<uint8_t>& out, const sf::Vector2f& vec) const;
+		void serializeVector2i(std::vector<uint8_t>& out, const sf::Vector2i& vec) const;
 		sf::Vector2f deserializeVector2f(const std::vector<uint8_t>& out, size_t& offset) const;
+		sf::Vector2i deserializeVector2i(const std::vector<uint8_t>& out, size_t& offset) const;
 	};
 }
