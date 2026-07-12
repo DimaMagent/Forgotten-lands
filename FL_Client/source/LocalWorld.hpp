@@ -29,4 +29,5 @@ protected:
 
 	virtual void onUpdate(float updateTime) override;
 	void onAbsenceEntity(uint32_t globalId);
+	void onAbsenceEntityOnStatusPacket(size_t entityIndex);
 };

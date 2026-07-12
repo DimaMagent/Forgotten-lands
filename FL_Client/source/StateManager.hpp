@@ -19,6 +19,9 @@ namespace sl {
 class StateManager {
 public:
 	sl::LockFreeDelegate<uint32_t> OnAbsenceEntity;
+
+	// passes the index of the entity. temp
+	sl::LockFreeDelegate<size_t> OnEntityAbsenceOnStatusPacket;
 	StateManager(std::weak_ptr<sl::Entity> playerEntity, std::vector<std::unique_ptr<sl::Entity>>& entities,
 		sl::Delegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntityDelegate);
 	void recordRollback(const sl::net::StatusData& data);

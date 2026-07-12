@@ -16,6 +16,9 @@ serializer(std::make_unique<Serializer>(OnUpdate, playerEntityStorage))
 
 World::~World() = default;
 
+
+//probably should be moved to a separate function, but for now it's fine.
+// Also should do direct call serilizer methods without delegate
 void World::onUpdate(float updateTime)
 {
 	for (auto& entity : playerEntityStorage.playerEntities) {

@@ -13,6 +13,7 @@ LocalWorld::LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory) : World
 	entityFactory(entityFactory)
 {
 	stateManager->OnAbsenceEntity.addFunction([this](uint32_t globalId) {this->onAbsenceEntity(globalId); });
+	stateManager->OnEntityAbsenceOnStatusPacket.addFunction([this](size_t entityIndex) {this->onAbsenceEntityOnStatusPacket(entityIndex); });
 }
 
 LocalWorld::~LocalWorld() = default;
@@ -61,4 +62,10 @@ void LocalWorld::onAbsenceEntity(uint32_t globalId)
 	std::unique_ptr<sl::Entity> en = ef->createEntity(sl::EntityType::Player);
 	en->setGlobalId(globalId);
 	addEntity(std::move(en));
+}
+
+void LocalWorld::onAbsenceEntityOnStatusPacket(size_t entityIndex)
+{
+	removeEntity(entityIndex);
+	std::cout << "Entity removed due to absence in status packet" << "\n";
 }

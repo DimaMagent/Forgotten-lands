@@ -27,7 +27,10 @@ void StateManager::recordRollback(const sl::net::StatusData& data)
 
 	std::vector<sl::net::EntityData> entityData = packet.getData().getEntityData();
 
+	std::vector<uint32_t> typeIds;
+
 	for (auto& enData : entityData) {
+		typeIds.push_back(enData.entityId);
 		for (auto& compData : enData.componentsData) {
 
 			if (enData.entityId == player->getGlobalId()) 
@@ -39,7 +42,8 @@ void StateManager::recordRollback(const sl::net::StatusData& data)
 					});
 			}
 			else if (auto it = std::lower_bound(entities.begin(), entities.end(), enData.entityId,
-				[](std::unique_ptr<sl::Entity>& entity, uint32_t id) { return entity->getGlobalId() < id; }); it != entities.end())
+				[](std::unique_ptr<sl::Entity>& entity, uint32_t id) { return entity->getGlobalId() < id; });
+				it != entities.end() && (*it)->getGlobalId() == enData.entityId)
 			{
 				(*it)->forCurrentSerialization(compData.typeId, [this, &compData](sl::Serializable& s) {
 					size_t offset = 0;
@@ -50,6 +54,13 @@ void StateManager::recordRollback(const sl::net::StatusData& data)
 			{
 				OnAbsenceEntity.broadcast(enData.entityId);
 			}
+		}
+		
+	}
+	for (size_t i = 0; entities.size() > i; ++i) {
+		auto it = std::find(typeIds.begin(), typeIds.end(), entities[i]->getGlobalId());
+		if (it == typeIds.end()) {
+			OnEntityAbsenceOnStatusPacket.broadcast(i);
 		}
 	}
 }
