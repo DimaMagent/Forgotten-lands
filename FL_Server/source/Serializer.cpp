@@ -9,12 +9,11 @@
 
 int Serializer::serializationFrequency = 5;
 
-Serializer::Serializer(const PlayerEntityStorage& serializedData):
-	entitiesStorage(serializedData)
+Serializer::Serializer()
 {	
 }
 
-void Serializer::serializeObjects()
+void Serializer::serializeObjects( const PlayerEntityStorage& entitiesStorage)
 {
 	std::vector<uint8_t> localBuf;
 
@@ -44,9 +43,9 @@ void Serializer::serializeObjects()
 	
 }
 
-void Serializer::onUpdate(float updateTime) {
+void Serializer::onUpdate(float updateTime, const PlayerEntityStorage& entitiesStorage) {
 	if (serializationFrequency <= ++serializationCounter) {
 		serializationCounter = 0;
-		serializeObjects();
+		serializeObjects(entitiesStorage);
 	}
 }

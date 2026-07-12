@@ -11,15 +11,14 @@ namespace sl {
 
 class Serializer {
 public:
-	Serializer(const PlayerEntityStorage& serializedData);
+	Serializer();
 	
-	void onUpdate(float updateTime);
+	void onUpdate(float updateTime, const PlayerEntityStorage& entitiesStorage);
 private:
-	const PlayerEntityStorage& entitiesStorage;
 	static int serializationFrequency;
 	int serializationCounter = 0;
 
-	void serializeObjects();
+	void serializeObjects(const PlayerEntityStorage& entitiesStorage);
 
 
 };
