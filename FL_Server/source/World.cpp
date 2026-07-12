@@ -7,7 +7,7 @@
 #include "ConnectionEvents.hpp"
 
 World::World(ConnectionEvents& connectionEvents) : WorldBase(),
-serializer(std::make_unique<Serializer>(OnUpdate, playerEntityStorage))
+serializer(std::make_unique<Serializer>(playerEntityStorage))
 {
 	connectionEvents.OnClientDisconnected.addFunction([this](uint32_t token) {
 		removePlayerEntityUsingToken(token);
@@ -33,6 +33,7 @@ void World::onUpdate(float updateTime)
 		trComp->setPosition(movComp->move(updateTime, trComp->getPosition()));
 		trComp->setRotation(movComp->getVelocityDirection());
 	}
+	serializer->onUpdate(updateTime);
 	OnUpdate.broadcast(updateTime);
 }
 

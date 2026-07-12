@@ -9,11 +9,9 @@
 
 int Serializer::serializationFrequency = 5;
 
-Serializer::Serializer(sl::LockFreeDelegate<float>& onUpdateDelegate, const PlayerEntityStorage& serializedData):
+Serializer::Serializer(const PlayerEntityStorage& serializedData):
 	entitiesStorage(serializedData)
-{
-	onUpdateDelegate.addFunction([this](float updateTime) { onUpdate(updateTime); });
-	
+{	
 }
 
 void Serializer::serializeObjects()

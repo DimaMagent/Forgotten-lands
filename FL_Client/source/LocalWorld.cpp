@@ -20,7 +20,7 @@ LocalWorld::~LocalWorld() = default;
 
 void LocalWorld::initializeRender(sf::RenderTarget& renderTarget)
 {
-	renderManager = std::make_unique<RenderManager>(renderTarget, playerEntity, entities, OnSetPlayerEntity);
+	renderManager = std::make_unique<RenderManager>(renderTarget);
 }
 
 void LocalWorld::setPlayerEntity(std::unique_ptr<sl::Entity>&& entity)
@@ -38,7 +38,15 @@ void LocalWorld::render()
 		std::cerr << "LocalWorld::render: renderManager is no valid" << "\n";
 		return; 
 	}
-	renderManager->render();
+	if (!entities.empty()) {
+		for (const auto& entity : entities) {
+			if (!entity) { continue; }
+			renderManager->render(*entity);
+		}
+	}
+	if (playerEntity) {
+		renderManager->render(*playerEntity);
+	}
 }
 
 void LocalWorld::onUpdate(float updateTime)

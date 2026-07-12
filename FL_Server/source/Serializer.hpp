@@ -11,13 +11,15 @@ namespace sl {
 
 class Serializer {
 public:
-	Serializer(sl::LockFreeDelegate<float>& onUpdateDelegate, const PlayerEntityStorage& serializedData);
+	Serializer(const PlayerEntityStorage& serializedData);
+	
+	void onUpdate(float updateTime);
 private:
 	const PlayerEntityStorage& entitiesStorage;
 	static int serializationFrequency;
 	int serializationCounter = 0;
 
 	void serializeObjects();
-	void onUpdate(float updateTime);
+
 
 };
