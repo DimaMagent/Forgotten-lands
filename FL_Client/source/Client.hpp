@@ -30,7 +30,7 @@ private:
 	std::shared_ptr<spdlog::logger> net_logger;
 
 	std::unique_ptr<asio::io_context> clientContext;
-	// It might be worth moving the factory to LocalWorld
+	// TODO: It might be worth moving the factory to LocalWorld
 	std::shared_ptr<ClientEntityFactory> entityFactory;
 	std::unique_ptr<LocalWorld> world;
 	std::unique_ptr<DataProcessorManager> dataProcessorManager;
