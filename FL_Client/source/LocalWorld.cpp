@@ -67,8 +67,7 @@ void LocalWorld::onAbsenceEntity(uint32_t globalId)
 	addEntity(std::move(en), globalId);
 }
 
-void LocalWorld::onAbsenceEntityOnStatusPacket(size_t entityIndex)
+void LocalWorld::onAbsenceEntityOnStatusPacket(uint32_t id)
 {
-	removeEntity(entityIndex);
-	std::cout << "Entity removed due to absence in status packet" << "\n";
+	entities.removeEntityUsingId(id);
 }

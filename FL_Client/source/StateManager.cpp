@@ -59,7 +59,7 @@ void StateManager::recordRollback(const sl::net::StatusData& data)
 	for (size_t i = 0; entities.getEntities().size() > i; ++i) {
 		auto it = std::find(typeIds.begin(), typeIds.end(), entities.getEntities()[i]->getGlobalId());
 		if (it == typeIds.end()) {
-			OnEntityAbsenceOnStatusPacket.broadcast(i);
+			OnEntityAbsenceOnStatusPacket.broadcast(entities.getEntities()[i]->getGlobalId());
 		}
 	}
 }
