@@ -17,8 +17,9 @@ Client::Client()
 	initLogging();
 
 	clientContext = std::make_unique<asio::io_context>();
+	window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "FL_Client.exe", sf::State::Windowed); // sf::State::Fullscreen
 	entityFactory = std::make_shared<ClientEntityFactory>();
-	world = std::make_unique<LocalWorld>(entityFactory);
+	world = std::make_unique<LocalWorld>(entityFactory, *window);
 	dataProcessorManager = std::make_unique<DataProcessorManager>(world->getStateManager());
 	netManager = std::make_unique<NetManager>(*clientContext, *dataProcessorManager);
 	inputManager = std::make_unique<InputManager>(isRunningFlag);
@@ -26,6 +27,7 @@ Client::Client()
 
 	netManager->OnAccept.addFunction([this]() {this->whenClientAccepted(); });
 	entityFactory->initialize();
+	window->setVerticalSyncEnabled(true);
 }
 
 Client::~Client() {
@@ -39,9 +41,6 @@ void Client::start()
 		isRunningFlag = true;
 		netManager->doConnect();
 		std::thread ClientThread([this]() {clientContext->run(); });
-		window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "FL_Client.exe", sf::State::Windowed); // sf::State::Fullscreen
-		window->setVerticalSyncEnabled(true);
-		world->initializeRender(*window);
 		sf::Clock timer;
 		for (;;) {
 			while (const std::optional<sf::Event> event = window->pollEvent()) {

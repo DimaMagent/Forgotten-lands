@@ -15,9 +15,8 @@ class ClientEntityFactory;
 class LocalWorld: public sl::WorldBase {
 public:
 	sl::Delegate<const std::weak_ptr<sl::Entity>> OnSetPlayerEntity;
-	LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory);
+	LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::RenderTarget& renderTarget);
 	~LocalWorld();
-	void initializeRender(sf::RenderTarget& renderTarget);
 	void setPlayerEntity(std::unique_ptr<sl::Entity>&& entity);
 	void render();
 	std::weak_ptr<StateManager> getStateManager() const { return stateManager; }

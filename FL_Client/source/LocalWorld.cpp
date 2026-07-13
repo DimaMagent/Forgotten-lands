@@ -8,20 +8,15 @@
 #include "LockFreeDelegate.hpp"
 #include "ClientEntityFactory.hpp"
 
-LocalWorld::LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory) : WorldBase() ,
+LocalWorld::LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::RenderTarget& renderTarget) : WorldBase() ,
 	stateManager(std::make_shared<StateManager>(playerEntity, entities, OnSetPlayerEntity)),
-	entityFactory(entityFactory)
+	entityFactory(entityFactory), renderManager(std::make_unique<RenderManager>(renderTarget))
 {
 	stateManager->OnAbsenceEntity.addFunction([this](uint32_t globalId) {this->onAbsenceEntity(globalId); });
 	stateManager->OnEntityAbsenceOnStatusPacket.addFunction([this](size_t entityIndex) {this->onAbsenceEntityOnStatusPacket(entityIndex); });
 }
 
 LocalWorld::~LocalWorld() = default;
-
-void LocalWorld::initializeRender(sf::RenderTarget& renderTarget)
-{
-	renderManager = std::make_unique<RenderManager>(renderTarget);
-}
 
 void LocalWorld::setPlayerEntity(std::unique_ptr<sl::Entity>&& entity)
 {
