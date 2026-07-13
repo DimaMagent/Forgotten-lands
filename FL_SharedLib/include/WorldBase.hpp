@@ -17,7 +17,7 @@ namespace sl {
 		void update(float deltaTime);
 		void removeEntity(size_t index);
 	protected:
-		EntityStorage entities;
+		sl::EntityStorage entities;
 		const sf::Time updateTime = sf::seconds(1.f / 60.f);
 		sf::Time timeSinceLastUpdate = sf::Time::Zero;
 

@@ -13,8 +13,9 @@ namespace sl {
 		struct StatusData;
 		struct AuthData;
 	}
+	struct EntityStorage;
+
 }
-struct EntityStorage;
 
 //stores the sequence of player actions
 class StateManager {
@@ -22,12 +23,12 @@ public:
 	sl::LockFreeDelegate<uint32_t> OnAbsenceEntity;
 	sl::LockFreeDelegate<uint32_t> OnEntityAbsenceOnStatusPacket;
 
-	StateManager(std::weak_ptr<sl::Entity> playerEntity, EntityStorage& entities,
+	StateManager(std::weak_ptr<sl::Entity> playerEntity, sl::EntityStorage& entities,
 		sl::Delegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntityDelegate);
 	void recordRollback(const sl::net::StatusData& data);
 	void auth(const sl::net::AuthData& data);
 private:
 	uint32_t lastAppliedSequence = 0;
 	std::weak_ptr<sl::Entity> playerEntity;
-	EntityStorage& entities;
+	sl::EntityStorage& entities;
 };

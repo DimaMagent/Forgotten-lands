@@ -6,7 +6,7 @@
 #include "Serializable.hpp"
 #include "EntityStorage.hpp"
 
-StateManager::StateManager(std::weak_ptr<sl::Entity> playerEntity, EntityStorage& entities,
+StateManager::StateManager(std::weak_ptr<sl::Entity> playerEntity, sl::EntityStorage& entities,
 		sl::Delegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntityDelegate): playerEntity(playerEntity), entities(entities)
 {
 	onSetPlayerEntityDelegate.addFunction([this](const std::weak_ptr<sl::Entity> playerEntity) {this->playerEntity = playerEntity; });

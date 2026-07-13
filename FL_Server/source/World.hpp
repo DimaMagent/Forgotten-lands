@@ -1,7 +1,7 @@
 #pragma once
 #include "WorldBase.hpp"
 #include "LockFreeDelegate.hpp"
-#include "PlayerEntityStorage.hpp"
+#include "EntityStorage.hpp"
 #include <unordered_map>
 #include <cstdint>
 
@@ -23,5 +23,7 @@ protected:
 
 private:
 	std::unique_ptr<Serializer> serializer;
-	PlayerEntityStorage playerEntityStorage;
+
+	//stores entities by tokens
+	sl::EntityStorage playerEntityStorage;
 };
