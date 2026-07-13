@@ -33,8 +33,8 @@ void LocalWorld::render()
 		std::cerr << "LocalWorld::render: renderManager is no valid" << "\n";
 		return; 
 	}
-	if (!entities.empty()) {
-		for (const auto& entity : entities) {
+	if (!entities.getEntities().empty()) {
+		for (const auto& entity : entities.getEntities()) {
 			if (!entity) { continue; }
 			renderManager->render(*entity);
 		}
@@ -64,7 +64,7 @@ void LocalWorld::onAbsenceEntity(uint32_t globalId)
 	if (!ef) { return; }
 	std::unique_ptr<sl::Entity> en = ef->createEntity(sl::EntityType::Player);
 	en->setGlobalId(globalId);
-	addEntity(std::move(en));
+	addEntity(std::move(en), globalId);
 }
 
 void LocalWorld::onAbsenceEntityOnStatusPacket(size_t entityIndex)

@@ -6,9 +6,9 @@
 
 sl::WorldBase::~WorldBase() = default;
 
-void sl::WorldBase::addEntity(std::unique_ptr<sl::Entity>&& entity) {
+void sl::WorldBase::addEntity(std::unique_ptr<sl::Entity>&& entity, uint32_t id) {
 	if (entity) {
-		entities.push_back(std::move(entity));
+		entities.addEntity(std::move(entity), id);
 	}
 }
 
@@ -19,7 +19,7 @@ void sl::WorldBase::update(float deltaTime) {
 
 		onUpdate(updateTime.asSeconds());
 
-		for (auto& en : entities) {
+		for (auto& en : entities.getEntities()) {
 
 			if (!en) { continue; }
 
@@ -34,9 +34,7 @@ void sl::WorldBase::update(float deltaTime) {
 	}
 }
 
-/*Remove is performed using swap&pop.*/
 void sl::WorldBase::removeEntity(size_t index) {
-	if (index >= entities.size()) { return; }
-	entities[index] = std::move(entities.back());
-	entities.pop_back();
+	if (index >= entities.getEntities().size()) { return; }
+	entities.removeEntityUsingIndex(index);
 }
