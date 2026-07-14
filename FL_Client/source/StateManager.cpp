@@ -9,6 +9,7 @@
 StateManager::StateManager(std::weak_ptr<sl::Entity> playerEntity, sl::EntityStorage& entities,
 		sl::Delegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntityDelegate): playerEntity(playerEntity), entities(entities)
 {
+	net_logger = spdlog::get("network");
 	onSetPlayerEntityDelegate.addFunction([this](const std::weak_ptr<sl::Entity> playerEntity) {this->playerEntity = playerEntity; });
 }
 
@@ -68,6 +69,6 @@ void StateManager::auth(const sl::net::AuthData& data)
 {
 	auto player = playerEntity.lock();
 	if (!player) { return; }
-	std::cout << "auth" << "\n";
+	net_logger->info("Player authenticated with global ID: {}", data.playerEntityID);
 	player->setGlobalId(data.playerEntityID);
 }

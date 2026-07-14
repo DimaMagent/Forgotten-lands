@@ -13,5 +13,7 @@ public:
 	~TextureManager();
 	std::shared_ptr<sf::Texture> getTexture(const std::string& path);
 private:
+	std::shared_ptr<spdlog::logger> load_logger;
+
 	std::unordered_map<std::string, std::shared_ptr<sf::Texture>> textures;
 };

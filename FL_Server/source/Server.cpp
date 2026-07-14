@@ -42,6 +42,9 @@ Server::~Server() {
 }
 
 void Server::start() {
+
+	spdlog::info("Server started on port 2001");
+
 	netManager->doAccept();
 	auto timer = std::make_shared<asio::steady_timer>(*serverContext);
 	sf::Clock clock;

@@ -88,7 +88,17 @@ void Client::initLogging() {
 		"network", sinks.begin(), sinks.end(),
 		spdlog::thread_pool(), spdlog::async_overflow_policy::block);
 
+	game_logger = std::make_shared<spdlog::async_logger>(
+		"game", sinks.begin(), sinks.end(),
+		spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+
+	load_logger = std::make_shared<spdlog::async_logger>(
+		"load", sinks.begin(), sinks.end(),
+		spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+
 	spdlog::register_logger(net_logger);
+	spdlog::register_logger(game_logger);
+	spdlog::register_logger(load_logger);
 
 	spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%n] %v");
 	spdlog::flush_every(std::chrono::seconds(3));

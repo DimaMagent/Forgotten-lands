@@ -12,6 +12,8 @@ LocalWorld::LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::Ren
 	stateManager(std::make_shared<StateManager>(playerEntity, entities, OnSetPlayerEntity)),
 	entityFactory(entityFactory), renderManager(std::make_unique<RenderManager>(renderTarget))
 {
+	game_logger = spdlog::get("game");
+
 	stateManager->OnAbsenceEntity.addFunction([this](uint32_t globalId) {this->onAbsenceEntity(globalId); });
 	stateManager->OnEntityAbsenceOnStatusPacket.addFunction([this](size_t entityIndex) {this->onAbsenceEntityOnStatusPacket(entityIndex); });
 }
@@ -30,7 +32,7 @@ void LocalWorld::setPlayerEntity(std::unique_ptr<sl::Entity>&& entity)
 void LocalWorld::render()
 {
 	if (!renderManager) {
-		std::cerr << "LocalWorld::render: renderManager is no valid" << "\n";
+		game_logger->warn("LocalWorld::render: renderManager is no valid");
 		return; 
 	}
 	if (!entities.getEntities().empty()) {

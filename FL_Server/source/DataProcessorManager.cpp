@@ -6,6 +6,8 @@
 
 DataProcessorManager::DataProcessorManager(PlayerManager& playerManager): playerManager(playerManager)
 {
+	logger = spdlog::get("network");
+
 	registerHandler<sl::net::InputStatePacket>(sl::net::InputStatePacket::type(),
     [this](const uint32_t& token, const sl::net::InputStatePacket& p){
         const auto& data = p.getData();
@@ -21,6 +23,6 @@ void DataProcessorManager::routeData(std::vector<uint8_t>&& data, sl::net::Packe
 		it->second(token, std::move(data));
 	}
 	else {
-		std::cerr << "Unknown packet type: " << static_cast<int>(type) << "\n";
+		logger->warn("Unknown packet type: {}", static_cast<int>(type));
 	}
 }

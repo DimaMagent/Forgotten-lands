@@ -9,6 +9,7 @@
 
 Controller::Controller(InputManager& im, LocalWorld& world)
 {
+	game_logger = spdlog::get("game") ;
 	im.onEvent.addFunction([this](const sf::Event& event) { onEvent(event); });
 	world.OnSetPlayerEntity.addFunction([this](const std::weak_ptr<sl::Entity> playerEntity) { onPlayerEntitySet(playerEntity); });
 }
@@ -35,10 +36,10 @@ void Controller::onEvent(const sf::Event& event) {
 void Controller::onPlayerEntitySet(std::weak_ptr<sl::Entity> playerEntity)
 {
 	if (playerEntity.expired()) {
-		std::cout << "Received expired player character reference." << std::endl;
+		game_logger->warn("Received expired player character reference.");
 		return;
 	}
-	std::cout << "Player character set in controller." << std::endl;
+	game_logger->info("Player character set in controller.");
 	this->playerEntity = playerEntity;
 	initKeyBindings();
 }

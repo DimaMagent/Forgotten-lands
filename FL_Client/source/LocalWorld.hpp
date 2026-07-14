@@ -21,6 +21,8 @@ public:
 	void render();
 	std::weak_ptr<StateManager> getStateManager() const { return stateManager; }
 protected:
+	std::shared_ptr<spdlog::logger> game_logger;
+
 	std::shared_ptr<sl::Entity> playerEntity;
 	std::unique_ptr<RenderManager> renderManager;
 	std::shared_ptr<StateManager> stateManager;

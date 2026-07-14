@@ -17,6 +17,8 @@ public:
 	Controller(InputManager& im, LocalWorld& world);
 	~Controller();
 private:
+	std::shared_ptr<spdlog::logger> game_logger;
+
 	std::unordered_map<sf::Keyboard::Key, std::function<sl::net::InputState()>> keyBindings;
 	std::weak_ptr<sl::Entity> playerEntity;
 	int reverseInputMultiplier = -1;

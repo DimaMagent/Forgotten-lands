@@ -7,6 +7,8 @@
 
 DataProcessorManager::DataProcessorManager(std::weak_ptr<StateManager> manager)
 {
+	net_logger = spdlog::get("network");
+
 	this->stateManager = manager;
 
 	registerHandler<sl::net::StatusPacket>(sl::net::StatusPacket::type(),
@@ -32,7 +34,7 @@ void DataProcessorManager::routeData(std::vector<uint8_t>&& data, sl::net::Packe
 		it->second(std::move(data));
 	}
 	else {
-		std::cerr << "Unknown packet type: " << static_cast<int>(type) << "\n";
+		net_logger->warn("Unknown packet type: {}", static_cast<int>(type));
 	}
 }
 

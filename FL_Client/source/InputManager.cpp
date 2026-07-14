@@ -3,6 +3,7 @@
 
 InputManager::InputManager(bool& isRunningFlag) : isRunningFlag(isRunningFlag)
 {
+	game_logger = spdlog::get("game");
 }
 
 InputManager::~InputManager() = default;
@@ -15,7 +16,7 @@ void InputManager::handleEvent(const sf::Event& event){
 	if (const auto* keyEvent = event.getIf<sf::Event::KeyPressed>()) {
 		if (keyEvent->code == sf::Keyboard::Key::Escape) {
 			isRunningFlag = false;
-			std::cout << "Input: Escape" << std::endl;
+			game_logger->info("Escape key pressed. Exiting application.");
 		}
 		onEvent.broadcast(event);
 		return;

@@ -26,6 +26,9 @@ public:
 	}
 
 private:
+	//loggers
+	std::shared_ptr<spdlog::logger> logger;
+
 	std::unordered_map<uint8_t, std::function<void(const uint32_t&, std::vector<uint8_t>&&)>> handlers;
 	PlayerManager& playerManager;
 };

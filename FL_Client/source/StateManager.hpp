@@ -28,6 +28,8 @@ public:
 	void recordRollback(const sl::net::StatusData& data);
 	void auth(const sl::net::AuthData& data);
 private:
+	std::shared_ptr<spdlog::logger> net_logger;
+
 	uint32_t lastAppliedSequence = 0;
 	std::weak_ptr<sl::Entity> playerEntity;
 	sl::EntityStorage& entities;

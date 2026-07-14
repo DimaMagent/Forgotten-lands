@@ -27,6 +27,8 @@ public:
 	}
 
 private:
+	std::shared_ptr<spdlog::logger> net_logger;
+
 	std::unordered_map<uint8_t, std::function<void(std::vector<uint8_t>&&)>> handlers;
 	std::weak_ptr<StateManager> stateManager;
 };
