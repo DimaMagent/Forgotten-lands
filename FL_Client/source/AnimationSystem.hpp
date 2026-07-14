@@ -5,5 +5,5 @@
 class AnimationSystem{
 public:
 	AnimationSystem() = default;
-	void update();
+	void onUpdate(float updateTime);
 };
