@@ -1,7 +1,7 @@
 {
   "player": {
     "RenderComponent": {
-      "texturePath": "assets/unarmed_character/steht0000.bmp",
+      "texturePath": "assets/unarmed_character/steht0000.png",
       "textureRect": {
         "height": 96,
         "width": 96,
