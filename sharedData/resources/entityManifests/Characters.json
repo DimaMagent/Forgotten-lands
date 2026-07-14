@@ -1,6 +1,112 @@
 {
   "player": {
     "RenderComponent": {
+      "Animations": {
+        "None": {
+          "Direction": {
+            "Forward": "assets/unarmed_character/none/steht0004.png",
+            "ForwardLeft": "assets/unarmed_character/none/steht0003.png",
+            "ForwardRight": "assets/unarmed_character/none/steht0005.png",
+            "Left": "assets/unarmed_character/none/steht0002.png",
+            "Right": "assets/unarmed_character/none/steht0006.png",
+            "Backward": "assets/unarmed_character/none/steht0000.png",
+            "BackwardLeft": "assets/unarmed_character/none/steht0001.png",
+            "BackwardRight": "assets/unarmed_character/none/steht0007.png"
+          }
+        },
+        "Walk": {
+          "Direction": {
+            "Forward": [
+              "assets/unarmed_character/walk/walk n0000.png",
+              "assets/unarmed_character/walk/walk n0001.png",
+              "assets/unarmed_character/walk/walk n0002.png",
+              "assets/unarmed_character/walk/walk n0003.png",
+              "assets/unarmed_character/walk/walk n0004.png",
+              "assets/unarmed_character/walk/walk n0005.png",
+              "assets/unarmed_character/walk/walk n0006.png",
+              "assets/unarmed_character/walk/walk n0007.png",
+              "assets/unarmed_character/walk/walk n0008.png"
+            ],
+            "ForwardLeft": [
+              "assets/unarmed_character/walk/walk nw0000.png",
+              "assets/unarmed_character/walk/walk nw0001.png",
+              "assets/unarmed_character/walk/walk nw0002.png",
+              "assets/unarmed_character/walk/walk nw0003.png",
+              "assets/unarmed_character/walk/walk nw0004.png",
+              "assets/unarmed_character/walk/walk nw0005.png",
+              "assets/unarmed_character/walk/walk nw0006.png",
+              "assets/unarmed_character/walk/walk nw0007.png",
+              "assets/unarmed_character/walk/walk nw0008.png"
+            ],
+            "ForwardRight": [
+              "assets/unarmed_character/walk/walk ne0000.png",
+              "assets/unarmed_character/walk/walk ne0001.png",
+              "assets/unarmed_character/walk/walk ne0002.png",
+              "assets/unarmed_character/walk/walk ne0003.png",
+              "assets/unarmed_character/walk/walk ne0004.png",
+              "assets/unarmed_character/walk/walk ne0005.png",
+              "assets/unarmed_character/walk/walk ne0006.png",
+              "assets/unarmed_character/walk/walk ne0007.png",
+              "assets/unarmed_character/walk/walk ne0008.png"
+            ],
+            "Left": [
+              "assets/unarmed_character/walk/walk w0000.png",
+              "assets/unarmed_character/walk/walk w0001.png",
+              "assets/unarmed_character/walk/walk w0002.png",
+              "assets/unarmed_character/walk/walk w0003.png",
+              "assets/unarmed_character/walk/walk w0004.png",
+              "assets/unarmed_character/walk/walk w0005.png",
+              "assets/unarmed_character/walk/walk w0006.png",
+              "assets/unarmed_character/walk/walk w0007.png",
+              "assets/unarmed_character/walk/walk w0008.png"
+            ],
+            "Right": [
+              "assets/unarmed_character/walk/walk e0000.png",
+              "assets/unarmed_character/walk/walk e0001.png",
+              "assets/unarmed_character/walk/walk e0002.png",
+              "assets/unarmed_character/walk/walk e0003.png",
+              "assets/unarmed_character/walk/walk e0004.png",
+              "assets/unarmed_character/walk/walk e0005.png",
+              "assets/unarmed_character/walk/walk e0006.png",
+              "assets/unarmed_character/walk/walk e0007.png",
+              "assets/unarmed_character/walk/walk e0008.png"
+            ],
+            "Backward": [
+              "assets/unarmed_character/walk/walk s0000.png",
+              "assets/unarmed_character/walk/walk s0001.png",
+              "assets/unarmed_character/walk/walk s0002.png",
+              "assets/unarmed_character/walk/walk s0003.png",
+              "assets/unarmed_character/walk/walk s0004.png",
+              "assets/unarmed_character/walk/walk s0005.png",
+              "assets/unarmed_character/walk/walk s0006.png",
+              "assets/unarmed_character/walk/walk s0007.png",
+              "assets/unarmed_character/walk/walk s0008.png"
+            ],
+            "BackwardLeft": [
+              "assets/unarmed_character/walk/walk sw0000.png",
+              "assets/unarmed_character/walk/walk sw0001.png",
+              "assets/unarmed_character/walk/walk sw0002.png",
+              "assets/unarmed_character/walk/walk sw0003.png",
+              "assets/unarmed_character/walk/walk sw0004.png",
+              "assets/unarmed_character/walk/walk sw0005.png",
+              "assets/unarmed_character/walk/walk sw0006.png",
+              "assets/unarmed_character/walk/walk sw0007.png",
+              "assets/unarmed_character/walk/walk sw0008.png"
+            ],
+            "BackwardRight": [
+              "assets/unarmed_character/walk/walk se0000.png",
+              "assets/unarmed_character/walk/walk se0001.png",
+              "assets/unarmed_character/walk/walk se0002.png",
+              "assets/unarmed_character/walk/walk se0003.png",
+              "assets/unarmed_character/walk/walk se0004.png",
+              "assets/unarmed_character/walk/walk se0005.png",
+              "assets/unarmed_character/walk/walk se0006.png",
+              "assets/unarmed_character/walk/walk se0007.png",
+              "assets/unarmed_character/walk/walk se0008.png"
+            ]
+          }
+        }
+      }
       "texturePath": "assets/unarmed_character/steht0000.png",
       "textureRect": {
         "height": 96,

@@ -8,7 +8,7 @@ namespace sf {
 	class RenderTarget;
 }
 
-
+class AnimationsStorage;
 
 
 class RenderComponent: public sl::Component {
@@ -19,7 +19,7 @@ public:
 	void render(sf::RenderTarget& target, sf::Vector2f position) const;
 	COMPONENT_TYPE(RenderComponent);
 private:
-
+	std::shared_ptr<const AnimationsStorage> animationsStorage;
 	std::shared_ptr<const sf::Texture> texture;
 	sf::IntRect rectTransform;
 };
