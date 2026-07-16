@@ -7,16 +7,14 @@ AnimationsStorage::AnimationsStorage() : animationsStorage(std::make_shared<Text
 
 void AnimationsStorage::addAnimations(AnimationType type, const std::string& direction, const AnimationFrames& frames)
 {
-	AnimationMap map;
-	map.try_emplace(direction, frames);
-	animationsStorage->try_emplace(type, std::move(map));
+	(*animationsStorage)[type][direction] = frames;
 }
 
 bool AnimationsStorage::getAnimationFrame(AnimationType type, const std::string& direction, size_t frameIndex, sf::Texture& outTexture) const
 {
 	auto it1 = animationsStorage->find(type);
 	if (it1 == animationsStorage->end()) {
-		spdlog::get("game")->error("Animation type {} not found", type);
+		spdlog::get("game")->error("Animation type {} not found", static_cast<int>(type));
 		return false;
 	}
 
