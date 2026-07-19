@@ -46,4 +46,6 @@ private:
 	void whenClientAccepted();
 
 	void initLogging();
+
+	void tick(float dt);
 };

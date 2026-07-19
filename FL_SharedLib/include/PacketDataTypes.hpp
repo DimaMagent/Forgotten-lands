@@ -7,6 +7,9 @@ namespace sl::net {
 		IS_MoveDown = 1 << 1,
 		IS_MoveLeft = 1 << 2,
 		IS_MoveRight = 1 << 3,
+
+		Mask_Vertical = IS_MoveUp | IS_MoveDown,
+		Mask_Horizontal = IS_MoveLeft | IS_MoveRight
 	};
 
 	enum PacketType : uint8_t {

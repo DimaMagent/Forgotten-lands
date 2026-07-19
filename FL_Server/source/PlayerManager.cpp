@@ -4,6 +4,7 @@
 #include "TransformComponent.hpp"
 #include "Entity.hpp"
 #include "World.hpp"
+#include "Utils.hpp"
 
 PlayerManager::PlayerManager(World& world):
 	world(world)
@@ -11,39 +12,24 @@ PlayerManager::PlayerManager(World& world):
 	initPlayerActions();
 }
 
-void PlayerManager::updatePlayerInputState(uint32_t playerToken, uint8_t inputState, bool pressingFlag)
+void PlayerManager::updatePlayerInputState(uint32_t playerToken, sf::Vector2i movementDirectionIntentions, uint8_t inputState, uint8_t inputAction)
 {
-	if (auto entity = world.getPlayerEntityToToken(playerToken).lock()) {
-		if (auto it = PlayerActions.find(sl::net::InputState(inputState)); it != PlayerActions.end()) {
-			it->second(*entity, pressingFlag);
-		}
-	}
+
+	auto entity = world.getPlayerEntityToToken(playerToken).lock();
+	if (!entity) { return; }
+
+	sl::MovementComponent* movComp = entity->getComponent<sl::MovementComponent>();
+	if (!movComp) { return; }
+
+	movComp->setVelocityDirection(sl::inBounds(movementDirectionIntentions, sf::Vector2i(-1, -1), sf::Vector2i(1, 1)));
 }
 
 void PlayerManager::initPlayerActions()
 {
-	PlayerActions.try_emplace(sl::net::IS_MoveUp, [this](sl::Entity& entity, bool pressingFlag) {
-		sl::MovementComponent* movComp = entity.getComponent<sl::MovementComponent>();
-		if (!movComp) { return; }
-		int pressingMultiplier = pressingFlag ? 1 : -1;
-		movComp->addDirection(sf::Vector2i(0, -1) * pressingMultiplier);
-	});
-	PlayerActions.try_emplace(sl::net::IS_MoveLeft, [this](sl::Entity& entity, bool pressingFlag) {
-		sl::MovementComponent* movComp = entity.getComponent<sl::MovementComponent>();
-		if (!movComp) { return; }
-		int pressingMultiplier = pressingFlag ? 1 : -1;
-		movComp->addDirection(sf::Vector2i(-1, 0) * pressingMultiplier);
-	});
-	PlayerActions.try_emplace(sl::net::IS_MoveDown, [this](sl::Entity& entity, bool pressingFlag) {
-		sl::MovementComponent* movComp = entity.getComponent<sl::MovementComponent>();
-		if (!movComp) { return; }
-		int pressingMultiplier = pressingFlag ? 1 : -1;
-		movComp->addDirection(sf::Vector2i(0, 1) * pressingMultiplier);
-	});
-	PlayerActions.try_emplace(sl::net::IS_MoveRight, [this](sl::Entity& entity, bool pressingFlag) {
-		sl::MovementComponent* movComp = entity.getComponent<sl::MovementComponent>();
-		if (!movComp) { return; }
-		int pressingMultiplier = pressingFlag ? 1 : -1;
-		movComp->addDirection(sf::Vector2i(1, 0) * pressingMultiplier);
-	});
+}
+
+void PlayerManager::movementUpdate(sl::Entity& entity, sf::Vector2i movementDirectionIntentions)
+{
+	
+
 }

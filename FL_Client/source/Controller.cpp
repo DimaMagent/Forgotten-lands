@@ -6,6 +6,7 @@
 #include "Packer.hpp"
 #include "MovementComponent.hpp"
 #include "InputStatePacket.hpp"
+#include "Utils.hpp"
 
 Controller::Controller(InputManager& im, LocalWorld& world)
 {
@@ -21,14 +22,18 @@ void Controller::onEvent(const sf::Event& event) {
 	if (const auto* keyEvent = event.getIf<sf::Event::KeyPressed>()) {
 		if (auto it = keyBindings.find(keyEvent->code); it != keyBindings.end()) {
 			reverseInputMultiplier = 1;
-			Packer::send<sl::net::InputStatePacket>(it->second(), true);
+			isInputStateChanged = true;
+			it->second();
+
 		}
 		return;
 	}
 	if (const auto* keyEvent = event.getIf<sf::Event::KeyReleased>()) {
 		if (auto it = keyBindings.find(keyEvent->code); it != keyBindings.end()) {
 			reverseInputMultiplier = -1;
-			Packer::send<sl::net::InputStatePacket>(it->second(), false);
+			isInputStateChanged = true;
+			it->second();
+
 		}
 	}
 }
@@ -46,23 +51,23 @@ void Controller::onPlayerEntitySet(std::weak_ptr<sl::Entity> playerEntity)
 
 void Controller::initKeyBindings(){
 	keyBindings[sf::Keyboard::Key::W] = [this]() {
-		moveEntity(sf::Vector2i(0, -1));
+		currentInputStates.movementDirectionIntentions = sl::inBounds(currentInputStates.movementDirectionIntentions + sf::Vector2i(0, -1) * reverseInputMultiplier, sf::Vector2i(-1, -1), sf::Vector2i(1, 1));
 		return sl::net::IS_MoveUp; };
 
 	keyBindings[sf::Keyboard::Key::A] = [this]() {
-		moveEntity(sf::Vector2i(-1, 0));
+		currentInputStates.movementDirectionIntentions = sl::inBounds(currentInputStates.movementDirectionIntentions + sf::Vector2i(-1, 0) * reverseInputMultiplier, sf::Vector2i(-1, -1), sf::Vector2i(1, 1));
 		return sl::net::IS_MoveLeft; };
 
 	keyBindings[sf::Keyboard::Key::S] = [this]() {
-		moveEntity(sf::Vector2i(0, 1));
+		currentInputStates.movementDirectionIntentions = sl::inBounds(currentInputStates.movementDirectionIntentions + sf::Vector2i(0, 1) * reverseInputMultiplier, sf::Vector2i(-1, -1), sf::Vector2i(1, 1));
 		return sl::net::IS_MoveDown; };
 
 	keyBindings[sf::Keyboard::Key::D] = [this]() {
-		moveEntity(sf::Vector2i(1, 0));
+		currentInputStates.movementDirectionIntentions = sl::inBounds(currentInputStates.movementDirectionIntentions + sf::Vector2i(1, 0) * reverseInputMultiplier, sf::Vector2i(-1, -1), sf::Vector2i(1, 1));
 		return sl::net::IS_MoveRight; };
 }
 
-void Controller::moveEntity(sf::Vector2i direction)
+void Controller::setMovingDirection()
 {
 	auto player = playerEntity.lock();
 	if (!player) { return; }
@@ -71,6 +76,21 @@ void Controller::moveEntity(sf::Vector2i direction)
 
 	if (!movComp) { return; }
 
-	movComp->addDirection(direction * reverseInputMultiplier);
 
+	movComp->setVelocityDirection(currentInputStates.movementDirectionIntentions);
+
+}
+
+void Controller::tick(float dt) {
+	timeSinceLastUpdate += std::min(sf::seconds(dt), sf::seconds(0.1f));
+	while (timeSinceLastUpdate >= updateTime) {
+		timeSinceLastUpdate -= updateTime;
+		if (!isInputStateChanged) { return; }
+		
+		Packer::send<sl::net::InputStatePacket>(currentInputStates.movementDirectionIntentions, 0, 0);
+
+		setMovingDirection();
+
+		isInputStateChanged = false;
+	}
 }

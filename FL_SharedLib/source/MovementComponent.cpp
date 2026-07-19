@@ -40,6 +40,11 @@ sf::Vector2f sl::MovementComponent::move(float deltaTime, const sf::Vector2f& po
 	return newPosition;
 }
 
+void sl::MovementComponent::setVelocityDirection(const sf::Vector2i& direction)
+{
+	velocityDirectionVector = inBounds(direction, sf::Vector2i(-1, -1), sf::Vector2i(1, 1));
+}
+
 void sl::MovementComponent::serialize(std::vector<uint8_t>& out) const
 {
 	sl::net::write_uint32_t(out, TypeId);

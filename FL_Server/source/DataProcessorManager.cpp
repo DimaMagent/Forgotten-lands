@@ -12,7 +12,7 @@ DataProcessorManager::DataProcessorManager(PlayerManager& playerManager): player
     [this](const uint32_t& token, const sl::net::InputStatePacket& p){
         const auto& data = p.getData();
 
-		this->playerManager.updatePlayerInputState(token, data.inputState, data.pressingFlag);
+		this->playerManager.updatePlayerInputState(token, data.movementDirectionIntentions, data.inputState, data.inputAction);
     });
 }
 

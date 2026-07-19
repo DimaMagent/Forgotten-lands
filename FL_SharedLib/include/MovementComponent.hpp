@@ -25,6 +25,7 @@ namespace sl {
 		sf::Vector2f move(float deltaTime, const sf::Vector2f& position);
 		sf::Vector2f getVelocity() const { return velocityVector; }
 		sf::Vector2i getVelocityDirection() const { return velocityDirectionVector; }
+		void setVelocityDirection(const sf::Vector2i& direction);
 		void resetVelocity() { velocityVector = sf::Vector2f(0.f, 0.f); }
 
 		bool isMoving() const { return velocityDirectionVector != sf::Vector2i(0, 0); }

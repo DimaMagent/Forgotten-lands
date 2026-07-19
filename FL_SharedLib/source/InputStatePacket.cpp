@@ -13,16 +13,18 @@ namespace sl::net {
 	}
 
 
-	void InputStatePacket::fillPacketData(uint16_t sequenceNumber, uint32_t token, uint8_t inputState, bool pressingFlag)
+	void InputStatePacket::fillPacketData(uint16_t sequenceNumber, uint32_t token, sf::Vector2i movementDirectionIntentions, uint8_t inputState, uint8_t inputAction)
 	{
-		data.fillPacketData(sequenceNumber, type(), token, inputState, pressingFlag);
+		data.fillPacketData(sequenceNumber, type(), token, movementDirectionIntentions, inputState, inputAction);
 	}
 
 	bool InputStateData::write(std::vector<uint8_t>& out) const
 	{
 		header.write(out);
+		net::write_uint32_t(out, movementDirectionIntentions.x);
+		net::write_uint32_t(out, movementDirectionIntentions.y);
 		net::write_uint8_t(out, inputState);
-		net::write_uint8_t(out, pressingFlag);
+		net::write_uint8_t(out, inputAction);
 		return true;
 	}
 
@@ -30,16 +32,18 @@ namespace sl::net {
 	{
 		if (offset < in.size()) {
 			header.read(in, offset);
+			movementDirectionIntentions.x = net::read_uint32_t(in, offset);
+			movementDirectionIntentions.y = net::read_uint32_t(in, offset);
 			inputState = net::read_uint8_t(in, offset);
-			pressingFlag = net::read_uint8_t(in, offset);
-
+			inputAction = net::read_uint8_t(in, offset);
 		}
 	}
 
-	void InputStateData::fillPacketData(uint16_t sequenceNumber, PacketType type, uint32_t token, uint8_t inputState, bool pressingFlag)
+	void InputStateData::fillPacketData(uint16_t sequenceNumber, PacketType type, uint32_t token, sf::Vector2i movementDirectionIntentions, uint8_t inputState, uint8_t inputAction)
 	{
+		this->movementDirectionIntentions = movementDirectionIntentions;
 		this->inputState = inputState;
-		this->pressingFlag = pressingFlag;
-		header.fillHeader(sequenceNumber, type, token, sizeof(inputState) + sizeof(pressingFlag));
+		this->inputAction = inputAction;
+		header.fillHeader(sequenceNumber, type, token, sizeof(inputState) + sizeof(movementDirectionIntentions) + sizeof(inputAction));
 	}
 }

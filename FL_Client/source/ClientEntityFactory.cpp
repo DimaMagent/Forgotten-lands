@@ -28,7 +28,7 @@ void ClientEntityFactory::registrationComponents()
 				for (auto& framePath : framePaths) {
 					directionFrames.push_back(textureManager->getTexture(framePath));
 				}
-				animationStorage->addAnimations(AnimationsStorage::animationTypeFromString(animationName), directionName, directionFrames);
+				animationStorage->addAnimations(animationTypeFromString(animationName), directionName, directionFrames);
 				directionFrames.clear();
 			}
 		}

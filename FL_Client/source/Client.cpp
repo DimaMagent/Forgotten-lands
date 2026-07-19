@@ -53,7 +53,7 @@ void Client::start()
 			if (!window->isOpen()) {
 				break;
 			}
-			world->update(timer.restart().asSeconds());
+			tick(timer.restart().asSeconds());
 			window->clear(sf::Color::Black);
 			world->render();
 			window->display();
@@ -102,4 +102,9 @@ void Client::initLogging() {
 
 	spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%n] %v");
 	spdlog::flush_every(std::chrono::seconds(3));
+}
+
+void Client::tick(float dt) {
+	world->update(dt);
+	controller->tick(dt);
 }
