@@ -67,18 +67,20 @@ void Controller::initKeyBindings(){
 		return sl::net::IS_MoveRight; };
 }
 
-void Controller::setMovingDirection()
+bool Controller::setMovingDirection()
 {
 	auto player = playerEntity.lock();
-	if (!player) { return; }
+	if (!player) { return false; }
 
 	sl::MovementComponent* movComp = player->getComponent<sl::MovementComponent>();
 
-	if (!movComp) { return; }
+	if (!movComp) { return false; }
 
+	if (movComp->getVelocityDirection() == currentInputStates.movementDirectionIntentions) { return false; }
 
 	movComp->setVelocityDirection(currentInputStates.movementDirectionIntentions);
 
+	return true;
 }
 
 void Controller::tick(float dt) {
@@ -86,10 +88,11 @@ void Controller::tick(float dt) {
 	while (timeSinceLastUpdate >= updateTime) {
 		timeSinceLastUpdate -= updateTime;
 		if (!isInputStateChanged) { return; }
-		
-		Packer::send<sl::net::InputStatePacket>(currentInputStates.movementDirectionIntentions, 0, 0);
 
-		setMovingDirection();
+		//sends packet if direction was changed
+		if (setMovingDirection()) {
+			Packer::send<sl::net::InputStatePacket>(currentInputStates.movementDirectionIntentions, 0, 0);
+		}
 
 		isInputStateChanged = false;
 	}

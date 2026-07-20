@@ -39,5 +39,7 @@ private:
 	void onEvent(const sf::Event& event);
 	void onPlayerEntitySet(std::weak_ptr<sl::Entity> playerEntity);
 	void initKeyBindings();
-	void setMovingDirection();
+
+	//returns true if direction changed
+	bool setMovingDirection();
 };
