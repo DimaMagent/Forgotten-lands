@@ -4,6 +4,7 @@
 #include "DataLoader.hpp"
 #include "TransformComponent.hpp"
 #include "MovementComponent.hpp"
+#include "StateComponent.hpp"
 
 sl::EntityFactory::EntityFactory() {
 	
@@ -50,6 +51,9 @@ void sl::EntityFactory::registrationComponents()
 		});
 	registry.try_emplace(sl::MovementComponent::ComponentName, [](Entity& entity, const json& js) {
 		entity.addComponent<sl::MovementComponent>(js.value("maxVelocity", 20.0f));
+		});
+	registry.try_emplace(sl::StateComponent::ComponentName, [](Entity& entity, const json& js) {
+		entity.addComponent<sl::StateComponent>();
 		});
 
 }

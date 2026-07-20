@@ -3,14 +3,17 @@
 #include "Entity.hpp"
 #include "MovementComponent.hpp"
 #include "TransformComponent.hpp"
+#include "StateComponent.hpp"
 #include "RenderManager.hpp"
 #include "StateManager.hpp"
 #include "LockFreeDelegate.hpp"
 #include "ClientEntityFactory.hpp"
+#include "AnimationSystem.hpp"
 
 LocalWorld::LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::RenderTarget& renderTarget) : WorldBase() ,
 	stateManager(std::make_shared<StateManager>(playerEntity, entities, OnSetPlayerEntity)),
-	entityFactory(entityFactory), renderManager(std::make_unique<RenderManager>(renderTarget))
+	entityFactory(entityFactory), renderManager(std::make_unique<RenderManager>(renderTarget)),
+	animationSystem(std::make_unique<AnimationSystem>())
 {
 	game_logger = spdlog::get("game");
 
@@ -52,12 +55,16 @@ void LocalWorld::onUpdate(float updateTime)
 
 	sl::MovementComponent* movComp = playerEntity->getComponent<sl::MovementComponent>();
 	sl::TransformComponent* trComp = playerEntity->getComponent<sl::TransformComponent>();
+	sl::StateComponent* stateComp = playerEntity->getComponent<sl::StateComponent>();
 
-	if (!movComp || !trComp) { return; }
+	if (!movComp || !trComp || !stateComp) { return; }
 	if (!movComp->isMoving()) { return; }
 
 	trComp->setPosition(movComp->move(updateTime, trComp->getPosition()));
 	trComp->setRotation(movComp->getVelocityDirection());
+	stateComp->movementState = sl::MovementState::Walk;
+
+	animationSystem->onUpdate(*playerEntity, updateTime);
 }
 
 void LocalWorld::onAbsenceEntity(uint32_t globalId)

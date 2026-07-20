@@ -11,10 +11,10 @@ RenderManager::RenderManager(sf::RenderTarget& renderTarget) :
 
 void RenderManager::render(sl::Entity& entity) const
 {
-	RenderComponent* comp = entity.getComponent<RenderComponent>();
+	RenderComponent* rendComp = entity.getComponent<RenderComponent>();
 	sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
 
-	if (!comp || !trComp) { return; }
+	if (!rendComp || !trComp) { return; }
 
-	comp->render(renderTarget, trComp->getPosition());
+	rendComp->render(renderTarget, trComp->getPosition());
 }

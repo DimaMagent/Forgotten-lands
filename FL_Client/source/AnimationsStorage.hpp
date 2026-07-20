@@ -5,18 +5,7 @@
 #include <string>
 #include "SFML/Graphics/Texture.hpp"
 #include "SFML/System/Vector2.hpp"
-
-
-enum class AnimationType : uint8_t {
-	None,
-	Walk,
-	Run,
-	Attack,
-	Rest,
-	Death,
-	TakingDamage,
-	Talk
-};
+#include "AnimationType.hpp"
 
 constexpr AnimationType animationTypeFromString(const std::string& typeStr)
 {
@@ -41,8 +30,11 @@ public:
 	AnimationsStorage();
 	void addAnimations(AnimationType type, const std::string& direction, const AnimationFrames& frames);
 	bool getAnimationFrame(AnimationType type, const std::string& direction, size_t frameIndex, sf::Texture& outTexture) const;
+	bool getAnimationFrame(AnimationType type, const sf::Vector2i& direction, size_t frameIndex, sf::Texture& outTexture) const;
 private:
 	//stores textures-animations by type and direction
 	std::shared_ptr<TexturesStorage> animationsStorage;
+
+	std::string directionDetermining(const sf::Vector2i& direction) const;
 
 };

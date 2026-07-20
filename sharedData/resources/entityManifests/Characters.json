@@ -118,6 +118,7 @@
     },
     "MovementComponent": {
       "maxVelocity": 200.0
-    }
+    },
+    "StateComponent": {}
   }
 }

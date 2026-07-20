@@ -25,14 +25,37 @@ bool AnimationsStorage::getAnimationFrame(AnimationType type, const std::string&
 	}
 
 	if (frameIndex >= it2->second.size()) {
-		spdlog::get("game")->error("Animation frame {} not found", frameIndex);
-		return false;
+		frameIndex = frameIndex % it2->second.size();
 	}
 
 	outTexture = *it2->second[frameIndex];
 
 	return true;
+}
 
+bool AnimationsStorage::getAnimationFrame(AnimationType type, const sf::Vector2i& direction, size_t frameIndex, sf::Texture& outTexture) const
+{
+	std::string dir = directionDetermining(direction);
+	if (dir == "None") {
+		std::shared_ptr<spdlog::logger> load_logger = spdlog::get("load");
+		load_logger->warn("AnimationsStorage::addAnimations wrong animation direction: ({} ; {})", direction.x, direction.y);
+		return false;
+	}
+
+	return getAnimationFrame(type, dir, frameIndex, outTexture);
+}
+
+std::string AnimationsStorage::directionDetermining(const sf::Vector2i& direction) const
+{
+	if (direction == sf::Vector2i(0, -1)) { return "Forward"; }
+	if (direction == sf::Vector2i(-1, -1)) { return "ForwardLeft"; }
+	if (direction == sf::Vector2i(1, -1)) { return "ForwardRight"; }
+	if (direction == sf::Vector2i(-1, 0)) { return "Left"; }
+	if (direction == sf::Vector2i(1, 0)) { return "Right"; }
+	if (direction == sf::Vector2i(0, 1)) { return "Backward"; }
+	if (direction == sf::Vector2i(-1, 1)) { return "BackwardLeft"; }
+	if (direction == sf::Vector2i(1, 1)) { return "BackwardRight"; }
+	return "None";
 }
 
 

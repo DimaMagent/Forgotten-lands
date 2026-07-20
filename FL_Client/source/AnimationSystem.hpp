@@ -1,9 +1,17 @@
 #pragma once
+#include "AnimationType.hpp"
 
-//later
+namespace sl {
+	class Entity;
+	class StateComponent;
+}
 
 class AnimationSystem{
 public:
 	AnimationSystem() = default;
-	void onUpdate(float updateTime);
+	void onUpdate(sl::Entity& entity, float updateTime);
+
+private:
+
+	AnimationType selectAnimationType(const sl::StateComponent& stateComp);
 };

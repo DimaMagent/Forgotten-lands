@@ -30,6 +30,4 @@ void PlayerManager::initPlayerActions()
 
 void PlayerManager::movementUpdate(sl::Entity& entity, sf::Vector2i movementDirectionIntentions)
 {
-	
-
 }

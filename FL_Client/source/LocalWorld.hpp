@@ -11,6 +11,7 @@ namespace sl {
 class RenderManager;
 class StateManager;
 class ClientEntityFactory;
+class AnimationSystem;
 
 class LocalWorld: public sl::WorldBase {
 public:
@@ -26,6 +27,7 @@ protected:
 	std::shared_ptr<sl::Entity> playerEntity;
 	std::unique_ptr<RenderManager> renderManager;
 	std::shared_ptr<StateManager> stateManager;
+	std::unique_ptr<AnimationSystem> animationSystem;
 	std::weak_ptr<ClientEntityFactory> entityFactory;
 
 	virtual void onUpdate(float updateTime) override;
