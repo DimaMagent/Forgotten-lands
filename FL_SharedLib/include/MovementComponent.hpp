@@ -5,7 +5,6 @@
 #include "Serializable.hpp"
 #include <string>
 
-// TODO: Entity не теряет скорость, если стоит на месте
 namespace sl {
 
 	class MovementComponent: public sl::Component, public sl::Serializable {

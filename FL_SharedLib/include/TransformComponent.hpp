@@ -15,11 +15,11 @@ namespace sl {
 
 		void setPosition(float x, float y);
 		void setPosition(const sf::Vector2f& position);
-		void setRotation(int x, int y) { rotation.x = x; rotation.y = y; }
-		void setRotation(const sf::Vector2i& rotation) { this->rotation = rotation; }
+		void setRotation(int x, int y);
+		void setRotation(const sf::Vector2i& rotation);
 
-		sf::Vector2f& getPosition() { return position; }
-		sf::Vector2i& getRotation() { return rotation; }
+		sf::Vector2f getPosition() { return position; }
+		sf::Vector2i getRotation() { return rotation; }
 
 		virtual void serialize(std::vector<uint8_t>& out) const override;
 		virtual bool deserialize(const std::vector<uint8_t>& out, size_t& offset) override;

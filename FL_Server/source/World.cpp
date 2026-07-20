@@ -5,6 +5,7 @@
 #include "TransformComponent.hpp"
 #include "Serializer.hpp"
 #include "ConnectionEvents.hpp"
+#include "MovementSystem.hpp"
 
 World::World(ConnectionEvents& connectionEvents) : WorldBase()
 {
@@ -22,15 +23,8 @@ void World::onUpdate(float updateTime)
 {
 	for (auto& entity : playerEntityStorage.getEntities()) {
 		if (!entity) { continue; }
-
-		sl::MovementComponent* movComp = entity->getComponent<sl::MovementComponent>();
-		if (!movComp || !movComp->isMoving()) { continue; }
-
-		sl::TransformComponent* trComp = entity->getComponent<sl::TransformComponent>();
-		if (!trComp) { continue; }
-
-		trComp->setPosition(movComp->move(updateTime, trComp->getPosition()));
-		trComp->setRotation(movComp->getVelocityDirection());
+		
+		movementSystem->onUpdate(*entity, updateTime);
 	}
 	serializer->onUpdate(updateTime, playerEntityStorage);
 	OnUpdate.broadcast(updateTime);

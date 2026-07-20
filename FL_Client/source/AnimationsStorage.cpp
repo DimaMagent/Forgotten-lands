@@ -10,7 +10,7 @@ void AnimationsStorage::addAnimations(AnimationType type, const std::string& dir
 	(*animationsStorage)[type][direction] = frames;
 }
 
-bool AnimationsStorage::getAnimationFrame(AnimationType type, const std::string& direction, size_t frameIndex, sf::Texture& outTexture) const
+bool AnimationsStorage::getAnimationFrame(AnimationType type, const std::string& direction, size_t& frameIndex, sf::Texture& outTexture) const
 {
 	auto it1 = animationsStorage->find(type);
 	if (it1 == animationsStorage->end()) {
@@ -33,7 +33,7 @@ bool AnimationsStorage::getAnimationFrame(AnimationType type, const std::string&
 	return true;
 }
 
-bool AnimationsStorage::getAnimationFrame(AnimationType type, const sf::Vector2i& direction, size_t frameIndex, sf::Texture& outTexture) const
+bool AnimationsStorage::getAnimationFrame(AnimationType type, const sf::Vector2i& direction, size_t& frameIndex, sf::Texture& outTexture) const
 {
 	std::string dir = directionDetermining(direction);
 	if (dir == "None") {

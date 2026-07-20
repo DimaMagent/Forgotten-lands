@@ -5,18 +5,23 @@
 #include "RenderComponent.hpp"
 #include "StateComponent.hpp"
 
+int AnimationSystem::serializationFrequency = 4;
+
 void AnimationSystem::onUpdate(sl::Entity& entity, float updateTime) {
-	sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
-	sl::StateComponent* stateComp = entity.getComponent<sl::StateComponent>();
-	RenderComponent* rendComp = entity.getComponent<RenderComponent>();
+	if (serializationFrequency <= ++serializationCounter) {
+		serializationCounter = 0;
+		sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
+		sl::StateComponent* stateComp = entity.getComponent<sl::StateComponent>();
+		RenderComponent* rendComp = entity.getComponent<RenderComponent>();
 
-	if (!rendComp || !trComp || !stateComp) { return; }
+		if (!rendComp || !trComp || !stateComp) { return; }
 
-	bool isSuc = rendComp->setCurrentAnimation(selectAnimationType(*stateComp), trComp->getRotation());
+		bool isSuc = rendComp->setCurrentAnimation(selectAnimationType(*stateComp), trComp->getRotation());
 
-	if (!isSuc) {
-		std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
-		game_logger->warn("AnimationSystem::onUpdate animation set failed");
+		if (!isSuc) {
+			std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
+			game_logger->warn("AnimationSystem::onUpdate animation set failed");
+		}
 	}
 }
 

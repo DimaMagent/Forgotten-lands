@@ -3,6 +3,12 @@
 #include "MovementComponent.hpp"
 #include "TransformComponent.hpp"
 #include "Entity.hpp"
+#include "MovementSystem.hpp"
+
+sl::WorldBase::WorldBase()
+{
+	movementSystem = std::make_unique<MovementSystem>();
+}
 
 sl::WorldBase::~WorldBase() = default;
 
@@ -23,13 +29,7 @@ void sl::WorldBase::update(float deltaTime) {
 
 			if (!en) { continue; }
 
-			sl::MovementComponent* movComp = en->getComponent<sl::MovementComponent>();
-			if (!movComp || !movComp->isMoving()) { continue; }
-
-			sl::TransformComponent* trComp = en->getComponent<sl::TransformComponent>();
-			if (!trComp) { continue; }
-
-			trComp->setPosition(movComp->move(updateTime.asSeconds(), trComp->getPosition()));
+			movementSystem->onUpdate(*en, deltaTime);
 		}
 	}
 }

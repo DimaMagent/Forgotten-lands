@@ -24,11 +24,12 @@ public:
 
 	COMPONENT_TYPE(RenderComponent);
 private:
-	std::shared_ptr<const AnimationsStorage> animationsStorage;
-	std::unique_ptr<sf::Texture> currentTexture;
 	AnimationType currentAnimationType;
 	sf::Vector2i currentDirection;
 	size_t currentIndex = 0;
+
+	std::shared_ptr<const AnimationsStorage> animationsStorage;
+	std::unique_ptr<sf::Texture> currentTexture;
 
 	sf::IntRect rectTransform;
 

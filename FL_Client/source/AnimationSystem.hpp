@@ -12,6 +12,8 @@ public:
 	void onUpdate(sl::Entity& entity, float updateTime);
 
 private:
+	static int serializationFrequency;
+	int serializationCounter = 0;
 
 	AnimationType selectAnimationType(const sl::StateComponent& stateComp);
 };

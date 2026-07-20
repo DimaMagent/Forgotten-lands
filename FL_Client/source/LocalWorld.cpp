@@ -9,6 +9,7 @@
 #include "LockFreeDelegate.hpp"
 #include "ClientEntityFactory.hpp"
 #include "AnimationSystem.hpp"
+#include "MovementSystem.hpp"
 
 LocalWorld::LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::RenderTarget& renderTarget) : WorldBase() ,
 	stateManager(std::make_shared<StateManager>(playerEntity, entities, OnSetPlayerEntity)),
@@ -53,16 +54,7 @@ void LocalWorld::onUpdate(float updateTime)
 {
 	if (!playerEntity) { return; }
 
-	sl::MovementComponent* movComp = playerEntity->getComponent<sl::MovementComponent>();
-	sl::TransformComponent* trComp = playerEntity->getComponent<sl::TransformComponent>();
-	sl::StateComponent* stateComp = playerEntity->getComponent<sl::StateComponent>();
-
-	if (!movComp || !trComp || !stateComp) { return; }
-	if (!movComp->isMoving()) { return; }
-
-	trComp->setPosition(movComp->move(updateTime, trComp->getPosition()));
-	trComp->setRotation(movComp->getVelocityDirection());
-	stateComp->movementState = sl::MovementState::Walk;
+	movementSystem->onUpdate(*playerEntity, updateTime);
 
 	animationSystem->onUpdate(*playerEntity, updateTime);
 }

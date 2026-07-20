@@ -29,8 +29,8 @@ class AnimationsStorage {
 public:
 	AnimationsStorage();
 	void addAnimations(AnimationType type, const std::string& direction, const AnimationFrames& frames);
-	bool getAnimationFrame(AnimationType type, const std::string& direction, size_t frameIndex, sf::Texture& outTexture) const;
-	bool getAnimationFrame(AnimationType type, const sf::Vector2i& direction, size_t frameIndex, sf::Texture& outTexture) const;
+	bool getAnimationFrame(AnimationType type, const std::string& direction, size_t& frameIndex, sf::Texture& outTexture) const;
+	bool getAnimationFrame(AnimationType type, const sf::Vector2i& direction, size_t& frameIndex, sf::Texture& outTexture) const;
 private:
 	//stores textures-animations by type and direction
 	std::shared_ptr<TexturesStorage> animationsStorage;
