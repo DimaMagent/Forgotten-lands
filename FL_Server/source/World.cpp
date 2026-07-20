@@ -30,6 +30,10 @@ void World::onUpdate(float updateTime)
 	OnUpdate.broadcast(updateTime);
 }
 
+void World::onUpdateEntities(sl::Entity& en, float updateTime)
+{
+}
+
 void World::addPlayerEntity(std::unique_ptr<sl::Entity>&& entity, const uint32_t& sessionToken)
 {
 	if (!entity) { return; }

@@ -13,10 +13,11 @@
 
 LocalWorld::LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::RenderTarget& renderTarget) : WorldBase() ,
 	stateManager(std::make_shared<StateManager>(playerEntity, entities, OnSetPlayerEntity)),
-	entityFactory(entityFactory), renderManager(std::make_unique<RenderManager>(renderTarget)),
-	animationSystem(std::make_unique<AnimationSystem>())
+	entityFactory(entityFactory), renderManager(std::make_unique<RenderManager>(renderTarget))
 {
 	game_logger = spdlog::get("game");
+
+	animationSystem = std::make_unique<AnimationSystem>(playerEntity, entities, OnSetPlayerEntity);
 
 	stateManager->OnAbsenceEntity.addFunction([this](uint32_t globalId) {this->onAbsenceEntity(globalId); });
 	stateManager->OnEntityAbsenceOnStatusPacket.addFunction([this](size_t entityIndex) {this->onAbsenceEntityOnStatusPacket(entityIndex); });
@@ -57,6 +58,11 @@ void LocalWorld::onUpdate(float updateTime)
 	movementSystem->onUpdate(*playerEntity, updateTime);
 
 	animationSystem->onUpdate(*playerEntity, updateTime);
+}
+
+void LocalWorld::onUpdateEntities(sl::Entity& en, float updateTime)
+{
+	animationSystem->onUpdate(en, updateTime);
 }
 
 void LocalWorld::onAbsenceEntity(uint32_t globalId)

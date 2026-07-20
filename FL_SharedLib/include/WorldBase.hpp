@@ -25,5 +25,6 @@ namespace sl {
 		std::unique_ptr<MovementSystem> movementSystem;
 
 		virtual void onUpdate(float updateTime) = 0;
+		virtual void onUpdateEntities(sl::Entity& en, float updateTime) = 0;
 	};
 }

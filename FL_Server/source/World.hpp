@@ -20,6 +20,7 @@ public:
 	std::weak_ptr<sl::Entity> getPlayerEntityToToken(uint32_t token) const;
 protected:
 	virtual void onUpdate(float updateTime) override;
+	virtual void onUpdateEntities(sl::Entity& en, float updateTime) override;
 
 private:
 	std::unique_ptr<Serializer> serializer;

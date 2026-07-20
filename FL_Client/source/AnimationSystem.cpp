@@ -5,22 +5,30 @@
 #include "RenderComponent.hpp"
 #include "StateComponent.hpp"
 
+
 int AnimationSystem::serializationFrequency = 4;
+
+AnimationSystem::AnimationSystem(std::weak_ptr<sl::Entity> playerEntity, sl::EntityStorage& entities,
+	sl::Delegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntityDelegate): playerEntity(playerEntity), entities(entities)
+{
+
+	onSetPlayerEntityDelegate.addFunction([this](const std::weak_ptr<sl::Entity> playerEntity) {this->playerEntity = playerEntity; });
+}
 
 void AnimationSystem::onUpdate(sl::Entity& entity, float updateTime) {
 	if (serializationFrequency <= ++serializationCounter) {
 		serializationCounter = 0;
-		sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
-		sl::StateComponent* stateComp = entity.getComponent<sl::StateComponent>();
-		RenderComponent* rendComp = entity.getComponent<RenderComponent>();
 
-		if (!rendComp || !trComp || !stateComp) { return; }
+		auto plEn = playerEntity.lock();
 
-		bool isSuc = rendComp->setCurrentAnimation(selectAnimationType(*stateComp), trComp->getRotation());
+		if (plEn) {
+			updateAnimations(*plEn, updateTime);
+		}
 
-		if (!isSuc) {
-			std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
-			game_logger->warn("AnimationSystem::onUpdate animation set failed");
+		for (auto& en : entities.getEntities()) {
+			if (!en) { continue; }
+
+			updateAnimations(*en, updateTime);
 		}
 	}
 }
@@ -35,4 +43,20 @@ AnimationType AnimationSystem::selectAnimationType(const sl::StateComponent& sta
 	if (stateComp.actionState == sl::ActionState::Talk) { return AnimationType::Talk; }
 	if (stateComp.actionState == sl::ActionState::Rest) { return AnimationType::Rest; }
 	return AnimationType::None;
+}
+
+void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
+{
+	sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
+	sl::StateComponent* stateComp = entity.getComponent<sl::StateComponent>();
+	RenderComponent* rendComp = entity.getComponent<RenderComponent>();
+
+	if (!rendComp || !trComp || !stateComp) { return; }
+
+	bool isSuc = rendComp->setCurrentAnimation(selectAnimationType(*stateComp), trComp->getRotation());
+
+	if (!isSuc) {
+		std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
+		game_logger->warn("AnimationSystem::onUpdate animation set failed");
+	}
 }

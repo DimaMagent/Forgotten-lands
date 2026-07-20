@@ -23,13 +23,17 @@ void sl::WorldBase::update(float deltaTime) {
 	while (timeSinceLastUpdate >= updateTime) {
 		timeSinceLastUpdate -= updateTime;
 
-		onUpdate(updateTime.asSeconds());
+		float updateTimeCount = updateTime.asSeconds();
+
+		onUpdate(updateTimeCount);
 
 		for (auto& en : entities.getEntities()) {
 
 			if (!en) { continue; }
 
-			movementSystem->onUpdate(*en, deltaTime);
+			movementSystem->onUpdate(*en, updateTimeCount);
+
+			onUpdateEntities(*en, updateTimeCount);
 		}
 	}
 }

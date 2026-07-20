@@ -27,10 +27,12 @@ protected:
 	std::shared_ptr<sl::Entity> playerEntity;
 	std::unique_ptr<RenderManager> renderManager;
 	std::shared_ptr<StateManager> stateManager;
-	std::unique_ptr<AnimationSystem> animationSystem;
 	std::weak_ptr<ClientEntityFactory> entityFactory;
+	std::unique_ptr<AnimationSystem> animationSystem;
 
 	virtual void onUpdate(float updateTime) override;
+	virtual void onUpdateEntities(sl::Entity& en, float updateTime) override;
+
 	void onAbsenceEntity(uint32_t globalId);
 	void onAbsenceEntityOnStatusPacket(uint32_t id);
 };
