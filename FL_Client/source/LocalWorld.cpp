@@ -57,12 +57,11 @@ void LocalWorld::onUpdate(float updateTime)
 
 	movementSystem->onUpdate(*playerEntity, updateTime);
 
-	animationSystem->onUpdate(*playerEntity, updateTime);
+	animationSystem->onUpdate(updateTime);
 }
 
 void LocalWorld::onUpdateEntities(sl::Entity& en, float updateTime)
 {
-	animationSystem->onUpdate(en, updateTime);
 }
 
 void LocalWorld::onAbsenceEntity(uint32_t globalId)

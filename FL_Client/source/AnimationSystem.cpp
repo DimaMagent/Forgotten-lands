@@ -6,7 +6,7 @@
 #include "StateComponent.hpp"
 
 
-int AnimationSystem::serializationFrequency = 4;
+int AnimationSystem::serializationFrequency = 5;
 
 AnimationSystem::AnimationSystem(std::weak_ptr<sl::Entity> playerEntity, sl::EntityStorage& entities,
 	sl::Delegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntityDelegate): playerEntity(playerEntity), entities(entities)
@@ -15,7 +15,7 @@ AnimationSystem::AnimationSystem(std::weak_ptr<sl::Entity> playerEntity, sl::Ent
 	onSetPlayerEntityDelegate.addFunction([this](const std::weak_ptr<sl::Entity> playerEntity) {this->playerEntity = playerEntity; });
 }
 
-void AnimationSystem::onUpdate(sl::Entity& entity, float updateTime) {
+void AnimationSystem::onUpdate(float updateTime) {
 	if (serializationFrequency <= ++serializationCounter) {
 		serializationCounter = 0;
 

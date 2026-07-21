@@ -8,5 +8,6 @@ namespace sl {
 		MovementSystem();
 
 		void onUpdate(sl::Entity& entity, float updateTime);
+
 	};
 }

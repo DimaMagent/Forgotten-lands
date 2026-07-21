@@ -12,7 +12,7 @@ class AnimationSystem{
 public:
 	AnimationSystem(std::weak_ptr<sl::Entity> playerEntity, sl::EntityStorage& entities,
 		sl::Delegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntityDelegate);
-	void onUpdate(sl::Entity& entity, float updateTime);
+	void onUpdate(float updateTime);
 
 private:
 	static int serializationFrequency;

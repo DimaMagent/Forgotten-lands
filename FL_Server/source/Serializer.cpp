@@ -7,7 +7,7 @@
 #include "Entity.hpp"
 #include "Serializable.hpp"
 
-int Serializer::serializationFrequency = 5;
+int Serializer::serializationFrequency = 2;
 
 Serializer::Serializer()
 {	

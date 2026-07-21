@@ -34,6 +34,8 @@ namespace sl {
 		virtual uint32_t getSerializeDataSize() const override;
 		virtual uint32_t getDeserializeDataSize() const override;
 
+		bool isMovementAlreadyReseted = false;
+
 		COMPONENT_TYPE(MovementComponent);
 	private:
 		sf::Vector2f velocityVector;
