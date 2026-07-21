@@ -2,7 +2,7 @@
 #include <cstdint>
 
 enum class AnimationType : uint8_t {
-	None,
+	Idle,
 	Walk,
 	Run,
 	Attack,
@@ -21,6 +21,6 @@ constexpr AnimationType animationTypeFromString(const std::string& typeStr)
 	if (typeStr == "Death") return AnimationType::Death;
 	if (typeStr == "TakingDamage") return AnimationType::TakingDamage;
 	if (typeStr == "Talk") return AnimationType::Talk;
-	return AnimationType::None;
+	return AnimationType::Idle;
 
 }

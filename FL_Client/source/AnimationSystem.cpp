@@ -42,7 +42,7 @@ AnimationType AnimationSystem::selectAnimationType(const sl::StateComponent& sta
 	if (stateComp.lifeState == sl::LifeState::TakingDamage) { return AnimationType::TakingDamage; }
 	if (stateComp.actionState == sl::ActionState::Talk) { return AnimationType::Talk; }
 	if (stateComp.actionState == sl::ActionState::Rest) { return AnimationType::Rest; }
-	return AnimationType::None;
+	return AnimationType::Idle;
 }
 
 void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)

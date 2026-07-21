@@ -2,15 +2,15 @@
   "player": {
     "RenderComponent": {
       "Animations": {
-        "None": {
-          "Forward": [ "assets/unarmed_character/none/steht0004.png" ],
-          "ForwardLeft": [ "assets/unarmed_character/none/steht0003.png" ],
-          "ForwardRight": [ "assets/unarmed_character/none/steht0005.png" ],
-          "Left": [ "assets/unarmed_character/none/steht0002.png" ],
-          "Right": [ "assets/unarmed_character/none/steht0006.png" ],
-          "Backward": [ "assets/unarmed_character/none/steht0000.png" ],
-          "BackwardLeft": [ "assets/unarmed_character/none/steht0001.png" ],
-          "BackwardRight": [ "assets/unarmed_character/none/steht0007.png" ]
+        "Idle": {
+          "Forward": [ "assets/unarmed_character/idle/steht0004.png" ],
+          "ForwardLeft": [ "assets/unarmed_character/idle/steht0003.png" ],
+          "ForwardRight": [ "assets/unarmed_character/idle/steht0005.png" ],
+          "Left": [ "assets/unarmed_character/idle/steht0002.png" ],
+          "Right": [ "assets/unarmed_character/idle/steht0006.png" ],
+          "Backward": [ "assets/unarmed_character/idle/steht0000.png" ],
+          "BackwardLeft": [ "assets/unarmed_character/idle/steht0001.png" ],
+          "BackwardRight": [ "assets/unarmed_character/idle/steht0007.png" ]
         },
         "Walk": {
           "Forward": [

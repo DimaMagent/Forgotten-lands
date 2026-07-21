@@ -9,7 +9,7 @@ RenderComponent::RenderComponent(std::shared_ptr<const AnimationsStorage> animSt
 {
 	currentTexture = std::make_unique<sf::Texture>();
 	currentIndex = 0;
-	currentAnimationType = AnimationType::None;
+	currentAnimationType = AnimationType::Idle;
 	currentDirection = sf::Vector2i(0, -1);
 	animationsStorage->getAnimationFrame(currentAnimationType, currentDirection, currentIndex, *currentTexture);
 }
@@ -19,7 +19,7 @@ RenderComponent::RenderComponent(std::shared_ptr<const AnimationsStorage> animSt
 {
 	currentTexture = std::make_unique<sf::Texture>();
 	currentIndex = 0;
-	currentAnimationType = AnimationType::None;
+	currentAnimationType = AnimationType::Idle;
 	currentDirection = sf::Vector2i(0, -1);
 	animationsStorage->getAnimationFrame(currentAnimationType, currentDirection, currentIndex, *currentTexture);
 }
