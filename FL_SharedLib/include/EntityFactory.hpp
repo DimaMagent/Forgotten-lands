@@ -19,6 +19,8 @@ namespace sl {
 		Player,
 	};
 
+	std::string EntityTypeToString(EntityType type);
+
 	using json = nlohmann::json;
 
 	using ComponentFactory = std::function<void(sl::Entity& entity, const json& js)>;
@@ -35,10 +37,8 @@ namespace sl {
 		std::unique_ptr<sl::Entity> createEntity(const EntityType entityId);
 	protected:
 		std::unique_ptr<DataLoader> dataLoader;
-		std::unordered_map<sl::EntityType, std::string> characterIdToDataId;
 		std::unordered_map<std::string_view, ComponentFactory> registry;
 
-		void InitializeCharacterIdToDataId();
 		virtual void registrationComponents();
 	};
 }
