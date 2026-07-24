@@ -15,8 +15,6 @@ public:
 	void onUpdate(float updateTime);
 
 private:
-	static int serializationFrequency;
-	int serializationCounter = 0;
 
 	std::weak_ptr<sl::Entity> playerEntity;
 	sl::EntityStorage& entities;

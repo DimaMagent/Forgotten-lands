@@ -20,7 +20,17 @@ void ClientEntityFactory::registrationComponents()
 	sl::EntityFactory::registrationComponents();
 
 	registry.try_emplace(RenderComponent::ComponentName, [this](sl::Entity& entity, const json& js) {
-		
+
+		auto& rectData = js.at("textureRect");
+
+		entity.addComponent<RenderComponent>(textureManager->getTexture(js.value("texture", "")),
+			rectData.value("height", 0),
+			rectData.value("width", 0),
+			rectData.value("x", 0),
+			rectData.value("y", 0));
+	});
+
+	registry.try_emplace(AnimationComponent::ComponentName, [this](sl::Entity& entity, const json& js) {
 		std::shared_ptr<AnimationsStorage> animationStorage = std::make_shared<AnimationsStorage>();
 
 		for (auto& [animationName, animation] : js["Animations"].items()) {
@@ -34,16 +44,11 @@ void ClientEntityFactory::registrationComponents()
 			}
 		}
 
-		auto& rectData = js.at("textureRect");
-		entity.addComponent<RenderComponent>(animationStorage,
-			rectData.value("height", 0),
-			rectData.value("width", 0),
-			rectData.value("x", 0),
-			rectData.value("y", 0));
-	});
+		AnimationComponent& animComp = entity.addComponent<AnimationComponent>(animationStorage);
 
-	registry.try_emplace(AnimationComponent::ComponentName, [this](sl::Entity& entity, const json& js) {
-		std::cout << "All ok\n";
+		for (auto& [animationName, frequency] : js["AllowedAnimation"].items()) {
+			animComp.addAllowedAnimationFrequency(animationTypeFromString(animationName), frequency);
+		}
 	});
 
 }

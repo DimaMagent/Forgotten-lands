@@ -15,21 +15,19 @@ class AnimationsStorage;
 class RenderComponent: public sl::Component {
 public:
 	RenderComponent() = default;
-	RenderComponent(std::shared_ptr<const AnimationsStorage> animStorage, const sf::IntRect& rc);
-	RenderComponent(std::shared_ptr<const AnimationsStorage> animStorage, int height, int width, int x, int y);
+
+	RenderComponent(const std::shared_ptr<sf::Texture> texture, const sf::IntRect& rc);
+
+	RenderComponent(const std::shared_ptr<sf::Texture> texture, int height, int width, int x, int y);
+
 	void render(sf::RenderTarget& target, sf::Vector2f position) const;
 
-	//returns true if animation exist
-	bool setCurrentAnimation(AnimationType type, const sf::Vector2i& direction);
+	void setCurrentTexture(const std::shared_ptr<sf::Texture> newTexture);
 
 	COMPONENT_TYPE(RenderComponent);
 private:
-	AnimationType currentAnimationType;
-	sf::Vector2i currentDirection;
-	size_t currentIndex = 0;
 
-	std::shared_ptr<const AnimationsStorage> animationsStorage;
-	std::unique_ptr<sf::Texture> currentTexture;
+	std::shared_ptr<sf::Texture> currentTexture;
 
 	sf::IntRect rectTransform;
 

@@ -4,9 +4,7 @@
 #include "TransformComponent.hpp"
 #include "RenderComponent.hpp"
 #include "StateComponent.hpp"
-
-
-int AnimationSystem::serializationFrequency = 5;
+#include "AnimationComponent.hpp"
 
 AnimationSystem::AnimationSystem(std::weak_ptr<sl::Entity> playerEntity, sl::EntityStorage& entities,
 	sl::Delegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntityDelegate): playerEntity(playerEntity), entities(entities)
@@ -16,20 +14,16 @@ AnimationSystem::AnimationSystem(std::weak_ptr<sl::Entity> playerEntity, sl::Ent
 }
 
 void AnimationSystem::onUpdate(float updateTime) {
-	if (serializationFrequency <= ++serializationCounter) {
-		serializationCounter = 0;
+	auto plEn = playerEntity.lock();
 
-		auto plEn = playerEntity.lock();
+	if (plEn) {
+		updateAnimations(*plEn, updateTime);
+	}
 
-		if (plEn) {
-			updateAnimations(*plEn, updateTime);
-		}
+	for (auto& en : entities.getEntities()) {
+		if (!en) { continue; }
 
-		for (auto& en : entities.getEntities()) {
-			if (!en) { continue; }
-
-			updateAnimations(*en, updateTime);
-		}
+		updateAnimations(*en, updateTime);
 	}
 }
 
@@ -47,16 +41,39 @@ AnimationType AnimationSystem::selectAnimationType(const sl::StateComponent& sta
 
 void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
 {
-	sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
+	AnimationComponent* animComp = entity.getComponent<AnimationComponent>();
+	if (!animComp) { return; }
+
 	sl::StateComponent* stateComp = entity.getComponent<sl::StateComponent>();
-	RenderComponent* rendComp = entity.getComponent<RenderComponent>();
+	if (!stateComp) { return; }
 
-	if (!rendComp || !trComp || !stateComp) { return; }
+	AnimationType currentAnimationType = selectAnimationType(*stateComp);
 
-	bool isSuc = rendComp->setCurrentAnimation(selectAnimationType(*stateComp), trComp->getRotation());
+	animComp->addTimeSinceLastUpdate(currentAnimationType, updateTime);
 
-	if (!isSuc) {
-		std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
-		game_logger->warn("AnimationSystem::onUpdate animation set failed");
+	float timeSinceLastUpdate;
+	if (!animComp->getTimeSinceLastUpdate(currentAnimationType, timeSinceLastUpdate)) { return; }
+
+	float currentFrequencyOfAnimation;
+	if (!animComp->getCurrentFrequencyOfAnimationIfExist(currentAnimationType, currentFrequencyOfAnimation)) { return; }
+
+	if (timeSinceLastUpdate >= currentFrequencyOfAnimation) {
+		animComp->addTimeSinceLastUpdate(currentAnimationType, -currentFrequencyOfAnimation);
+
+		sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
+		RenderComponent* rendComp = entity.getComponent<RenderComponent>();
+
+
+		if (!rendComp || !trComp) { return; }
+
+		const std::shared_ptr<sf::Texture> texture = animComp->getCurrentAnimationFrame(currentAnimationType, trComp->getRotation());
+
+		if (!texture) {
+			std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
+			game_logger->warn("AnimationSystem::onUpdate animation set failed");
+			return;
+		}
+
+		rendComp->setCurrentTexture(texture);
 	}
 }

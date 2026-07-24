@@ -10,39 +10,37 @@ void AnimationsStorage::addAnimations(AnimationType type, const std::string& dir
 	(*animationsStorage)[type][direction] = frames;
 }
 
-bool AnimationsStorage::getAnimationFrame(AnimationType type, const std::string& direction, size_t& frameIndex, sf::Texture& outTexture) const
+const std::shared_ptr<sf::Texture> AnimationsStorage::getAnimationFrame(AnimationType type, const std::string& direction, size_t& frameIndex) const
 {
 	auto it1 = animationsStorage->find(type);
 	if (it1 == animationsStorage->end()) {
 		spdlog::get("game")->error("Animation type {} not found", static_cast<int>(type));
-		return false;
+		return nullptr;
 	}
 
 	auto it2 = it1->second.find(direction);
 	if (it2 == it1->second.end()) {
 		spdlog::get("game")->error("Animation direction {} not found", direction);
-		return false;
+		return nullptr;
 	}
 
 	if (frameIndex >= it2->second.size()) {
 		frameIndex = frameIndex % it2->second.size();
 	}
 
-	outTexture = *it2->second[frameIndex];
-
-	return true;
+	return it2->second[frameIndex];
 }
 
-bool AnimationsStorage::getAnimationFrame(AnimationType type, const sf::Vector2i& direction, size_t& frameIndex, sf::Texture& outTexture) const
+const std::shared_ptr<sf::Texture> AnimationsStorage::getAnimationFrame(AnimationType type, const sf::Vector2i& direction, size_t& frameIndex) const
 {
 	std::string dir = directionDetermining(direction);
 	if (dir == "None") {
 		std::shared_ptr<spdlog::logger> load_logger = spdlog::get("load");
 		load_logger->warn("AnimationsStorage::addAnimations wrong animation direction: ({} ; {})", direction.x, direction.y);
-		return false;
+		return nullptr;
 	}
 
-	return getAnimationFrame(type, dir, frameIndex, outTexture);
+	return getAnimationFrame(type, dir, frameIndex);
 }
 
 std::string AnimationsStorage::directionDetermining(const sf::Vector2i& direction) const

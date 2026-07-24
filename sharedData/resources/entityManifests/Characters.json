@@ -1,6 +1,16 @@
 {
   "player": {
     "RenderComponent": {
+      "texture": "assets/unarmed_character/idle/steht0004.png",
+     
+      "textureRect": {
+        "height": 96,
+        "width": 96,
+        "x": 0,
+        "y": 0
+      }
+    },
+    "AnimationComponent": {
       "Animations": {
         "Idle": {
           "Forward": [ "assets/unarmed_character/idle/steht0004.png" ],
@@ -103,25 +113,25 @@
           ]
         }
       },
-      "textureRect": {
-        "height": 96,
-        "width": 96,
-        "x": 0,
-        "y": 0
+
+      "AllowedAnimation": {
+        "Idle": 0.1,
+        "Walk": 0.083
       }
-    },
-    "AnimationComponent": {
 
     },
     "TransformComponent": {
+
       "position": {
         "x": 0,
         "y": 0
       }
+
     },
     "MovementComponent": {
       "maxVelocity": 200.0
     },
+
     "StateComponent": {}
   }
 }

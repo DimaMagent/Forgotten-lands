@@ -4,24 +4,16 @@
 #include "AnimationsStorage.hpp"
 
 
-RenderComponent::RenderComponent(std::shared_ptr<const AnimationsStorage> animStorage, const sf::IntRect& rc) :
-	animationsStorage(animStorage), rectTransform(rc)
+RenderComponent::RenderComponent(const std::shared_ptr<sf::Texture> texture, const sf::IntRect& rc) :
+	rectTransform(rc)
 {
-	currentTexture = std::make_unique<sf::Texture>();
-	currentIndex = 0;
-	currentAnimationType = AnimationType::Idle;
-	currentDirection = sf::Vector2i(0, -1);
-	animationsStorage->getAnimationFrame(currentAnimationType, currentDirection, currentIndex, *currentTexture);
+	currentTexture = texture;
 }
 
-RenderComponent::RenderComponent(std::shared_ptr<const AnimationsStorage> animStorage, int height, int width, int x, int y):
-	animationsStorage(animStorage), rectTransform(sf::IntRect(sf::Vector2i(x, y), sf::Vector2i(height, width)))
+RenderComponent::RenderComponent(const std::shared_ptr<sf::Texture> texture, int height, int width, int x, int y):
+	rectTransform(sf::IntRect(sf::Vector2i(x, y), sf::Vector2i(height, width)))
 {
-	currentTexture = std::make_unique<sf::Texture>();
-	currentIndex = 0;
-	currentAnimationType = AnimationType::Idle;
-	currentDirection = sf::Vector2i(0, -1);
-	animationsStorage->getAnimationFrame(currentAnimationType, currentDirection, currentIndex, *currentTexture);
+	currentTexture = texture;
 }
 
 void RenderComponent::render(sf::RenderTarget& target, sf::Vector2f position) const
@@ -33,18 +25,10 @@ void RenderComponent::render(sf::RenderTarget& target, sf::Vector2f position) co
 	}
 }
 
-bool RenderComponent::setCurrentAnimation(AnimationType type, const sf::Vector2i& direction)
+void RenderComponent::setCurrentTexture(const std::shared_ptr<sf::Texture> newTexture)
 {
-	if (currentAnimationType == type && currentDirection == direction) {
-		++currentIndex;
+	if (newTexture) {
+		currentTexture = newTexture;
 	}
-	else {
-		currentAnimationType = type;
-		currentDirection = direction;
-		currentIndex = 0;
-	}
-	
-	return animationsStorage->getAnimationFrame(currentAnimationType, currentDirection, currentIndex, *currentTexture);
 }
-
 
