@@ -110,6 +110,9 @@
         "y": 0
       }
     },
+    "AnimationComponent": {
+
+    },
     "TransformComponent": {
       "position": {
         "x": 0,

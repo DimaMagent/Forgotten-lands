@@ -6,6 +6,7 @@
 #include "RenderComponent.hpp"
 #include "TextureManager.hpp"
 #include "AnimationsStorage.hpp"
+#include "AnimationComponent.hpp"
 
 ClientEntityFactory::ClientEntityFactory() : sl::EntityFactory()
 {
@@ -40,4 +41,9 @@ void ClientEntityFactory::registrationComponents()
 			rectData.value("x", 0),
 			rectData.value("y", 0));
 	});
+
+	registry.try_emplace(AnimationComponent::ComponentName, [this](sl::Entity& entity, const json& js) {
+		std::cout << "All ok\n";
+	});
+
 }
