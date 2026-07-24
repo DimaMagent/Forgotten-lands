@@ -21,6 +21,9 @@ void Serializer::serializeObjects( const sl::EntityStorage& entitiesStorage)
 		uint32_t entityId = entitiesStorage.getEntities()[i]->getId();
 		sl::net::write_uint32_t(localBuf, entityId);
 
+		uint32_t entityType = static_cast<uint32_t>(entitiesStorage.getEntities()[i]->getEntityType());
+		sl::net::write_uint32_t(localBuf, entityType);
+
 		std::vector<uint8_t> entityLocalBuf;
 		uint32_t entityDataSize = 0;
 

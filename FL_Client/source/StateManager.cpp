@@ -52,7 +52,7 @@ void StateManager::recordRollback(const sl::net::StatusData& data)
 			}
 			else 
 			{
-				OnAbsenceEntity.broadcast(enData.entityId);
+				OnAbsenceEntity.broadcast(enData.entityId, static_cast<sl::EntityType>(enData.entityType));
 			}
 		}
 		

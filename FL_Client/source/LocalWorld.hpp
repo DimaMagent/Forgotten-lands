@@ -4,6 +4,7 @@
 #include <vector>
 #include "Delegate.hpp"
 #include "SFML/System/Time.hpp"
+#include "EntityType.hpp"
 
 namespace sl {
 	class Entity;
@@ -33,6 +34,6 @@ protected:
 	virtual void onUpdate(float updateTime) override;
 	virtual void onUpdateEntities(sl::Entity& en, float updateTime) override;
 
-	void onAbsenceEntity(uint32_t globalId);
+	void onAbsenceEntity(uint32_t globalId, sl::EntityType type);
 	void onAbsenceEntityOnStatusPacket(uint32_t id);
 };

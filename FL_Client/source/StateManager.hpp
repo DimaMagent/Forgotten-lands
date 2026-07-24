@@ -6,6 +6,7 @@
 #include "Delegate.hpp"
 #include "LockFreeDelegate.hpp"
 #include "PacketDataTypes.hpp"
+#include "EntityType.hpp"
 
 namespace sl {
 	class Entity;
@@ -20,7 +21,7 @@ namespace sl {
 //stores the sequence of player actions
 class StateManager {
 public:
-	sl::LockFreeDelegate<uint32_t> OnAbsenceEntity;
+	sl::LockFreeDelegate<uint32_t, sl::EntityType> OnAbsenceEntity;
 	sl::LockFreeDelegate<uint32_t> OnEntityAbsenceOnStatusPacket;
 
 	StateManager(std::weak_ptr<sl::Entity> playerEntity, sl::EntityStorage& entities,

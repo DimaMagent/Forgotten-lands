@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <cstdint>
 #include "Component.hpp"
+#include "EntityType.hpp"
 
 namespace sl {
     
@@ -11,7 +12,7 @@ namespace sl {
 
     class Entity {
     public:
-		Entity();
+		Entity(sl::EntityType type);
         ~Entity();
 
         Entity(const Entity&) = delete;
@@ -23,6 +24,8 @@ namespace sl {
         uint32_t getId() const { return id; }
 
         uint32_t getGlobalId() const { return globalId; }
+
+        sl::EntityType getEntityType() const { return type; }
 
         void setGlobalId(uint32_t newId) { globalId = newId; }
 
@@ -82,6 +85,7 @@ namespace sl {
         static uint32_t nextId;
         uint32_t id;
         uint32_t globalId = 0;
+        sl::EntityType type;
         std::vector<std::pair<uint32_t, std::unique_ptr<sl::Component>>> components;
     };
 }

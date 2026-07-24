@@ -61,6 +61,7 @@ namespace sl::net {
 		while (offset < data.size()) {
 			EntityData enData;
 			enData.entityId = sl::net::read_uint32_t(data, offset);
+			enData.entityType = sl::net::read_uint32_t(data, offset);
 			enData.entityDataSize = sl::net::read_uint32_t(data, offset);
 			size_t entityEnd = offset + enData.entityDataSize;
 

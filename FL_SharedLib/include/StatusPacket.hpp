@@ -11,6 +11,7 @@ namespace sl::net {
 
 	struct EntityData {
 		uint32_t entityId = 0;
+		uint32_t entityType = 0;
 		uint32_t entityDataSize = 0;
 		std::vector<ComponentData> componentsData;
 	};
@@ -23,6 +24,7 @@ namespace sl::net {
 		virtual void fillPacketData(uint16_t sequenceNumber, PacketType type, uint32_t token, std::vector<uint8_t> data);
 		std::vector<EntityData> getEntityData() const;
 	};
+
 	class StatusPacket : public Packet {
 	public:
 		virtual bool write(std::vector<uint8_t>& out) const override;

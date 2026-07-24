@@ -18,9 +18,9 @@ void sl::EntityFactory::initialize()
 
 sl::EntityFactory::~EntityFactory() = default;
 
-std::unique_ptr<sl::Entity> sl::EntityFactory::createEntity(const EntityType EntityId)
+std::unique_ptr<sl::Entity> sl::EntityFactory::createEntity(const sl::EntityType entityType)
 {
-		std::string dataId = EntityTypeToString(EntityId);
+		std::string dataId = sl::EntityTypeToString(entityType);
 
 		if (dataId == "undefined") {
 			return nullptr;
@@ -28,7 +28,7 @@ std::unique_ptr<sl::Entity> sl::EntityFactory::createEntity(const EntityType Ent
 
 		json jd = dataLoader->getData(dataId);
 
-		std::unique_ptr<sl::Entity> entity = std::make_unique<sl::Entity>();
+		std::unique_ptr<sl::Entity> entity = std::make_unique<sl::Entity>(entityType);
 
 		for (auto& [key, value] : jd.items()) {
 			if (registry.contains(key)) {
@@ -53,8 +53,3 @@ void sl::EntityFactory::registrationComponents()
 
 }
 
-std::string sl::EntityTypeToString(EntityType type)
-{
-	if (type == EntityType::Player) { return "player"; }
-	return "undefined";
-}

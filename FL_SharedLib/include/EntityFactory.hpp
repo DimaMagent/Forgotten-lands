@@ -4,6 +4,7 @@
 #include <functional>
 #include <string_view>
 #include <nlohmann/json.hpp>
+#include "EntityType.hpp"
 
 /*If the compilation time due to nlohmann/json.hpp header is significant,
 then PIMPL + component registration composition can be used to remove the inclusion from the .hpp file.
@@ -14,12 +15,6 @@ class TextureManager;
 
 namespace sl {
 	class Entity;
-
-	enum class EntityType {
-		Player,
-	};
-
-	std::string EntityTypeToString(EntityType type);
 
 	using json = nlohmann::json;
 
@@ -34,7 +29,7 @@ namespace sl {
 
 		void initialize();
 
-		std::unique_ptr<sl::Entity> createEntity(const EntityType entityId);
+		std::unique_ptr<sl::Entity> createEntity(const sl::EntityType entityType);
 	protected:
 		std::unique_ptr<DataLoader> dataLoader;
 		std::unordered_map<std::string_view, ComponentFactory> registry;

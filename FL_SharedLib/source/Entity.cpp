@@ -7,7 +7,8 @@ namespace sl {
 
 	Entity::~Entity() = default;
 
-	Entity::Entity() {
+	Entity::Entity(sl::EntityType type) {
 		this->id = nextId++;
+		this->type = type;
 	}
 }
