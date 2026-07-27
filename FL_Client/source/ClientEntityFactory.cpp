@@ -7,13 +7,32 @@
 #include "TextureManager.hpp"
 #include "AnimationsStorage.hpp"
 #include "AnimationComponent.hpp"
+#include "NetworkComponentRegistry.hpp"
+#include "StatusPacket.hpp"
 
 ClientEntityFactory::ClientEntityFactory() : sl::EntityFactory()
 {
 	textureManager = std::make_unique<TextureManager>();
+	networkComponentRegistry = std::make_unique<NetworkComponentRegistry>();
 }
 
 ClientEntityFactory::~ClientEntityFactory() = default;
+
+std::unique_ptr<sl::Entity> ClientEntityFactory::entityCollection(const sl::net::EntityData& enData)
+{
+	std::unique_ptr<sl::Entity> entity = std::make_unique<sl::Entity>(enData.entityType);
+	entity->setGlobalId(enData.entityId);
+
+	for (auto& compData : enData.componentsData) {
+		networkComponentRegistry->createAndAttach(compData.typeId, *entity);
+		entity->forCurrentSerialization(compData.typeId, [this, &compData](sl::Serializable& s) {
+			size_t offset = 0;
+			s.deserialize(compData.componentData, offset);
+		});
+	}
+	
+	return std::unique_ptr<sl::Entity>();
+}
 
 void ClientEntityFactory::registrationComponents()
 {

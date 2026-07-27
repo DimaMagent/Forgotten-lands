@@ -8,7 +8,6 @@
     static constexpr uint32_t TypeId = sl::net::fnv1a(#name); \
     uint32_t getTypeId() const override { return TypeId; }
 
-
 namespace sl {
 
 	class Component {

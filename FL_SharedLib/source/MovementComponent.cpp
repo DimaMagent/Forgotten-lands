@@ -3,6 +3,7 @@
 #include <cmath>
 #include "NetUtils.hpp"
 
+
 sl::MovementComponent::MovementComponent(float maxSpeed, sf::Time maxAccelerationTime) : maxSpeed(maxSpeed), maxAccelerationTime(maxAccelerationTime)
 {}
 
