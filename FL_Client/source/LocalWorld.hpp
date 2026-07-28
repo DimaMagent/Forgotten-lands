@@ -8,6 +8,9 @@
 
 namespace sl {
 	class Entity;
+	namespace net {
+		struct EntityData;
+	}
 }
 class RenderManager;
 class StateManager;
@@ -34,6 +37,7 @@ protected:
 	virtual void onUpdate(float updateTime) override;
 	virtual void onUpdateEntities(sl::Entity& en, float updateTime) override;
 
-	void onAbsenceEntity(uint32_t globalId, sl::EntityType type);
+	void onAbsenceEntity(const sl::net::EntityData& enData);
 	void onAbsenceEntityOnStatusPacket(uint32_t id);
+	void onAuth(const sl::net::EntityData& enData);
 };

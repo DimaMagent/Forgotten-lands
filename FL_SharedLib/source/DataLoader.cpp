@@ -2,15 +2,15 @@
 #include "DataLoader.hpp"
 #include <fstream>
 
-DataLoader::DataLoader(){}
+sl::DataLoader::DataLoader(){}
 
-DataLoader::~DataLoader() = default;
+sl::DataLoader::~DataLoader() = default;
 
 
-json DataLoader::getData(const std::string& id)
+json sl::DataLoader::getData(const std::string& id, const std::string& pathToFile)
 {
 	try {
-		std::ifstream file("entityManifests/Characters.json");
+		std::ifstream file(pathToFile);
 		if (file.is_open()) {
 			nlohmann::json data;
 			file >> data;
@@ -18,7 +18,7 @@ json DataLoader::getData(const std::string& id)
 			return std::move(EntityData);
 		}
 		else {
-			throw std::runtime_error("Could not open Characters.json");
+			throw std::runtime_error("Could not open file with current path");
 		}
 
 	}

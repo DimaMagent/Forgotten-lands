@@ -15,6 +15,8 @@ public:
 	Serializer();
 	
 	void onUpdate(float updateTime, const sl::EntityStorage& entitiesStorage);
+
+	std::vector<uint8_t> serializeEntity(const sl::Entity& en) const;
 private:
 	static int serializationFrequency;
 	int serializationCounter = 0;

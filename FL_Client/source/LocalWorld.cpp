@@ -11,6 +11,7 @@
 #include "AnimationSystem.hpp"
 #include "MovementSystem.hpp"
 #include "EntityType.hpp"
+#include "StatusPacket.hpp"
 
 LocalWorld::LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::RenderTarget& renderTarget) : WorldBase() ,
 	stateManager(std::make_shared<StateManager>(playerEntity, entities, OnSetPlayerEntity)),
@@ -20,8 +21,9 @@ LocalWorld::LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::Ren
 
 	animationSystem = std::make_unique<AnimationSystem>(playerEntity, entities, OnSetPlayerEntity);
 
-	stateManager->OnAbsenceEntity.addFunction([this](uint32_t globalId, sl::EntityType type) {this->onAbsenceEntity(globalId, type); });
+	stateManager->OnAbsenceEntity.addFunction([this](const sl::net::EntityData& enData) {this->onAbsenceEntity(enData); });
 	stateManager->OnEntityAbsenceOnStatusPacket.addFunction([this](size_t entityIndex) {this->onAbsenceEntityOnStatusPacket(entityIndex); });
+	stateManager->OnAuth.addFunction([this](const sl::net::EntityData& enData) {this->onAuth(enData); });
 }
 
 LocalWorld::~LocalWorld() = default;
@@ -65,16 +67,28 @@ void LocalWorld::onUpdateEntities(sl::Entity& en, float updateTime)
 {
 }
 
-void LocalWorld::onAbsenceEntity(uint32_t globalId, sl::EntityType type)
+void LocalWorld::onAbsenceEntity(const sl::net::EntityData& enData)
 {
 	auto ef = entityFactory.lock();
 	if (!ef) { return; }
-	std::unique_ptr<sl::Entity> en = ef->createEntity(type);
-	en->setGlobalId(globalId);
-	addEntity(std::move(en), globalId);
+	std::unique_ptr<sl::Entity> en = ef->entityCollection(enData);
+	addEntity(std::move(en), enData.entityId);
 }
 
 void LocalWorld::onAbsenceEntityOnStatusPacket(uint32_t id)
 {
 	entities.removeEntityUsingId(id);
+}
+
+void LocalWorld::onAuth(const sl::net::EntityData& enData)
+{
+	auto ef = entityFactory.lock();
+	if (!ef) { return; }
+	setPlayerEntity(ef->entityCollection(enData));
+	if (playerEntity) {
+		playerEntity->setGlobalId(enData.entityId);
+	}
+	else {
+		game_logger->error("failed to create entity with id {}", enData.entityId);
+	}
 }

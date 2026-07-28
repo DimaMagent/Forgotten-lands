@@ -6,11 +6,15 @@
 
 using json = nlohmann::json;
 
+namespace sl {
 
-class DataLoader {
-public:
-	DataLoader();
-	DataLoader(const DataLoader&) = delete;
-	~DataLoader();
-	json getData(const std::string& id);
-};
+	class DataLoader {
+	public:
+		DataLoader();
+		DataLoader(const DataLoader&) = delete;
+		~DataLoader();
+		json getData(const std::string& id, const std::string& pathToFile);
+		
+	};
+
+}

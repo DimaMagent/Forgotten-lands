@@ -1,4 +1,3 @@
-
 find_package(SFML COMPONENTS Graphics Window Audio System REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(asio CONFIG REQUIRED)

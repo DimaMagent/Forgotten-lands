@@ -10,30 +10,35 @@
 then PIMPL + component registration composition can be used to remove the inclusion from the .hpp file.
 However, such measures are currently redundant.*/
 
-class DataLoader;
+
 class TextureManager;
 
-namespace sl {
-	class Entity;
+using json = nlohmann::json;
 
-	using json = nlohmann::json;
+namespace sl {
+	class DataLoader;
+
+	class Entity;
 
 	using ComponentFactory = std::function<void(sl::Entity& entity, const json& js)>;
 
 	//before using you should use methos initialize for currect work
 	class EntityFactory {
 	public:
-		EntityFactory();
+		EntityFactory(const std::string& pathToCharacterFile);
 		EntityFactory(EntityFactory&&) = default;
 		virtual ~EntityFactory();
 
 		void initialize();
 
-		std::unique_ptr<sl::Entity> createEntity(const sl::EntityType entityType);
+		std::unique_ptr<sl::Entity> createEntity(sl::EntityType entityType);
+
 	protected:
-		std::unique_ptr<DataLoader> dataLoader;
+		const std::string PATH_TO_CHARACTERS_FILE;
+
+		std::unique_ptr <sl::DataLoader> dataLoader;
 		std::unordered_map<std::string_view, ComponentFactory> registry;
 
-		virtual void registrationComponents();
+		virtual void registrationComponents() = 0;
 	};
 }

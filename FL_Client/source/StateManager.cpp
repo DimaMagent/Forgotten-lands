@@ -24,10 +24,7 @@ void StateManager::recordRollback(const sl::net::StatusData& data)
 	auto player = playerEntity.lock();
 	if (!player) { return; }
 
-	sl::net::StatusPacket packet;
-	packet.readData(data);
-
-	std::vector<sl::net::EntityData> entityData = packet.getData().getEntityData();
+	std::vector<sl::net::EntityData> entityData = data.getEntityData();
 
 	std::vector<uint32_t> typeIds;
 
@@ -52,7 +49,7 @@ void StateManager::recordRollback(const sl::net::StatusData& data)
 			}
 			else 
 			{
-				OnAbsenceEntity.broadcast(enData.entityId, static_cast<sl::EntityType>(enData.entityType));
+				OnAbsenceEntity.broadcast(enData);
 			}
 		}
 		
@@ -67,8 +64,12 @@ void StateManager::recordRollback(const sl::net::StatusData& data)
 
 void StateManager::auth(const sl::net::AuthData& data)
 {
-	auto player = playerEntity.lock();
-	if (!player) { return; }
 	net_logger->info("Player authenticated with global ID: {}", data.playerEntityID);
-	player->setGlobalId(data.playerEntityID);
+	std::vector<sl::net::EntityData> statData = data.getEntityData();
+	if (statData.size() > 0) {
+		OnAuth.broadcast(statData[0]);
+	}
+	else {
+		net_logger->error("StateManager::auth: statusData for PlayerEntity is Empty");
+	}
 }

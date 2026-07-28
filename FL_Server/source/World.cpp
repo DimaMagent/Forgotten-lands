@@ -18,7 +18,6 @@ World::World(ConnectionEvents& connectionEvents) : WorldBase()
 World::~World() = default;
 
 
-//probably should be moved to a separate function, but for now it's fine.
 void World::onUpdate(float updateTime)
 {
 	for (auto& entity : playerEntityStorage.getEntities()) {
@@ -34,11 +33,22 @@ void World::onUpdateEntities(sl::Entity& en, float updateTime)
 {
 }
 
-void World::addPlayerEntity(std::unique_ptr<sl::Entity>&& entity, const uint32_t& sessionToken)
+std::vector<uint8_t> World::addPlayerEntity(std::unique_ptr<sl::Entity>&& entity, const uint32_t& sessionToken)
 {
-	if (!entity) { return; }
+	if (!entity) {
+		throw std::runtime_error("entity is nullptr, adding an entity is not possible");
+	}
 
 	playerEntityStorage.addEntity(std::move(entity), sessionToken);
+
+	auto en = playerEntityStorage.getEntityToId(sessionToken).lock();
+
+	if (en) {
+		return serializer->serializeEntity(*en);
+	}
+
+	throw std::runtime_error("PLayerEntity is missing on playerEntityStorage");
+
 }
 
 bool World::removePlayerEntityUsingToken(const uint32_t& sessionToken)

@@ -10,7 +10,7 @@ namespace sl {
 	class MovementComponent: public sl::Component, public sl::Serializable {
 	public:
 
-		MovementComponent(float maxSpeed = 100, sf::Time maxAccelerationTime = sf::seconds(0.5f));
+		MovementComponent(float maxSpeed = 10, sf::Time maxAccelerationTime = sf::seconds(0.5f));
 
 		/*Use this method if the direction and speed were obtained externally, such as throwing*/
 		void addVelocityVector(sf::Vector2i direction, float speed);

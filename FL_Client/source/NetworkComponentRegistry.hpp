@@ -17,7 +17,7 @@ public:
 		static_assert(std::is_base_of_v<sl::Component, T>, "T must be a Component");
 		static_assert(std::is_base_of_v<sl::Serializable, T>, "T must be Serializable to be network-instantiated");
 
-		registry.try_emplace(T::TypeId = [](sl::Entity& entity) -> sl::Serializable* {
+		registry.try_emplace(T::TypeId, [](sl::Entity& entity) -> sl::Serializable* {
 			T* comp = entity.getComponent<T>();
 			if (!comp) {
 				comp = &entity.addComponent<T>();

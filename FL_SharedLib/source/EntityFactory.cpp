@@ -6,9 +6,10 @@
 #include "MovementComponent.hpp"
 #include "StateComponent.hpp"
 
-sl::EntityFactory::EntityFactory() {
-	
-	dataLoader = std::make_unique<DataLoader>();
+sl::EntityFactory::EntityFactory(const std::string& pathToCharacterFile):
+	PATH_TO_CHARACTERS_FILE(pathToCharacterFile){
+
+	dataLoader = std::make_unique<sl::DataLoader>();
 }
 
 void sl::EntityFactory::initialize()
@@ -18,7 +19,7 @@ void sl::EntityFactory::initialize()
 
 sl::EntityFactory::~EntityFactory() = default;
 
-std::unique_ptr<sl::Entity> sl::EntityFactory::createEntity(const sl::EntityType entityType)
+std::unique_ptr<sl::Entity> sl::EntityFactory::createEntity(sl::EntityType entityType)
 {
 		std::string dataId = sl::EntityTypeToString(entityType);
 
@@ -26,7 +27,7 @@ std::unique_ptr<sl::Entity> sl::EntityFactory::createEntity(const sl::EntityType
 			return nullptr;
 		}
 
-		json jd = dataLoader->getData(dataId);
+		json jd = dataLoader->getData(dataId, PATH_TO_CHARACTERS_FILE);
 
 		std::unique_ptr<sl::Entity> entity = std::make_unique<sl::Entity>(entityType);
 
@@ -36,20 +37,5 @@ std::unique_ptr<sl::Entity> sl::EntityFactory::createEntity(const sl::EntityType
 			}
 		}
 
-		return entity;
+		return std::move(entity);
 }
-
-void sl::EntityFactory::registrationComponents()
-{
-	registry.try_emplace(sl::TransformComponent::ComponentName, [](Entity& entity, const json& js) {
-		entity.addComponent<sl::TransformComponent>(js.at("position").value("x", 0.0f), js.at("position").value("y", 0.0f));
-		});
-	registry.try_emplace(sl::MovementComponent::ComponentName, [](Entity& entity, const json& js) {
-		entity.addComponent<sl::MovementComponent>(js.value("maxVelocity", 20.0f));
-		});
-	registry.try_emplace(sl::StateComponent::ComponentName, [](Entity& entity, const json& js) {
-		entity.addComponent<sl::StateComponent>();
-		});
-
-}
-

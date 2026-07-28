@@ -18,21 +18,9 @@ void Serializer::serializeObjects( const sl::EntityStorage& entitiesStorage)
 	std::vector<uint8_t> localBuf;
 
 	for (size_t i = 0; i < entitiesStorage.getEntities().size(); ++i) {
-		uint32_t entityId = entitiesStorage.getEntities()[i]->getId();
-		sl::net::write_uint32_t(localBuf, entityId);
 
-		uint32_t entityType = static_cast<uint32_t>(entitiesStorage.getEntities()[i]->getEntityType());
-		sl::net::write_uint32_t(localBuf, entityType);
+		std::vector<uint8_t> entityLocalBuf = serializeEntity(*entitiesStorage.getEntities()[i]);
 
-		std::vector<uint8_t> entityLocalBuf;
-		uint32_t entityDataSize = 0;
-
-		entitiesStorage.getEntities()[i]->forEachSerialization([&entityLocalBuf, &entityDataSize](const sl::Serializable& s) {
-			entityDataSize += s.getSerializeDataSize();
-			s.serialize(entityLocalBuf);
-		});
-
-		sl::net::write_uint32_t(localBuf, entityDataSize);
 		localBuf.insert(localBuf.end(), entityLocalBuf.begin(), entityLocalBuf.end());
 	}
 
@@ -51,4 +39,29 @@ void Serializer::onUpdate(float updateTime, const sl::EntityStorage& entitiesSto
 		serializationCounter = 0;
 		serializeObjects(entitiesStorage);
 	}
+}
+
+std::vector<uint8_t> Serializer::serializeEntity(const sl::Entity& en) const
+{
+	std::vector<uint8_t> localBuf;
+
+	uint32_t entityId = en.getId();
+	sl::net::write_uint32_t(localBuf, entityId);
+
+	uint32_t entityType = static_cast<uint32_t>(en.getEntityType());
+	sl::net::write_uint32_t(localBuf, entityType);
+
+	std::vector<uint8_t> entityLocalBuf;
+	uint32_t entityDataSize = 0;
+
+	en.forEachSerialization([&entityLocalBuf, &entityDataSize](const sl::Serializable& s) {
+		entityDataSize += s.getSerializeDataSize();
+		s.serialize(entityLocalBuf);
+		});
+
+	sl::net::write_uint32_t(localBuf, entityDataSize);
+
+	localBuf.insert(localBuf.end(), entityLocalBuf.begin(), entityLocalBuf.end());
+
+	return localBuf;
 }

@@ -71,7 +71,7 @@ void Client::start()
 
 void Client::whenClientAccepted()
 {
-	world->setPlayerEntity(entityFactory->createEntity(sl::EntityType::Player));
+	//world->setPlayerEntity(entityFactory->createEntity(sl::EntityType::Player));
 }
 
 void Client::initLogging() {

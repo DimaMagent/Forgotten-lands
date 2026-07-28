@@ -57,7 +57,7 @@ namespace sl {
         }
 
         template<typename Fn>
-        void forEachSerialization(Fn&& fn) {
+        void forEachSerialization(Fn&& fn) const{
             static_assert(std::is_invocable_v<Fn, const sl::Serializable&> || std::is_invocable_v<Fn, sl::Serializable&>);
             for (auto& [tid, comp] : components) {
                 if (auto* c = dynamic_cast<sl::Serializable*>(comp.get())) {

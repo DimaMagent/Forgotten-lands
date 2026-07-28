@@ -13,6 +13,7 @@ namespace sl {
 	namespace net {
 		struct StatusData;
 		struct AuthData;
+		struct EntityData;
 	}
 	struct EntityStorage;
 
@@ -21,8 +22,9 @@ namespace sl {
 //stores the sequence of player actions
 class StateManager {
 public:
-	sl::LockFreeDelegate<uint32_t, sl::EntityType> OnAbsenceEntity;
+	sl::LockFreeDelegate<const sl::net::EntityData&> OnAbsenceEntity;
 	sl::LockFreeDelegate<uint32_t> OnEntityAbsenceOnStatusPacket;
+	sl::LockFreeDelegate<const sl::net::EntityData&> OnAuth;
 
 	StateManager(std::weak_ptr<sl::Entity> playerEntity, sl::EntityStorage& entities,
 		sl::Delegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntityDelegate);

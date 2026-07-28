@@ -7,7 +7,7 @@
 #include "Session.hpp"
 #include "IncomingDataManager.hpp"
 #include "DataProcessorManager.hpp"
-#include "EntityFactory.hpp"
+#include "ServerEntityFactory.hpp"
 #include "NetManager.hpp"
 #include "World.hpp"
 #include "Entity.hpp"
@@ -30,7 +30,7 @@ Server::Server(short port)
 	playerManager = std::make_unique<PlayerManager>(*world);
 	dataProcessorManager = std::make_unique<DataProcessorManager>(*playerManager);
 	netManager = std::make_unique<NetManager>(*serverContext, port, *dataProcessorManager, *connectionEvents);
-	entityFactory = std::make_unique<sl::EntityFactory>();
+	entityFactory = std::make_unique<ServerEntityFactory>();
 
 	entityFactory->initialize();
 	netManager->OnAccept.addFunction([this](uint32_t token) {onClientAccept(token); });
@@ -69,11 +69,19 @@ void Server::start() {
 
 void Server::onClientAccept(uint32_t token)
 {
-	std::unique_ptr<sl::Entity> playerEntity = entityFactory->createEntity(sl::EntityType::Player);
-	if (!playerEntity) { return; }
-	uint32_t entityGlobalId = playerEntity->getId();
-	world->addPlayerEntity(std::move(playerEntity), token);
-	Packer::send<sl::net::AuthPacket>(token, entityGlobalId);
+	try {
+		std::unique_ptr<sl::Entity> playerEntity = entityFactory->createEntity(sl::EntityType::Player);
+		if (!playerEntity) { return; }
+
+		uint32_t entityGlobalId = playerEntity->getId();
+
+		std::vector<uint8_t> entityData = world->addPlayerEntity(std::move(playerEntity), token);
+
+		Packer::send<sl::net::AuthPacket>(token, entityGlobalId, entityData);
+	}
+	catch (std::exception& e) {
+		net_logger->error("World::addPlayerEntity: token {} exception: {}", token, e.what());
+	}
 }
 
 void Server::initLogging()

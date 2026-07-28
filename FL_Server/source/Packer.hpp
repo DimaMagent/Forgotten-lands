@@ -21,6 +21,7 @@ public:
 		static_assert(requires { std::declval<PacketT>().fillPacketData(std::declval<uint16_t>(), std::declval<uint32_t>(), std::declval<Args>()...); },
 			"PacketT must have fillPacketData(uint16_t, uint32_t, args...) method.");
 		static_assert(std::is_base_of_v<sl::net::Packet, PacketT>, "PacketT must inherit from Packet.");
+
 		if (auto manager = staticOutputManager.lock()) {
 			PacketT packet;
 			packet.fillPacketData(sequenceNumber++, 0, std::forward<Args>(args)...);

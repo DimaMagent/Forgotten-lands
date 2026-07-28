@@ -10,12 +10,12 @@ class NetManager;
 class World;
 class PlayerManager;
 class ConnectionEvents;
+class ServerEntityFactory;
+
 namespace asio {
 	class io_context;
 }
-namespace sl {
-	class EntityFactory;
-}
+
 class Server {
 public:
 	Server(short port);
@@ -32,7 +32,7 @@ private:
 	std::unique_ptr<PlayerManager> playerManager;
 	std::unique_ptr<DataProcessorManager> dataProcessorManager;
 	std::unique_ptr<NetManager> netManager;
-	std::unique_ptr<sl::EntityFactory> entityFactory;
+	std::unique_ptr<ServerEntityFactory> entityFactory;
 	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;
 
 

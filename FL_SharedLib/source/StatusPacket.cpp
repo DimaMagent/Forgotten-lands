@@ -38,6 +38,7 @@ namespace sl::net {
 			if (in.size() > offset) {
 				data.reserve(in.size());
 				data.insert(data.end(), in.begin() + offset, in.end());
+				offset += data.size();
 			}
 		}
 	}

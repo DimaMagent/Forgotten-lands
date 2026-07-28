@@ -9,8 +9,11 @@
 #include "AnimationComponent.hpp"
 #include "NetworkComponentRegistry.hpp"
 #include "StatusPacket.hpp"
+#include "TransformComponent.hpp"
+#include "MovementComponent.hpp"
+#include "StateComponent.hpp"
 
-ClientEntityFactory::ClientEntityFactory() : sl::EntityFactory()
+ClientEntityFactory::ClientEntityFactory() : sl::EntityFactory("manifests/ClientCharacterComponents.json")
 {
 	textureManager = std::make_unique<TextureManager>();
 	networkComponentRegistry = std::make_unique<NetworkComponentRegistry>();
@@ -20,23 +23,23 @@ ClientEntityFactory::~ClientEntityFactory() = default;
 
 std::unique_ptr<sl::Entity> ClientEntityFactory::entityCollection(const sl::net::EntityData& enData)
 {
-	std::unique_ptr<sl::Entity> entity = std::make_unique<sl::Entity>(enData.entityType);
+	uint32_t type = enData.entityType;
+
+	std::unique_ptr<sl::Entity> entity = createEntity(static_cast<sl::EntityType>(type));
 	entity->setGlobalId(enData.entityId);
 
 	for (auto& compData : enData.componentsData) {
 		networkComponentRegistry->createAndAttach(compData.typeId, *entity);
-		entity->forCurrentSerialization(compData.typeId, [this, &compData](sl::Serializable& s) {
+		entity->forCurrentSerialization(compData.typeId, [&compData](sl::Serializable& s) {
 			size_t offset = 0;
 			s.deserialize(compData.componentData, offset);
 		});
 	}
-	
-	return std::unique_ptr<sl::Entity>();
+	return entity;
 }
 
 void ClientEntityFactory::registrationComponents()
 {
-	sl::EntityFactory::registrationComponents();
 
 	registry.try_emplace(RenderComponent::ComponentName, [this](sl::Entity& entity, const json& js) {
 
@@ -52,22 +55,25 @@ void ClientEntityFactory::registrationComponents()
 	registry.try_emplace(AnimationComponent::ComponentName, [this](sl::Entity& entity, const json& js) {
 		std::shared_ptr<AnimationsStorage> animationStorage = std::make_shared<AnimationsStorage>();
 
-		for (auto& [animationName, animation] : js["Animations"].items()) {
-			std::vector<std::shared_ptr<sf::Texture>> directionFrames;
-			for (auto& [directionName, framePaths] : animation.items()) {
-				for (auto& framePath : framePaths) {
-					directionFrames.push_back(textureManager->getTexture(framePath));
+		if (js.contains("Animations") && js["Animations"].is_object()) {
+			for (auto& [animationName, animation] : js["Animations"].items()) {
+				std::vector<std::shared_ptr<sf::Texture>> directionFrames;
+				for (auto& [directionName, framePaths] : animation.items()) {
+					for (auto& framePath : framePaths) {
+						directionFrames.push_back(textureManager->getTexture(framePath));
+					}
+					animationStorage->addAnimations(animationTypeFromString(animationName), directionName, directionFrames);
+					directionFrames.clear();
 				}
-				animationStorage->addAnimations(animationTypeFromString(animationName), directionName, directionFrames);
-				directionFrames.clear();
 			}
 		}
 
 		AnimationComponent& animComp = entity.addComponent<AnimationComponent>(animationStorage);
 
-		for (auto& [animationName, frequency] : js["AllowedAnimation"].items()) {
-			animComp.addAllowedAnimationFrequency(animationTypeFromString(animationName), frequency);
+		if (js.contains("AllowedAnimation") && js["AllowedAnimation"].is_object()) {
+			for (auto& [animationName, frequency] : js["AllowedAnimation"].items()) {
+				animComp.addAllowedAnimationFrequency(animationTypeFromString(animationName), frequency);
+			}
 		}
 	});
-
 }

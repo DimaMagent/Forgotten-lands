@@ -51,18 +51,20 @@ void sl::MovementComponent::serialize(std::vector<uint8_t>& out) const
 	sl::net::write_uint32_t(out, TypeId);
 	sl::net::write_uint32_t(out, getDeserializeDataSize());
 	sl::net::write_float(out, currentSpeed);
+	sl::net::write_float(out, maxSpeed);
 }
 
 bool sl::MovementComponent::deserialize(const std::vector<uint8_t>& out, size_t& offset)
 {
 	if (offset + getDeserializeDataSize() > out.size()) { return false; }
 	currentSpeed = sl::net::read_float(out, offset);
+	maxSpeed = sl::net::read_float(out, offset);
 	return true;
 }
 
 uint32_t sl::MovementComponent::getSerializeDataSize() const
 {
-	return sizeof(float) + sizeof(TypeId) + sizeof(uint32_t);
+	return sizeof(float) + sizeof(TypeId) + sizeof(uint32_t) + sizeof(float);
 }
 
 uint32_t sl::MovementComponent::getDeserializeDataSize() const
