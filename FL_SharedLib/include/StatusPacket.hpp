@@ -1,20 +1,9 @@
 #pragma once
 #include "Packet.hpp"
 #include <vector>
+#include "PacketDataTypes.hpp"
 
 namespace sl::net {
-	struct ComponentData {
-		uint32_t typeId = 0;
-		uint32_t compSize = 0;
-		std::vector<uint8_t> componentData;
-	};
-
-	struct EntityData {
-		uint32_t entityId = 0;
-		uint32_t entityType = 0;
-		uint32_t entityDataSize = 0;
-		std::vector<ComponentData> componentsData;
-	};
 
 	struct StatusData : public Data {
 		std::vector<uint8_t> data;

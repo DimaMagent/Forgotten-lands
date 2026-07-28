@@ -36,6 +36,6 @@ add_custom_command(TARGET FL_Server POST_BUILD
 add_custom_command(
     TARGET FL_Server POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${CMAKE_SOURCE_DIR}/sharedData/resources"
+            "${CMAKE_SOURCE_DIR}/FL_Server/resources"
             "$<TARGET_FILE_DIR:FL_Server>"
 )

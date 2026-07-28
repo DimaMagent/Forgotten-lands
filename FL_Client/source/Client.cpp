@@ -69,10 +69,7 @@ void Client::start()
 	}
 }
 
-void Client::whenClientAccepted()
-{
-	//world->setPlayerEntity(entityFactory->createEntity(sl::EntityType::Player));
-}
+void Client::whenClientAccepted(){}
 
 void Client::initLogging() {
 	spdlog::init_thread_pool(8192, 1);

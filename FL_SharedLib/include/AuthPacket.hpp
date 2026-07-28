@@ -1,8 +1,7 @@
 #pragma once
 #include "Packet.hpp"
-#include "StatusPacket.hpp" //temp
+#include "PacketDataTypes.hpp"
 
-/*TODO: Данный пакет нужно переделать в пакет для авторизации*/
 namespace sl::net {
 	struct AuthData : Data {
 		uint32_t playerEntityID;
@@ -10,7 +9,7 @@ namespace sl::net {
 		virtual bool write(std::vector<uint8_t>& out) const override;
 		virtual void read(const std::vector<uint8_t>& in, size_t& offset) override;
 		virtual void fillPacketData(uint16_t sequenceNumber, PacketType type, uint32_t fromToken, uint32_t playerEntityID, std::vector<uint8_t> statusData);
-		std::vector<sl::net::EntityData> getEntityData() const; // temp
+		std::vector<sl::net::EntityData> getEntityData() const;
 	};
 
 	class AuthPacket : public Packet {

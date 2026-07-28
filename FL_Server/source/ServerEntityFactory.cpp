@@ -6,7 +6,7 @@
 #include "Entity.hpp"
 #include "DataLoader.hpp"
 
-ServerEntityFactory::ServerEntityFactory(): sl::EntityFactory("entityManifests/Characters.json") {
+ServerEntityFactory::ServerEntityFactory(): sl::EntityFactory("manifests/Characters.json") {
 }
 
 void ServerEntityFactory::registrationComponents()

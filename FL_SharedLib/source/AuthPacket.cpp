@@ -33,29 +33,7 @@ namespace sl::net {
     }
 
     std::vector<sl::net::EntityData> AuthData::getEntityData() const {
-        size_t offset = 0;
-        std::vector<EntityData> entitiesCompData;
-
-        while (offset < statData.size()) {
-            EntityData enData;
-            enData.entityId = sl::net::read_uint32_t(statData, offset);
-            enData.entityType = sl::net::read_uint32_t(statData, offset);
-            enData.entityDataSize = sl::net::read_uint32_t(statData, offset);
-            size_t entityEnd = offset + enData.entityDataSize;
-
-            while (offset < entityEnd) {
-                ComponentData compData;
-                compData.typeId = sl::net::read_uint32_t(statData, offset);
-                compData.compSize = sl::net::read_uint32_t(statData, offset);
-                compData.componentData.insert(compData.componentData.end(),
-                    statData.begin() + offset,
-                    statData.begin() + offset + compData.compSize);
-                offset += compData.compSize;
-                enData.componentsData.push_back(compData);
-            }
-            entitiesCompData.push_back(enData);
-        }
-        return entitiesCompData;
+        return sl::net::EntityData::getEntityData(statData);
     }
 
     bool AuthPacket::write(std::vector<uint8_t>& out) const

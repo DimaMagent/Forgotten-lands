@@ -19,4 +19,19 @@ namespace sl::net {
 		PT_Status = 3,
 		PT_GameStateUpdate = 4,
 	};
+
+	struct ComponentData {
+		uint32_t typeId = 0;
+		uint32_t compSize = 0;
+		std::vector<uint8_t> componentData;
+	};
+
+	struct EntityData {
+		uint32_t entityId = 0;
+		uint32_t entityType = 0;
+		uint32_t entityDataSize = 0;
+		std::vector<ComponentData> componentsData;
+
+		static std::vector<EntityData> getEntityData(const std::vector<uint8_t>& data);
+	};
 }
