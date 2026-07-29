@@ -29,13 +29,12 @@ void AnimationSystem::onUpdate(float updateTime) {
 
 AnimationType AnimationSystem::selectAnimationType(const sl::StateComponent& stateComp)
 {
-	if (stateComp.lifeState == sl::LifeState::Death) { return AnimationType::Death; }
-	if (stateComp.actionState == sl::ActionState::MeleeAttack) { return AnimationType::Attack; }
-	if (stateComp.movementState == sl::MovementState::Run) { return AnimationType::Run; }
-	if (stateComp.movementState == sl::MovementState::Walk) { return AnimationType::Walk; }
-	if (stateComp.lifeState == sl::LifeState::TakingDamage) { return AnimationType::TakingDamage; }
-	if (stateComp.actionState == sl::ActionState::Talk) { return AnimationType::Talk; }
-	if (stateComp.actionState == sl::ActionState::Rest) { return AnimationType::Rest; }
+	if (stateComp.getCurrentLifeState() == sl::LifeState::Death) { return AnimationType::Death; }
+	if (stateComp.getCurrentActionState() == sl::ActionState::MeleeAttack) { return AnimationType::Attack; }
+	if (stateComp.getCurrentMovementState() == sl::MovementState::Run) { return AnimationType::Run; }
+	if (stateComp.getCurrentMovementState() == sl::MovementState::Walk) { return AnimationType::Walk; }
+	if (stateComp.getCurrentActionState() == sl::ActionState::Talk) { return AnimationType::Talk; }
+	if (stateComp.getCurrentActionState() == sl::ActionState::Rest) { return AnimationType::Rest; }
 	return AnimationType::Idle;
 }
 

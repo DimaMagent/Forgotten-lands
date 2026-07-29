@@ -21,28 +21,35 @@ sf::Vector2f sl::MovementComponent::move(float deltaTime, const sf::Vector2f& po
 {
 	if (velocityDirectionVector != sf::Vector2i(0, 0)) {
 		currentAccelerationTime > maxAccelerationTime ? currentAccelerationTime = maxAccelerationTime :
-			currentAccelerationTime += std::min(sf::seconds(deltaTime), maxAccelerationTime);
+			currentAccelerationTime = std::min(sf::seconds(deltaTime) + currentAccelerationTime, maxAccelerationTime);
 		float t = currentAccelerationTime.asSeconds() / maxAccelerationTime.asSeconds();
 		currentSpeed = maxSpeed * (3 * t * t - 2 * t * t * t);
 	}
-	else if (currentSpeed > 0.f){
-		currentAccelerationTime = std::max(sf::Time::Zero, currentAccelerationTime - sf::seconds(deltaTime));
-		float t = currentAccelerationTime.asSeconds() / maxAccelerationTime.asSeconds();
-		currentSpeed = maxSpeed * (3 * t * t - 2 * t * t * t);
-	}
+
 	if (currentSpeed > 0.f) {
 		if (velocityDirectionVector == sf::Vector2i(1, 1) || velocityDirectionVector == sf::Vector2i(-1, 1) || velocityDirectionVector == sf::Vector2i(1, -1) || velocityDirectionVector == sf::Vector2i(-1, -1)) {
 			currentSpeed /= std::sqrt(velocityDirectionVector.x * velocityDirectionVector.x + velocityDirectionVector.y * velocityDirectionVector.y);
 		}
 		velocityVector += sf::Vector2f(velocityDirectionVector) * currentSpeed * deltaTime;
 	}
+
 	sf::Vector2f newPosition = position + velocityVector;
 	resetVelocity();
 	return newPosition;
 }
 
+void sl::MovementComponent::braking(float deltaTime)
+{
+	if (currentSpeed > 0.f) {
+		currentAccelerationTime = std::max(sf::Time::Zero, currentAccelerationTime - sf::seconds(deltaTime));
+		float t = currentAccelerationTime.asSeconds() / maxAccelerationTime.asSeconds();
+		currentSpeed = maxSpeed * (3 * t * t - 2 * t * t * t);
+	}
+}
+
 void sl::MovementComponent::setVelocityDirection(const sf::Vector2i& direction)
 {
+
 	velocityDirectionVector = inBounds(direction, sf::Vector2i(-1, -1), sf::Vector2i(1, 1));
 }
 

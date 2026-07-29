@@ -17,8 +17,10 @@ void sl::MovementSystem::onUpdate(sl::Entity& entity, float updateTime) {
 	if (!movComp || !trComp || !stateComp) { return; }
 
 	if (!movComp->isMoving()) {
+		movComp->braking(updateTime);
+
 		if (!movComp->isMovementAlreadyReseted) {
-			stateComp->movementState = sl::MovementState::None;
+			stateComp->setCurrentMovementState(sl::MovementState::None);
 			movComp->isMovementAlreadyReseted = true;
 		}
 		return;
@@ -26,6 +28,6 @@ void sl::MovementSystem::onUpdate(sl::Entity& entity, float updateTime) {
 
 	trComp->setPosition(movComp->move(updateTime, trComp->getPosition()));
 	trComp->setRotation(movComp->getVelocityDirection());
-	stateComp->movementState = sl::MovementState::Walk;
+	stateComp->setCurrentMovementState(sl::MovementState::Walk);
 	movComp->isMovementAlreadyReseted = false;
 }

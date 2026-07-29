@@ -9,6 +9,21 @@ sl::StateComponent::StateComponent()
 	lifeState = LifeState::Alive;
 }
 
+void sl::StateComponent::setCurrentActionState(ActionState newState)
+{
+	actionState = newState;
+}
+
+void sl::StateComponent::setCurrentMovementState(MovementState newState)
+{
+	movementState = newState;
+}
+
+void sl::StateComponent::setCurrentLifeState(LifeState newState)
+{
+	lifeState = newState;
+}
+
 void sl::StateComponent::serialize(std::vector<uint8_t>& out) const
 {
 	sl::net::write_uint32_t(out, TypeId);
