@@ -12,8 +12,9 @@
 #include "TransformComponent.hpp"
 #include "MovementComponent.hpp"
 #include "StateComponent.hpp"
+#include "ClientDataLoader.hpp"
 
-ClientEntityFactory::ClientEntityFactory() : sl::EntityFactory("manifests/ClientCharacterComponents.json")
+ClientEntityFactory::ClientEntityFactory() : sl::EntityFactory(std::make_unique<ClientDataLoader>())
 {
 	textureManager = std::make_unique<TextureManager>();
 	networkComponentRegistry = std::make_unique<NetworkComponentRegistry>();

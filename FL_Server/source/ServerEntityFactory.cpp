@@ -4,9 +4,10 @@
 #include "MovementComponent.hpp"
 #include "StateComponent.hpp"
 #include "Entity.hpp"
-#include "DataLoader.hpp"
+#include "ServerDataLoader.hpp"
 
-ServerEntityFactory::ServerEntityFactory(): sl::EntityFactory("manifests/Characters.json") {
+
+ServerEntityFactory::ServerEntityFactory() : sl::EntityFactory(std::make_unique<ServerDataLoader>()) {
 }
 
 void ServerEntityFactory::registrationComponents()
@@ -22,3 +23,5 @@ void ServerEntityFactory::registrationComponents()
 		});
 
 }
+
+

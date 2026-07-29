@@ -25,7 +25,7 @@ namespace sl {
 	//before using you should use methos initialize for currect work
 	class EntityFactory {
 	public:
-		EntityFactory(const std::string& pathToCharacterFile);
+		EntityFactory(std::unique_ptr<sl::DataLoader>&& dataLoader);
 		EntityFactory(EntityFactory&&) = default;
 		virtual ~EntityFactory();
 
@@ -34,9 +34,8 @@ namespace sl {
 		std::unique_ptr<sl::Entity> createEntity(sl::EntityType entityType);
 
 	protected:
-		const std::string PATH_TO_CHARACTERS_FILE;
 
-		std::unique_ptr <sl::DataLoader> dataLoader;
+		std::unique_ptr<sl::DataLoader> dataLoader;
 		std::unordered_map<std::string_view, ComponentFactory> registry;
 
 		virtual void registrationComponents() = 0;
