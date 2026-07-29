@@ -75,6 +75,26 @@ void NetManager::doAccept() {
 		});
 }
 
+void NetManager::closeSession(uint32_t token)
+{
+	auto it = sessions.find(token);
+
+	if (it == sessions.end()) 
+	{
+		logger->warn("session with token {} not exist", token);
+		return; 
+	}
+
+	auto session = it->second.lock();
+	if (!session)
+	{
+		logger->warn("session with token {} not exist", token);
+		return;
+	}
+	
+	session->close();
+}
+
 void NetManager::cleaning() {
 
 	auto now = std::chrono::steady_clock::now();

@@ -25,11 +25,15 @@ public:
 	~NetManager();
 
 	void doAccept();
+	
+	void closeSession(uint32_t token);
 private:
 	std::shared_ptr<spdlog::logger> logger;
 
 	asio::ssl::context sslContext;
 	asio::ip::tcp::acceptor acceptor;
+
+	//token - session
 	std::unordered_map<uint32_t, std::weak_ptr<Session>> sessions;
 	std::shared_ptr<OutputDataManager> outputDataManager;
 	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;

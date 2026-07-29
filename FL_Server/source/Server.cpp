@@ -81,6 +81,7 @@ void Server::onClientAccept(uint32_t token)
 	}
 	catch (std::exception& e) {
 		net_logger->error("World::addPlayerEntity: token {} exception: {}", token, e.what());
+		netManager->closeSession(token);
 	}
 }
 
