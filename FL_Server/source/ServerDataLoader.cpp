@@ -45,7 +45,9 @@ void ServerDataLoader::loadData()
 }
 
 std::optional<json> ServerDataLoader::getEntityData(sl::EntityType id) {
-	auto enData = jsonFileData.find("manifests/Characters.json"); //temp
+	if (filePaths.empty()) { return {}; }
+
+	auto enData = jsonFileData.find(filePaths[0]); //temp
 	if (enData == jsonFileData.end()) { return {}; }
 
 	auto jsonData = enData->second.find(static_cast<uint32_t>(id));

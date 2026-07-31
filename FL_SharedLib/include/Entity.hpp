@@ -30,7 +30,7 @@ namespace sl {
         void setGlobalId(uint32_t newId) { globalId = newId; }
 
         template<typename T>
-        T* getComponent() {
+        T* getComponent() const{
             static_assert(std::is_base_of_v<sl::Component, T>, "T must inherit from Component.");
             static_assert(requires { T::TypeId; }, "PacketT must have static TypeId field");
             auto it = std::lower_bound(components.begin(), components.end(), T::TypeId,
@@ -39,6 +39,18 @@ namespace sl {
                 });
             if (it == components.end() || it->first != T::TypeId) return nullptr;
             return static_cast<T*>(it->second.get());
+        }
+
+        template<typename T>
+        bool hasComponent() const{
+            static_assert(std::is_base_of_v<sl::Component, T>, "T must inherit from Component.");
+            static_assert(requires { T::TypeId; }, "PacketT must have static TypeId field");
+            auto it = std::lower_bound(components.begin(), components.end(), T::TypeId,
+                [](const auto& pair, const uint32_t& tid) {
+                    return pair.first < tid;
+                });
+            if (it == components.end() || it->first != T::TypeId) return false;
+            return true;
         }
 
         template<typename T, typename... Args>
