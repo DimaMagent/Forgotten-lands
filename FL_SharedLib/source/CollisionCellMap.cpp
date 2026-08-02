@@ -10,28 +10,44 @@ sl::Cell::Cell(float posX, float posY)
 	if (posX <= 0) { x = 0; }
 	if (posY <= 0) { y = 0; }
 
-	x = static_cast<uint16_t>(posX / 100.f);
-	y = static_cast<uint16_t>(posY / 100.f);
+	x = static_cast<uint16_t>(posX / cellSize);
+	y = static_cast<uint16_t>(posY / cellSize);
+}
+
+sl::Cell::Cell(uint8_t cellNumX, uint8_t cellNumY)
+{
+	if (cellNumX < 0) { x = 0; }
+	if (cellNumY < 0) { y = 0; }
+
+	x = cellNumX;
+	y = cellNumY;
 }
 
 
-void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity, float posX, float posY)
+void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity, AABB aabb)
 {
-	if (posX < 0 || posY < 0) { return; }
-
 	if (!entity.hasComponent<sl::CollisionComponent>()) { return; }
 
-	Cell currentCell(posX, posY);
+	AABB boundedAABB = onMapBound(aabb);
 
-	cellToEntityIds[currentCell].push_back(entity.getGlobalId());
+	uint8_t minCellX = static_cast<uint8_t>(boundedAABB.topX / 100.f);
+	uint8_t maxCellX = static_cast<uint8_t>(boundedAABB.downX / 100.f);
+	uint8_t minCellY = static_cast<uint8_t>(boundedAABB.topY / 100.f);
+	uint8_t maxCellY = static_cast<uint8_t>(boundedAABB.downY / 100.f);
+
+	for (uint8_t cellNumX = minCellX; cellNumX <= maxCellX; ++cellNumX) {
+		for (uint8_t cellNumY = minCellY; cellNumY <= maxCellY; ++cellNumY) {
+			Cell currentCell(cellNumX, cellNumY);
+			cellToEntityIds[currentCell].push_back(entity.getGlobalId());
+		}
+	}
 }
 
-void sl::CollisionCellMap::removeEntityToCollisionMap(uint32_t entityId, float posX, float posY)
+void sl::CollisionCellMap::removeEntityToCollisionMap(uint32_t entityId, AABB aabb)
 {
-	if (posX < 0 || posY < 0) { return; }
+	if (aabb.topX < 0 || aabb.topY < 0 || aabb.downX < 0 || aabb.downY < 0) { return; }
 
-	Cell cell(posX, posY);
-
+	Cell cell(aabb.topX, aabb.topY);
 	auto it = cellToEntityIds.find(cell);
 
 	if (it == cellToEntityIds.end()) { return; }
@@ -57,7 +73,7 @@ std::vector<uint32_t> sl::CollisionCellMap::getEntityIdsToCollisionMap(float pos
 	return it->second;
 }
 
-std::vector<uint32_t> sl::CollisionCellMap::getNearestEntityIdsToEntity(float posX, float posY, uint8_t searchDepth)
+std::vector<uint32_t> sl::CollisionCellMap::getNearestEntityIdsToPosition(float posX, float posY, uint8_t searchDepth)
 {
 	std::vector<uint32_t> entityIds;
 	if (posX < 0.f || posY < 0.f) { return entityIds; }
@@ -85,3 +101,21 @@ std::vector<uint32_t> sl::CollisionCellMap::getNearestEntityIdsToEntity(float po
 	return entityIds;
 }
 
+sl::AABB sl::CollisionCellMap::onMapBound(const AABB& aabb) const
+{
+	AABB aabbOut(aabb.topX, aabb.topY, aabb.downX, aabb.downY);
+	if (aabb.topX < 0) { aabbOut.topX = 0; }
+	if (aabb.topY < 0) { aabbOut.topY = 0; }
+	if (aabb.downX < 0) { aabbOut.downX = 0; }
+	if (aabb.downY < 0) { aabbOut.downY = 0; }
+
+	return aabbOut;
+}
+
+sl::AABB::AABB(float topX, float topY, float downX, float downY)
+{
+	this->topX = topX;
+	this->topY = topY;
+	this->downX = downX;
+	this->downY = downY;
+}

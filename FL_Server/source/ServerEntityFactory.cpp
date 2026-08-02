@@ -3,6 +3,7 @@
 #include "TransformComponent.hpp"
 #include "MovementComponent.hpp"
 #include "StateComponent.hpp"
+#include "CollisionComponent.hpp"
 #include "Entity.hpp"
 #include "ServerDataLoader.hpp"
 
@@ -20,6 +21,9 @@ void ServerEntityFactory::registrationComponents()
 		});
 	registry.try_emplace(sl::StateComponent::ComponentName, [](sl::Entity& entity, const json& js) {
 		entity.addComponent<sl::StateComponent>();
+		});
+	registry.try_emplace(sl::CollisionComponent::ComponentName, [](sl::Entity& entity, const json& js) {
+		entity.addComponent<sl::CollisionComponent>(js.value("width", 96.0f), js.value("height", 96.0f), js.value("isStatic", true));
 		});
 
 }

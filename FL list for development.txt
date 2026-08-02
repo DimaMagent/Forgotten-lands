@@ -20,3 +20,4 @@
 19) починить метод clean в NetManager
 20) написать тесты для различных систем
 21) Убрать временное решение в ClientDataLoader и ServerDataLoader
+22) сделать так, чтобы проверка Cell у CollisionCellMap могла иметь направление
