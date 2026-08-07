@@ -13,7 +13,8 @@
     "CollisionComponent": {
       "width": 96,
       "height": 96,
-      "isStatic": false
+      "isStatic": false,
+      "CollisionType": "Block"
     }
   }
 }

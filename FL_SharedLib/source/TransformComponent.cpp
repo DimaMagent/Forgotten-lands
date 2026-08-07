@@ -21,13 +21,20 @@ sl::TransformComponent::TransformComponent(float x, float y)
 
 void sl::TransformComponent::setPosition(float x, float y)
 {
+	bool isCellChanged = (!sl::areEqualAbsolute(position.x / Cell::getCellSize(), x / Cell::getCellSize())) ||
+		(!sl::areEqualAbsolute(position.y / Cell::getCellSize(), y / Cell::getCellSize()));
+
 	position.x = x;
 	position.y = y;
+
+	if (isCellChanged) {
+		onCellChanged.broadcast(position);
+	}
 }
 
 void sl::TransformComponent::setPosition(const sf::Vector2f& position)
 {
-	this->position = position;
+	setPosition(position.x, position.y);
 }
 
 void sl::TransformComponent::setRotation(int x, int y)

@@ -20,4 +20,8 @@
 19) починить метод clean в NetManager
 20) написать тесты для различных систем
 21) Убрать временное решение в ClientDataLoader и ServerDataLoader
-22) сделать так, чтобы проверка Cell у CollisionCellMap могла иметь направление
+22) сделать так, чтобы проверка getNearestEntityIdsToPosition у CollisionCellMap могла иметь направление
+23) в collisionSystem добавить проверку на изменение положения объекта для того, чтобы не проверять коллизию у объектов, которые не двигались
+24) залогировать метод getEntityById у worldов
+25) залогировать неизвестный CollisionType в stringToCollisionType
+26) Метод getNearestEntityIdsToPosition() у CollisionCellMap плохо работает если объект имеет aabb на несколько клеток. Поэтому нужно реализовать getNearestEntityIdsToEntity()

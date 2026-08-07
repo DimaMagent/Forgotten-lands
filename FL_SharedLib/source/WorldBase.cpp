@@ -42,3 +42,11 @@ void sl::WorldBase::removeEntity(size_t index) {
 	if (index >= entities.getEntities().size()) { return; }
 	entities.removeEntityUsingIndex(index);
 }
+
+std::optional<std::reference_wrapper<sl::Entity>> sl::WorldBase::getEntityById(uint32_t id) const
+{
+	auto entityPtr = entities.getEntityToId(id).lock();
+	if (!entityPtr) { return {}; }
+
+	return *entityPtr;
+}

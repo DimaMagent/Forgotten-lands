@@ -1,52 +1,33 @@
 #pragma once
+#include <SFML/System/Vector2.hpp>
 #include <vector>
 #include <cstdint>
 #include <unordered_map>
-#include <cstddef>
+#include "Cell.hpp"
 #include "Aabb.hpp"
 
 namespace sl {
-	struct Cell {
-		uint16_t x;
-		uint16_t y;
-		Cell(float posX, float posY);
-		Cell(uint8_t cellNumX, uint8_t cellNumY);
-
-		bool operator==(const Cell& other) const noexcept {
-			return x == other.x && y == other.y;
-		}
-	private:
-		float cellSize = 100.f;
-	};
-}
-namespace std {
-	template <>
-	struct hash<sl::Cell> {
-		std::size_t operator()(const sl::Cell& ñ) const noexcept {
-			std::size_t h1 = std::hash<int>{}(ñ.x);
-			std::size_t h2 = std::hash<int>{}(ñ.y);
-
-			std::size_t seed = h1;
-			seed ^= h2 + 0x9e3779b9 + (seed << 6) + (seed >> 2);
-			return seed;
-		}
-	};
-}
-
-namespace sl {
 	class Entity;
+	class CollisionComponent;
 
-	//stores <cell, EntityIds>
 	class CollisionCellMap {
 	public:
 		CollisionCellMap() = default;
-		void recordEntityToCollisionMap(const sl::Entity& entity, AABB aabb);
-		void removeEntityToCollisionMap(uint32_t entityId, AABB aabb);
-		std::vector<uint32_t> getEntityIdsToCollisionMap(float posX, float posY) const;
-		std::vector<uint32_t> getNearestEntityIdsToPosition(float posX, float posY, uint8_t searchDepth = 1);
+		void recordEntityToCollisionMap(const sl::Entity& entity);
+		void removeEntityToCollisionMap(const sl::Entity& entity);
+		std::vector<uint32_t> getEntityIdsToCollisionMap(sf::Vector2f pos) const;
+		std::vector<uint32_t> getNearestEntityIdsToPosition(sf::Vector2f pos, uint8_t searchDepth = 1) const;
+		std::vector<uint32_t> getNearestEntityIdsToEntity(AABB aabb, sf::Vector2f pos, uint8_t searchDepth = 1) const;
 	private:
+		//stores <cell, EntityIds>
 		std::unordered_map<Cell, std::vector<uint32_t>> cellToEntityIds;
 
-		AABB onMapBound(const AABB& aabb) const;
+		//stores <EntityIds, DelegateToken> for remove
+		std::unordered_map<uint32_t, uint64_t> entityIdToDelegateToken;
+
+		bool onMapBound(const AABB& aabb, sf::Vector2f pos) const;
+		bool adjustingEntityOnMap(const sl::Entity& entity, sf::Vector2f pos);
+		bool occupiedCellsAdd(uint32_t EntityId, sf::Vector2f pos, sl::CollisionComponent& colisComp);
+		bool occupiedCellsRemove(const sl::Entity& entity);
 	};
 }

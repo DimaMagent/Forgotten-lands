@@ -3,12 +3,15 @@
 #include "Component.hpp"
 #include "Serializable.hpp"
 #include "NetUtils.hpp"
+#include "LockFreeDelegate.hpp"
+#include "Cell.hpp"
 
 namespace sl {
 
-	/*Component that stores position of an entity. Can be extended in the future to include rotation, scale, etc.*/
 	class TransformComponent: public sl::Component, public sl::Serializable {
 	public:
+		sl::LockFreeDelegate<sf::Vector2f> onCellChanged;
+
 		TransformComponent();
 		TransformComponent(sf::Vector2f startPosition);
 		TransformComponent(float x, float y);
@@ -18,8 +21,8 @@ namespace sl {
 		void setRotation(int x, int y);
 		void setRotation(const sf::Vector2i& rotation);
 
-		sf::Vector2f getPosition() { return position; }
-		sf::Vector2i getRotation() { return rotation; }
+		sf::Vector2f getPosition() const { return position; }
+		sf::Vector2i getRotation() const { return rotation; }
 
 		virtual void serialize(std::vector<uint8_t>& out) const override;
 		virtual bool deserialize(const std::vector<uint8_t>& out, size_t& offset) override;

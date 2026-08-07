@@ -6,10 +6,14 @@
 #include "Serializer.hpp"
 #include "ConnectionEvents.hpp"
 #include "MovementSystem.hpp"
+#include "WorldMap.hpp"
+#include "CollisionSystem.hpp"
 
 World::World(ConnectionEvents& connectionEvents) : WorldBase()
 {
 	serializer = std::make_unique<Serializer>();
+	worldMap = std::make_unique<sl::WorldMap>();
+	collisionSystem = std::make_unique<sl::CollisionSystem>(worldMap->getCollisionMap(), *this);
 	connectionEvents.OnClientDisconnected.addFunction([this](uint32_t token) {
 		removePlayerEntityUsingToken(token);
 		});
@@ -24,6 +28,7 @@ void World::onUpdate(float updateTime)
 		if (!entity) { continue; }
 		
 		movementSystem->onUpdate(*entity, updateTime);
+		collisionSystem->onUpdate(*entity, updateTime);
 	}
 	serializer->onUpdate(updateTime, playerEntityStorage);
 	OnUpdate.broadcast(updateTime);
@@ -31,6 +36,7 @@ void World::onUpdate(float updateTime)
 
 void World::onUpdateEntities(sl::Entity& en, float updateTime)
 {
+	collisionSystem->onUpdate(en, updateTime);
 }
 
 std::vector<uint8_t> World::addPlayerEntity(std::unique_ptr<sl::Entity>&& entity, const uint32_t& sessionToken)
@@ -64,4 +70,12 @@ bool World::removePlayerEntityUsingIndex(const size_t& index)
 std::weak_ptr<sl::Entity> World::getPlayerEntityToToken(uint32_t token) const
 {
 	return playerEntityStorage.getEntityToId(token);
+}
+
+std::optional<std::reference_wrapper<sl::Entity>> World::getEntityById(uint32_t id) const
+{
+	auto entity = playerEntityStorage.getEntityToId(id).lock();
+	if (entity) { return *entity; }
+
+	return sl::WorldBase::getEntityById(id);
 }

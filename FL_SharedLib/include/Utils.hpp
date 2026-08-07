@@ -14,4 +14,12 @@ namespace sl {
 		}
 		return num;
 	}
+	bool areEqualAbsolute(float a, float b, float epsilon = 1e-5f);
+
+	template<typename T>
+	void swapPopDelete(std::vector<T>& vec, size_t popIndex) {
+		vec[popIndex] = vec.back();
+		vec.pop_back();
+	}
+
 }

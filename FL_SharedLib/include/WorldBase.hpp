@@ -3,6 +3,8 @@
 #include <memory>
 #include "SFML/System/Time.hpp"
 #include "EntityStorage.hpp"
+#include <optional>
+#include <functional>
 
 namespace sl {
 	class Entity;
@@ -17,6 +19,7 @@ namespace sl {
 		void addEntity(std::unique_ptr<sl::Entity>&& entity, uint32_t id);
 		void update(float deltaTime);
 		void removeEntity(size_t index);
+		virtual std::optional<std::reference_wrapper<sl::Entity>> getEntityById(uint32_t id) const;
 	protected:
 		sl::EntityStorage entities;
 		const sf::Time updateTime = sf::seconds(1.f / 60.f);
