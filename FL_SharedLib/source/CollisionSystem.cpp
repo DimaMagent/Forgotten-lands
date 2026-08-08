@@ -32,6 +32,7 @@ void sl::CollisionSystem::onUpdate(sl::Entity& entity, float updateTime) {
 		std::vector<uint32_t> entityIds = collisionCellMap.getNearestEntityIdsToPosition(position, 1);
 
 		for (uint32_t id : entityIds) {
+
 			auto entityOpt = world.getEntityById(id);
 			if (!entityOpt.has_value()) { continue; }
 			if (id == entity.getGlobalId()) { continue; }

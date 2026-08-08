@@ -74,6 +74,8 @@ void Server::onClientAccept(uint32_t token)
 		if (!playerEntity) { return; }
 
 		uint32_t entityGlobalId = playerEntity->getId();
+		
+		playerEntity->setGlobalId(entityGlobalId);
 
 		std::vector<uint8_t> entityData = world->addPlayerEntity(std::move(playerEntity), token);
 

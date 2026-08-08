@@ -2,9 +2,10 @@
 #include "WorldMap.hpp"
 #include "CollisionCellMap.hpp"
 
-sl::WorldMap::WorldMap()
+sl::WorldMap::WorldMap(cellIndex mapSizeX, cellIndex mapSizeY) :
+	mapBoundsX(mapSizeX), mapBoundsY(mapSizeY)
 {
-	collisionMap = std::make_unique<sl::CollisionCellMap>();
+	collisionMap = std::make_unique<sl::CollisionCellMap>(mapSizeX, mapSizeY);
 }
 
 sl::WorldMap::~WorldMap() = default;

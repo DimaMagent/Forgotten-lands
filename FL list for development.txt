@@ -25,3 +25,4 @@
 24) залогировать метод getEntityById у worldов
 25) залогировать неизвестный CollisionType в stringToCollisionType
 26) Метод getNearestEntityIdsToPosition() у CollisionCellMap плохо работает если объект имеет aabb на несколько клеток. Поэтому нужно реализовать getNearestEntityIdsToEntity()
+27) обработать событие отсоединения клиента от сервера на клиенте

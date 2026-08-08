@@ -3,7 +3,7 @@
 #include "Entity.hpp"
 
 
-void sl::EntityStorage::addEntity(std::unique_ptr<sl::Entity>&& entity, uint32_t id)
+void sl::EntityStorage::addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id)
 {
 	if (entity) {
 		entities.emplace_back(std::move(entity));

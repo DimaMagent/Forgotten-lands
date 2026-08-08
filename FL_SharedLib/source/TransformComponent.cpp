@@ -21,8 +21,8 @@ sl::TransformComponent::TransformComponent(float x, float y)
 
 void sl::TransformComponent::setPosition(float x, float y)
 {
-	bool isCellChanged = (!sl::areEqualAbsolute(position.x / Cell::getCellSize(), x / Cell::getCellSize())) ||
-		(!sl::areEqualAbsolute(position.y / Cell::getCellSize(), y / Cell::getCellSize()));
+	bool isCellChanged = (static_cast<int>(position.x / Cell::getCellSize()) != static_cast<int>(x / Cell::getCellSize())) ||
+		(static_cast<int>(position.y / Cell::getCellSize()) != static_cast<int>(y / Cell::getCellSize()));
 
 	position.x = x;
 	position.y = y;

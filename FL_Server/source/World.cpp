@@ -26,7 +26,7 @@ void World::onUpdate(float updateTime)
 {
 	for (auto& entity : playerEntityStorage.getEntities()) {
 		if (!entity) { continue; }
-		
+
 		movementSystem->onUpdate(*entity, updateTime);
 		collisionSystem->onUpdate(*entity, updateTime);
 	}
@@ -39,7 +39,7 @@ void World::onUpdateEntities(sl::Entity& en, float updateTime)
 	collisionSystem->onUpdate(en, updateTime);
 }
 
-std::vector<uint8_t> World::addPlayerEntity(std::unique_ptr<sl::Entity>&& entity, const uint32_t& sessionToken)
+std::vector<uint8_t> World::addPlayerEntity(std::unique_ptr<sl::Entity> entity, const uint32_t& sessionToken)
 {
 	if (!entity) {
 		throw std::runtime_error("entity is nullptr, adding an entity is not possible");
@@ -50,6 +50,8 @@ std::vector<uint8_t> World::addPlayerEntity(std::unique_ptr<sl::Entity>&& entity
 	auto en = playerEntityStorage.getEntityToId(sessionToken).lock();
 
 	if (en) {
+		worldMap->onEntityAdded(*en);
+
 		return serializer->serializeEntity(*en);
 	}
 
@@ -74,7 +76,7 @@ std::weak_ptr<sl::Entity> World::getPlayerEntityToToken(uint32_t token) const
 
 std::optional<std::reference_wrapper<sl::Entity>> World::getEntityById(uint32_t id) const
 {
-	auto entity = playerEntityStorage.getEntityToId(id).lock();
+	auto entity = playerEntityStorage.getEntityToEntityId(id).lock();
 	if (entity) { return *entity; }
 
 	return sl::WorldBase::getEntityById(id);

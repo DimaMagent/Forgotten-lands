@@ -8,6 +8,16 @@
 #include "Utils.hpp"
 
 
+sl::CollisionCellMap::CollisionCellMap(cellIndex mapSizeX, cellIndex mapSizeY)
+{
+	for (cellIndex x = 0; x < mapSizeX; ++x) {
+		for (cellIndex y = 0; y < mapSizeY; ++y) {
+			Cell cell(x, y);
+			cellToEntityIds.try_emplace(cell, std::vector<uint32_t>());
+		}
+	}
+}
+
 void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
 {
 	sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
@@ -27,6 +37,8 @@ void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
 		});
 
 	entityIdToDelegateToken.try_emplace(entity.getGlobalId(), token);
+
+	std::cout << "Entity " << entity.getGlobalId() << " recorded to CollisionCellMap at position (" << position.x << ", " << position.y << ")." << std::endl;
 
 }
 
@@ -75,7 +87,7 @@ std::vector<uint32_t> sl::CollisionCellMap::getNearestEntityIdsToPosition(sf::Ve
 		for (int y = minY; y <= maxY; ++y) {
 			if (x < 0 || y < 0) { continue; }
 
-			Cell cell(static_cast<float>(x * Cell::getCellSize()), static_cast<float>(y * Cell::getCellSize()));
+			Cell cell(static_cast<cellIndex>(x), static_cast<cellIndex>(y));
 
 			auto it = cellToEntityIds.find(cell);
 			if (it != cellToEntityIds.end()) {
@@ -122,6 +134,7 @@ bool sl::CollisionCellMap::adjustingEntityOnMap(const sl::Entity& entity, sf::Ve
 
 bool sl::CollisionCellMap::occupiedCellsAdd(uint32_t EntityId, sf::Vector2f pos, sl::CollisionComponent& colisComp)
 {
+	std::cout << "occupiesCellsAdd called for Entity " << EntityId << " at position (" << pos.x << ", " << pos.y << ")." << std::endl;
 	AABB aabb = colisComp.getAABB();
 
 	if (!aabb.exists()) { return false; }

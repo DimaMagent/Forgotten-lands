@@ -1,7 +1,7 @@
 #pragma once
 #include "WorldBase.hpp"
 #include "LockFreeDelegate.hpp"
-#include "EntityStorage.hpp"
+#include "ServerEntityStorage.hpp"
 #include <unordered_map>
 #include <cstdint>
 #include <optional>
@@ -21,7 +21,7 @@ public:
 	World(ConnectionEvents& connectionEvents);
 	virtual ~World();
 	//returns serialized playerEntity data
-	std::vector<uint8_t> addPlayerEntity(std::unique_ptr<sl::Entity>&& entity, const uint32_t& sessionToken);
+	std::vector<uint8_t> addPlayerEntity(std::unique_ptr<sl::Entity> entity, const uint32_t& sessionToken);
 	bool removePlayerEntityUsingToken(const uint32_t& sessionToken);
 	bool removePlayerEntityUsingIndex(const size_t& index);
 	std::weak_ptr<sl::Entity> getPlayerEntityToToken(uint32_t token) const;
@@ -38,5 +38,5 @@ private:
 	std::unique_ptr<sl::CollisionSystem> collisionSystem;
 
 	//stores entities by tokens
-	sl::EntityStorage playerEntityStorage;
+	ServerEntityStorage playerEntityStorage;
 };

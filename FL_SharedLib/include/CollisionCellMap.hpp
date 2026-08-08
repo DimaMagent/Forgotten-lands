@@ -12,7 +12,7 @@ namespace sl {
 
 	class CollisionCellMap {
 	public:
-		CollisionCellMap() = default;
+		CollisionCellMap(cellIndex mapSizeX, cellIndex mapSizeY);
 		void recordEntityToCollisionMap(const sl::Entity& entity);
 		void removeEntityToCollisionMap(const sl::Entity& entity);
 		std::vector<uint32_t> getEntityIdsToCollisionMap(sf::Vector2f pos) const;
