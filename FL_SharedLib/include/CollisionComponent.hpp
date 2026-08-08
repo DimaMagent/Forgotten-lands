@@ -23,7 +23,7 @@ namespace sl {
 		AABB getAABB() const { return aabb; }
 
 		AABB getRelativeAABB(float posX, float posY) const {
-			return AABB(posX + aabb.topX, posY + aabb.topY, posX + aabb.downX, posY + aabb.downY);
+			return AABB(posX + aabb.minX, posY + aabb.minY, posX + aabb.maxX, posY + aabb.maxY);
 		}
 
 		bool isStaticCollisioner() const { return isSataticCollisioner; }

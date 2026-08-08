@@ -38,8 +38,6 @@ void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
 
 	entityIdToDelegateToken.try_emplace(entity.getGlobalId(), token);
 
-	std::cout << "Entity " << entity.getGlobalId() << " recorded to CollisionCellMap at position (" << position.x << ", " << position.y << ")." << std::endl;
-
 }
 
 void sl::CollisionCellMap::removeEntityToCollisionMap(const sl::Entity& entity)
@@ -107,15 +105,17 @@ std::vector<uint32_t> sl::CollisionCellMap::getNearestEntityIdsToEntity(AABB aab
 
 	if (!onMapBound(aabb, pos)) { return entityIds; }
 
-	Cell minCell(aabb.topX + pos.x, aabb.topY + pos.y);
-	Cell maxCell(aabb.downX + pos.x, aabb.downY + pos.y);
+	Cell minCell(aabb.minX + pos.x, aabb.minY + pos.y);
+	Cell maxCell(aabb.maxX + pos.x, aabb.maxY + pos.y);
+
+	return entityIds;
 
 	//TODO: Implement search depth logic for nearest entity IDs to entity
 }
 
 bool sl::CollisionCellMap::onMapBound(const AABB& aabb, sf::Vector2f pos) const
 {
-	if (aabb.topX + pos.x < 0 || aabb.topY + pos.y < 0 || aabb.downX + pos.x < 0 || aabb.downY + pos.y < 0) { return false; }
+	if (aabb.minX + pos.x < 0 || aabb.minY + pos.y < 0 || aabb.maxX + pos.x < 0 || aabb.maxY + pos.y < 0) { return false; }
 
 	return true;
 }
@@ -134,17 +134,16 @@ bool sl::CollisionCellMap::adjustingEntityOnMap(const sl::Entity& entity, sf::Ve
 
 bool sl::CollisionCellMap::occupiedCellsAdd(uint32_t EntityId, sf::Vector2f pos, sl::CollisionComponent& colisComp)
 {
-	std::cout << "occupiesCellsAdd called for Entity " << EntityId << " at position (" << pos.x << ", " << pos.y << ")." << std::endl;
 	AABB aabb = colisComp.getAABB();
 
 	if (!aabb.exists()) { return false; }
 
 	if (!onMapBound(aabb, pos)) { return false; }
 
-	cellIndex minCellX = static_cast<cellIndex>((aabb.topX + pos.x) / Cell::getCellSize());
-	cellIndex maxCellX = static_cast<cellIndex>((aabb.downX + pos.x) / Cell::getCellSize());
-	cellIndex minCellY = static_cast<cellIndex>((aabb.topY + pos.y) / Cell::getCellSize());
-	cellIndex maxCellY = static_cast<cellIndex>((aabb.downY + pos.y) / Cell::getCellSize());
+	cellIndex minCellX = static_cast<cellIndex>((aabb.minX + pos.x) / Cell::getCellSize());
+	cellIndex maxCellX = static_cast<cellIndex>((aabb.maxX + pos.x) / Cell::getCellSize());
+	cellIndex minCellY = static_cast<cellIndex>((aabb.minY + pos.y) / Cell::getCellSize());
+	cellIndex maxCellY = static_cast<cellIndex>((aabb.maxY + pos.y) / Cell::getCellSize());
 
 	for (cellIndex cellNumX = minCellX; cellNumX <= maxCellX; ++cellNumX) {
 		for (cellIndex cellNumY = minCellY; cellNumY <= maxCellY; ++cellNumY) {

@@ -4,10 +4,10 @@
 sl::CollisionComponent::CollisionComponent(float width, float height, bool isSataticCollisioner, CollisionType collisionType)
 	:isSataticCollisioner(isSataticCollisioner), collisionType(collisionType)
 {
-	aabb.topX = 0.f;
-	aabb.topY = 0.f;
-	aabb.downX = width;
-	aabb.downY = height;
+	aabb.minX = 0.f;
+	aabb.minY = 0.f;
+	aabb.maxX = width;
+	aabb.maxY = height;
 }
 
 sl::CollisionType sl::CollisionComponent::isRelativeCollisionWith(float posX, float posY, AABB other) const

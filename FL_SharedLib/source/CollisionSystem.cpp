@@ -47,9 +47,9 @@ void sl::CollisionSystem::onUpdate(sl::Entity& entity, float updateTime) {
 
 			sl::CollisionType type = colisComp->isRelativeCollisionWith(position.x, position.y, relativeAabb);
 
-			onCollisionDetected.broadcast(entity, entityOpt.value(), type);
+			if (type == sl::CollisionType::None) { continue; }
 
-			std::cout << "Collision detected between Entity " << entity.getGlobalId() << " and Entity " << entityOpt.value().get().getGlobalId() << " with CollisionType: " << static_cast<int>(type) << std::endl;
+			onCollisionDetected.broadcast(entity, entityOpt.value(), type);
 		}
 
 	}

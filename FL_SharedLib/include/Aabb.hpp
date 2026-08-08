@@ -2,23 +2,23 @@
 
 namespace sl {
 	struct AABB {
-		float topX;
-		float topY;
-		float downX;
-		float downY;
-		AABB(float topX, float topY, float downX, float downY)
-			: topX(topX), topY(topY), downX(downX), downY(downY) {}
+		float minX;
+		float minY;
+		float maxX;
+		float maxY;
+		AABB(float minX, float minY, float maxX, float maxY)
+			: minX(minX), minY(minY), maxX(maxX), maxY(maxY) {}
 
-		AABB() : topX(-1.f), topY(-1.f), downX(-1.f), downY(-1.f) {}
+		AABB() : minX(-1.f), minY(-1.f), maxX(-1.f), maxY(-1.f) {}
 
 
 		bool intersects(const AABB& other) const {
-			return !(downX < other.topX || topX > other.downX ||
-				downY < other.topY || topY > other.downY);
+			return !(maxX <= other.minX || minX >= other.maxX ||
+				maxY <= other.minY || minY >= other.maxY);
 		}
 
 		bool exists() const {
-			return topX >= 0 && topY >= 0 && downX >= 0 && downY >= 0;
+			return minX >= 0 && minY >= 0 && maxX >= 0 && maxY >= 0;
 		}
 	};
 }
