@@ -29,7 +29,9 @@ void sl::CollisionSystem::onUpdate(sl::Entity& entity, float updateTime) {
 
 		sf::Vector2f position = transComp->getPosition();
 
-		std::vector<uint32_t> entityIds = collisionCellMap.getNearestEntityIdsToPosition(position, 1);
+		AABB aabb = colisComp->getAABB();
+
+		std::vector<uint32_t> entityIds = collisionCellMap.getNearestEntityIdsToEntity(aabb, position, 1);
 
 		for (uint32_t id : entityIds) {
 
@@ -43,13 +45,18 @@ void sl::CollisionSystem::onUpdate(sl::Entity& entity, float updateTime) {
 			sl::TransformComponent* anotherTransComp = entityOpt.value().get().getComponent<sl::TransformComponent>();
 			if (!anotherTransComp) { continue; }
 
-			AABB relativeAabb = anotherColisComp->getRelativeAABB(anotherTransComp->getPosition().x, anotherTransComp->getPosition().y);
+			AABB otherAABB = anotherColisComp->getAABB();
 
-			sl::CollisionType type = colisComp->isRelativeCollisionWith(position.x, position.y, relativeAabb);
+			sf::Vector2f otherPosition = anotherTransComp->getPosition();
+
+			sl::CollisionType type = colisComp->isRelativeCollisionWith(position.x, position.y, otherAABB,
+				otherPosition.x, otherPosition.y);
 
 			if (type == sl::CollisionType::None) { continue; }
 
 			onCollisionDetected.broadcast(entity, entityOpt.value(), type);
+
+			//std::cout << "Collision detected between Entity " << entity.getGlobalId() << " and Entity " << id << " with CollisionType: " << static_cast<int>(type) << std::endl;
 		}
 
 	}

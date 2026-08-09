@@ -22,13 +22,9 @@ namespace sl {
 
 		AABB getAABB() const { return aabb; }
 
-		AABB getRelativeAABB(float posX, float posY) const {
-			return AABB(posX + aabb.minX, posY + aabb.minY, posX + aabb.maxX, posY + aabb.maxY);
-		}
-
 		bool isStaticCollisioner() const { return isSataticCollisioner; }
 
-		CollisionType isRelativeCollisionWith(float posX, float posY, AABB other) const;
+		CollisionType isRelativeCollisionWith(float posX, float posY, AABB otherAABB, float otherPosX, float otherPosY) const;
 
 		void setOccupiedCells(const std::vector<sl::Cell>& cells) { occupiedCells = cells; }
 		void addOccupiedCell(const sl::Cell& cell) { occupiedCells.push_back(cell); }
@@ -45,6 +41,8 @@ namespace sl {
 
 		//stores cells occupied by aabb in CollisionMap
 		std::vector<sl::Cell> occupiedCells;
+
+		AABB getRelativeAABB(AABB aabb, float posX, float posY) const;
 	};
 
 }

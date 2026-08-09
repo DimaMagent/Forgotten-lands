@@ -107,10 +107,26 @@ std::vector<uint32_t> sl::CollisionCellMap::getNearestEntityIdsToEntity(AABB aab
 
 	Cell minCell(aabb.minX + pos.x, aabb.minY + pos.y);
 	Cell maxCell(aabb.maxX + pos.x, aabb.maxY + pos.y);
+		
+	int minX = std::max(0, static_cast<int>(minCell.x) - searchDepth);
+	int maxX = static_cast<int>(maxCell.x) + searchDepth;
+	int minY = std::max(0, static_cast<int>(minCell.y) - searchDepth);
+	int maxY = static_cast<int>(maxCell.y) + searchDepth;
+
+	for (int x = minX; x <= maxX; ++x) {
+		for (int y = minY; y <= maxY; ++y) {
+			if (x < 0 || y < 0) { continue; }
+
+			Cell cell(static_cast<cellIndex>(x), static_cast<cellIndex>(y));
+
+			auto it = cellToEntityIds.find(cell);
+			if (it != cellToEntityIds.end()) {
+				entityIds.insert(entityIds.end(), it->second.begin(), it->second.end());
+			}
+		}
+	}
 
 	return entityIds;
-
-	//TODO: Implement search depth logic for nearest entity IDs to entity
 }
 
 bool sl::CollisionCellMap::onMapBound(const AABB& aabb, sf::Vector2f pos) const
