@@ -15,7 +15,7 @@ PlayerManager::PlayerManager(World& world):
 void PlayerManager::updatePlayerInputState(uint32_t playerToken, sf::Vector2i movementDirectionIntentions, uint8_t inputState, uint8_t inputAction)
 {
 
-	auto entity = world.getPlayerEntityToToken(playerToken).lock();
+	auto entity = world.getPlayerEntityByToken(playerToken).lock();
 	if (!entity) { return; }
 
 	sl::MovementComponent* movComp = entity->getComponent<sl::MovementComponent>();

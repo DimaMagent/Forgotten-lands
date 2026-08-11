@@ -1,7 +1,6 @@
 #pragma once
 #include "WorldBase.hpp"
 #include "LockFreeDelegate.hpp"
-#include "ServerEntityStorage.hpp"
 #include <unordered_map>
 #include <cstdint>
 #include <optional>
@@ -22,21 +21,22 @@ public:
 	virtual ~World();
 	//returns serialized playerEntity data
 	std::vector<uint8_t> addPlayerEntity(std::unique_ptr<sl::Entity> entity, const uint32_t& sessionToken);
-	bool removePlayerEntityUsingToken(const uint32_t& sessionToken);
-	bool removePlayerEntityUsingIndex(const size_t& index);
-	std::weak_ptr<sl::Entity> getPlayerEntityToToken(uint32_t token) const;
-	virtual std::optional<std::reference_wrapper<sl::Entity>> getEntityById(uint32_t id) const override;
+	bool removePlayerEntityByToken(uint32_t sessionToken);
+	bool removeEntityByIndex(size_t index) override;
+	bool removeEntityById(uint32_t id) override;
+
+	std::weak_ptr<sl::Entity> getPlayerEntityByToken(uint32_t token) const;
+	std::optional<uint32_t> getTokenByIndex(size_t index) const;
+
 protected:
 	virtual void onUpdate(float updateTime) override;
 	virtual void onUpdateEntities(sl::Entity& en, float updateTime) override;
 
 private:
 	std::unique_ptr<Serializer> serializer;
-
 	std::unique_ptr<sl::WorldMap> worldMap;
-
 	std::unique_ptr<sl::CollisionSystem> collisionSystem;
 
-	//stores entities by tokens
-	ServerEntityStorage playerEntityStorage;
+	std::unordered_map<uint32_t, size_t> tokenToIndex;
+	std::unordered_map<size_t, uint32_t> indexToToken;
 };

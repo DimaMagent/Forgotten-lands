@@ -6,19 +6,12 @@
 #include "StateComponent.hpp"
 #include "AnimationComponent.hpp"
 
-AnimationSystem::AnimationSystem(std::weak_ptr<sl::Entity> playerEntity, sl::EntityStorage& entities,
-	sl::Delegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntityDelegate): playerEntity(playerEntity), entities(entities)
+AnimationSystem::AnimationSystem(sl::EntityStorage& entities):
+	entities(entities)
 {
-
-	onSetPlayerEntityDelegate.addFunction([this](const std::weak_ptr<sl::Entity> playerEntity) {this->playerEntity = playerEntity; });
 }
 
 void AnimationSystem::onUpdate(float updateTime) {
-	auto plEn = playerEntity.lock();
-
-	if (plEn) {
-		updateAnimations(*plEn, updateTime);
-	}
 
 	for (auto& en : entities.getEntities()) {
 		if (!en) { continue; }

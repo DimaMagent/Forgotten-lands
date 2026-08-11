@@ -5,17 +5,20 @@
 #include "StatusPacket.hpp"
 #include "EntityStorage.hpp"
 #include "Entity.hpp"
+#include "World.hpp"
 #include "Serializable.hpp"
 
 int Serializer::serializationFrequency = 2;
 
-Serializer::Serializer()
+Serializer::Serializer(const World& world) : world(world)
 {	
 }
 
-void Serializer::serializeObjects( const sl::EntityStorage& entitiesStorage)
+void Serializer::serializeObjects() const
 {
 	std::vector<uint8_t> localBuf;
+
+	const sl::EntityStorage& entitiesStorage = world.getEntityStorage();
 
 	for (size_t i = 0; i < entitiesStorage.getEntities().size(); ++i) {
 
@@ -25,8 +28,8 @@ void Serializer::serializeObjects( const sl::EntityStorage& entitiesStorage)
 	}
 
 	for (size_t i = 0; i < entitiesStorage.getEntities().size(); ++i) {
-		if (uint32_t token = entitiesStorage.getIdToIndex(i); token != 0) {
-			Packer::send<sl::net::StatusPacket>(token, localBuf);
+		if (auto tokenOpt = world.getTokenByIndex(i); tokenOpt.has_value()) {
+			Packer::send<sl::net::StatusPacket>(tokenOpt.value(), localBuf);
 		}
 	}
 
@@ -34,10 +37,10 @@ void Serializer::serializeObjects( const sl::EntityStorage& entitiesStorage)
 	
 }
 
-void Serializer::onUpdate(float updateTime, const sl::EntityStorage& entitiesStorage) {
+void Serializer::onUpdate(float updateTime) {
 	if (serializationFrequency <= ++serializationCounter) {
 		serializationCounter = 0;
-		serializeObjects(entitiesStorage);
+		serializeObjects();
 	}
 }
 

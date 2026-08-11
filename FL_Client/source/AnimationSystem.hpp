@@ -10,13 +10,10 @@ namespace sl {
 
 class AnimationSystem{
 public:
-	AnimationSystem(std::weak_ptr<sl::Entity> playerEntity, sl::EntityStorage& entities,
-		sl::Delegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntityDelegate);
+	AnimationSystem(sl::EntityStorage& entities);
 	void onUpdate(float updateTime);
 
 private:
-
-	std::weak_ptr<sl::Entity> playerEntity;
 	sl::EntityStorage& entities;
 
 	AnimationType selectAnimationType(const sl::StateComponent& stateComp);

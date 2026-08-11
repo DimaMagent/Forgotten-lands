@@ -9,19 +9,22 @@ namespace sl {
 	class Entity;
 	struct EntityStorage;
 }
+class World;
 
 class Serializer {
 public:
-	Serializer();
+	Serializer(const World& world);
 	
-	void onUpdate(float updateTime, const sl::EntityStorage& entitiesStorage);
+	void onUpdate(float updateTime);
 
 	std::vector<uint8_t> serializeEntity(const sl::Entity& en) const;
 private:
 	static int serializationFrequency;
 	int serializationCounter = 0;
 
-	void serializeObjects(const sl::EntityStorage& entitiesStorage);
+	const World& world;
+
+	void serializeObjects() const;
 
 
 };

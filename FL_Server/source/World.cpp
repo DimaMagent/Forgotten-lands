@@ -11,43 +11,39 @@
 
 World::World(ConnectionEvents& connectionEvents) : WorldBase()
 {
-	serializer = std::make_unique<Serializer>();
+	serializer = std::make_unique<Serializer>(*this);
 	worldMap = std::make_unique<sl::WorldMap>();
 	collisionSystem = std::make_unique<sl::CollisionSystem>(worldMap->getCollisionMap(), *this);
 	connectionEvents.OnClientDisconnected.addFunction([this](uint32_t token) {
-		removePlayerEntityUsingToken(token);
+		removePlayerEntityByToken(token);
 		});
 }
 
 World::~World() = default;
 
-
 void World::onUpdate(float updateTime)
 {
-	for (auto& entity : playerEntityStorage.getEntities()) {
-		if (!entity) { continue; }
-
-		movementSystem->onUpdate(*entity, updateTime);
-		collisionSystem->onUpdate(*entity, updateTime);
-	}
-	serializer->onUpdate(updateTime, playerEntityStorage);
+	collisionSystem->onUpdate(updateTime);
+	serializer->onUpdate(updateTime);
 	OnUpdate.broadcast(updateTime);
 }
 
 void World::onUpdateEntities(sl::Entity& en, float updateTime)
 {
-	collisionSystem->onUpdate(en, updateTime);
 }
 
 std::vector<uint8_t> World::addPlayerEntity(std::unique_ptr<sl::Entity> entity, const uint32_t& sessionToken)
 {
 	if (!entity) {
-		throw std::runtime_error("entity is nullptr, adding an entity is not possible");
+		throw std::runtime_error("World::addPlayerEntity: entity is nullptr, adding an entity is not possible");
 	}
 
-	playerEntityStorage.addEntity(std::move(entity), sessionToken);
+	size_t index = addEntity(std::move(entity), entity->getGlobalId());
 
-	auto en = playerEntityStorage.getEntityToId(sessionToken).lock();
+	tokenToIndex.try_emplace(sessionToken, index);
+	indexToToken.try_emplace(index, sessionToken);
+
+	std::shared_ptr<sl::Entity> en = entities.getEntities()[index];
 
 	if (en) {
 		worldMap->onEntityAdded(*en);
@@ -59,25 +55,60 @@ std::vector<uint8_t> World::addPlayerEntity(std::unique_ptr<sl::Entity> entity, 
 
 }
 
-bool World::removePlayerEntityUsingToken(const uint32_t& sessionToken)
+bool World::removePlayerEntityByToken(uint32_t sessionToken)
 {
-	return playerEntityStorage.removeEntityUsingId(sessionToken);
+	auto it = tokenToIndex.find(sessionToken);
+	if (it == tokenToIndex.end()) { return false; }
+
+	return removeEntityByIndex(it->second);
 }
 
-bool World::removePlayerEntityUsingIndex(const size_t& index)
+bool World::removeEntityByIndex(size_t index)
 {
-	return playerEntityStorage.removeEntityUsingIndex(index);
+	if (index >= entities.getEntities().size()) { return false; }
+
+	auto it = indexToToken.find(index);
+	if (it == indexToToken.end()) { return false; }
+
+	uint32_t token = it->second;
+
+	if (index == entities.getEntities().size() - 1) {
+		tokenToIndex.erase(token);
+		indexToToken.erase(index);
+		return entities.removeEntityByIndex(index);
+	}
+
+	auto movedIt = indexToToken.find(entities.getEntities().size() - 1);
+	if (movedIt == indexToToken.end()) { return false; }
+
+	tokenToIndex.erase(token);
+	tokenToIndex[movedIt->second] = index;
+	indexToToken[index] = movedIt->second;
+
+	return entities.removeEntityByIndex(index);
 }
 
-std::weak_ptr<sl::Entity> World::getPlayerEntityToToken(uint32_t token) const
+bool World::removeEntityById(uint32_t id)
 {
-	return playerEntityStorage.getEntityToId(token);
+	auto indexOpt = entities.getIndexToId(id);
+	if (!indexOpt.has_value()) { return false; }
+
+	return removeEntityByIndex(indexOpt.value());
 }
 
-std::optional<std::reference_wrapper<sl::Entity>> World::getEntityById(uint32_t id) const
+std::weak_ptr<sl::Entity> World::getPlayerEntityByToken(uint32_t token) const
 {
-	auto entity = playerEntityStorage.getEntityToEntityId(id).lock();
-	if (entity) { return *entity; }
+	auto it = tokenToIndex.find(token);
+	if (it == tokenToIndex.end()) {
+		return std::weak_ptr<sl::Entity>();
+	}
+	return entities.getEntities()[it->second];
+}
 
-	return sl::WorldBase::getEntityById(id);
+std::optional<uint32_t> World::getTokenByIndex(size_t index) const
+{
+	auto it = indexToToken.find(index);
+	if (it == indexToToken.end()) { return {}; }
+
+	return it->second;
 }

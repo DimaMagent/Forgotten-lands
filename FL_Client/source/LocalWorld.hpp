@@ -22,13 +22,18 @@ public:
 	sl::Delegate<const std::weak_ptr<sl::Entity>> OnSetPlayerEntity;
 	LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::RenderTarget& renderTarget);
 	~LocalWorld();
-	void setPlayerEntity(std::unique_ptr<sl::Entity>&& entity);
+	void addPlayerEntity(std::unique_ptr<sl::Entity> entity, uint32_t id);
+	size_t addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id) override;
 	void render();
+	bool removeEntityByIndex(size_t index) override;
+	bool removeEntityById(uint32_t id) override;
 	std::weak_ptr<StateManager> getStateManager() const { return stateManager; }
 protected:
 	std::shared_ptr<spdlog::logger> game_logger;
 
-	std::shared_ptr<sl::Entity> playerEntity;
+	size_t playerEntityIndex;
+	bool isPlayerEntityAssigned = false;
+
 	std::unique_ptr<RenderManager> renderManager;
 	std::shared_ptr<StateManager> stateManager;
 	std::weak_ptr<ClientEntityFactory> entityFactory;
@@ -40,4 +45,5 @@ protected:
 	void onAbsenceEntity(const sl::net::EntityData& enData);
 	void onAbsenceEntityOnStatusPacket(uint32_t id);
 	void onAuth(const sl::net::EntityData& enData);
+	const std::weak_ptr<sl::Entity> getPlayerEntity() const;
 };

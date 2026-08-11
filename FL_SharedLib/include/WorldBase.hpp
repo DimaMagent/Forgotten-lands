@@ -16,10 +16,12 @@ namespace sl {
 	public:
 		WorldBase();
 		virtual ~WorldBase();
-		void addEntity(std::unique_ptr<sl::Entity>&& entity, uint32_t id);
 		void update(float deltaTime);
-		void removeEntity(size_t index);
+		virtual size_t addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id);
+		virtual bool removeEntityById(uint32_t id);
+		virtual bool removeEntityByIndex(size_t index);
 		virtual std::optional<std::reference_wrapper<sl::Entity>> getEntityById(uint32_t id) const;
+		virtual const EntityStorage& getEntityStorage() const { return entities; }
 	protected:
 		sl::EntityStorage entities;
 		const sf::Time updateTime = sf::seconds(1.f / 60.f);

@@ -12,7 +12,7 @@ void sl::EntityStorage::addEntity(std::unique_ptr<sl::Entity> entity, uint32_t i
 	}
 }
 
-bool sl::EntityStorage::removeEntityUsingId(const uint32_t& id)
+bool sl::EntityStorage::removeEntityById(const uint32_t& id)
 {
 	auto it = idToIndex.find(id);
 	if (it == idToIndex.end()) { return false; }
@@ -35,12 +35,12 @@ bool sl::EntityStorage::removeEntityUsingId(const uint32_t& id)
 	return true;
 }
 
-bool sl::EntityStorage::removeEntityUsingIndex(const size_t& index)
+bool sl::EntityStorage::removeEntityByIndex(const size_t& index)
 {
 	auto it = indexToId.find(index);
 	if (it == indexToId.end()) { return false; }
 
-	return removeEntityUsingId(it->second);
+	return removeEntityById(it->second);
 }
 
 std::weak_ptr<sl::Entity> sl::EntityStorage::getEntityToId(uint32_t id) const
@@ -52,13 +52,30 @@ std::weak_ptr<sl::Entity> sl::EntityStorage::getEntityToId(uint32_t id) const
 	return {};
 }
 
-uint32_t sl::EntityStorage::getIdToIndex(size_t index) const
+std::weak_ptr<sl::Entity> sl::EntityStorage::getEntityToIndex(size_t index) const
+{
+	if (index < entities.size()) {
+		return entities[index];
+	}
+	return {};
+}
+
+std::optional<uint32_t> sl::EntityStorage::getIdToIndex(size_t index) const
 {
 	auto it = indexToId.find(index);
 	if (it != indexToId.end()) {
 		return it->second;
 	}
-	return 0;
+	return {};
+}
+
+std::optional<size_t> sl::EntityStorage::getIndexToId(uint32_t id) const
+{
+	auto it = idToIndex.find(id);
+	if (it != idToIndex.end()) {
+		return it->second;
+	}
+	return {};
 }
 
 

@@ -12,12 +12,6 @@ sl::WorldBase::WorldBase()
 
 sl::WorldBase::~WorldBase() = default;
 
-void sl::WorldBase::addEntity(std::unique_ptr<sl::Entity>&& entity, uint32_t id) {
-	if (entity) {
-		entities.addEntity(std::move(entity), id);
-	}
-}
-
 void sl::WorldBase::update(float deltaTime) {
 	timeSinceLastUpdate += std::min(sf::seconds(deltaTime), sf::seconds(0.1f));
 	while (timeSinceLastUpdate >= updateTime) {
@@ -38,9 +32,25 @@ void sl::WorldBase::update(float deltaTime) {
 	}
 }
 
-void sl::WorldBase::removeEntity(size_t index) {
-	if (index >= entities.getEntities().size()) { return; }
-	entities.removeEntityUsingIndex(index);
+bool sl::WorldBase::removeEntityById(uint32_t id)
+{
+	return entities.removeEntityById(id);
+}
+
+bool sl::WorldBase::removeEntityByIndex(size_t index) {
+	if (index >= entities.getEntities().size()) { return false; }
+
+	return entities.removeEntityByIndex(index);
+}
+
+size_t sl::WorldBase::addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id)
+{
+	if (!entity) {
+		throw std::runtime_error("sl::WorldBase::addEntity: entity is nullptr, adding player entity is not possible");
+	}
+
+	entities.addEntity(std::move(entity), id);
+	return entities.getEntities().size() - 1;
 }
 
 std::optional<std::reference_wrapper<sl::Entity>> sl::WorldBase::getEntityById(uint32_t id) const
@@ -50,3 +60,4 @@ std::optional<std::reference_wrapper<sl::Entity>> sl::WorldBase::getEntityById(u
 
 	return *entityPtr;
 }
+

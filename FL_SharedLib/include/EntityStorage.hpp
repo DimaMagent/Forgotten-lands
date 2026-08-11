@@ -2,6 +2,7 @@
 #include <vector>
 #include <unordered_map>
 #include <memory>
+#include <optional>
 
 namespace sl {
 	class Entity;
@@ -14,15 +15,19 @@ namespace sl {
 		//using ID as key for storage
 		virtual void addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id);
 
-		/*Remove is performed using swap&pop.*/
-		virtual bool removeEntityUsingId(const uint32_t& id);
+		//Remove is performed using swap&pop.
+		virtual bool removeEntityById(const uint32_t& id);
 
-		/*Remove is performed using swap&pop.*/
-		virtual bool removeEntityUsingIndex(const size_t& index);
+		//Remove is performed using swap&pop.
+		virtual bool removeEntityByIndex(const size_t& index);
 
 		std::weak_ptr<sl::Entity> getEntityToId(uint32_t id) const;
 
-		uint32_t getIdToIndex(size_t index) const;
+		std::weak_ptr<sl::Entity> getEntityToIndex(size_t index) const;
+
+		std::optional<uint32_t> getIdToIndex(size_t index) const;
+
+		std::optional<size_t> getIndexToId(uint32_t id) const;
 	protected:
 		std::vector<std::shared_ptr<sl::Entity>> entities;
 		std::unordered_map<uint32_t, size_t> idToIndex;
