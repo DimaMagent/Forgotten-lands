@@ -22,11 +22,10 @@ public:
 	//returns serialized playerEntity data
 	std::vector<uint8_t> addPlayerEntity(std::unique_ptr<sl::Entity> entity, const uint32_t& sessionToken);
 	bool removePlayerEntityByToken(uint32_t sessionToken);
-	bool removeEntityByIndex(size_t index) override;
 	bool removeEntityById(uint32_t id) override;
 
 	std::weak_ptr<sl::Entity> getPlayerEntityByToken(uint32_t token) const;
-	std::optional<uint32_t> getTokenByIndex(size_t index) const;
+	std::optional<uint32_t> getTokenById(uint32_t id) const;
 
 protected:
 	virtual void onUpdate(float updateTime) override;
@@ -37,6 +36,6 @@ private:
 	std::unique_ptr<sl::WorldMap> worldMap;
 	std::unique_ptr<sl::CollisionSystem> collisionSystem;
 
-	std::unordered_map<uint32_t, size_t> tokenToIndex;
-	std::unordered_map<size_t, uint32_t> indexToToken;
+	std::unordered_map<uint32_t, uint32_t> tokenToEntityId;
+	std::unordered_map<uint32_t, uint32_t> entityIdToToken;
 };

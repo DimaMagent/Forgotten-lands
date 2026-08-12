@@ -25,13 +25,12 @@ public:
 	void addPlayerEntity(std::unique_ptr<sl::Entity> entity, uint32_t id);
 	size_t addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id) override;
 	void render();
-	bool removeEntityByIndex(size_t index) override;
 	bool removeEntityById(uint32_t id) override;
 	std::weak_ptr<StateManager> getStateManager() const { return stateManager; }
 protected:
 	std::shared_ptr<spdlog::logger> game_logger;
 
-	size_t playerEntityIndex;
+	uint32_t playerEntityId;
 	bool isPlayerEntityAssigned = false;
 
 	std::unique_ptr<RenderManager> renderManager;

@@ -37,12 +37,6 @@ bool sl::WorldBase::removeEntityById(uint32_t id)
 	return entities.removeEntityById(id);
 }
 
-bool sl::WorldBase::removeEntityByIndex(size_t index) {
-	if (index >= entities.getEntities().size()) { return false; }
-
-	return entities.removeEntityByIndex(index);
-}
-
 size_t sl::WorldBase::addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id)
 {
 	if (!entity) {

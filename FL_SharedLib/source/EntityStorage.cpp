@@ -5,14 +5,16 @@
 
 void sl::EntityStorage::addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id)
 {
-	if (entity) {
+	if (!entity) { return; }
+
+	if (idToIndex.find(id) == idToIndex.end())
+	{
 		entities.emplace_back(std::move(entity));
 		idToIndex.try_emplace(id, entities.size() - 1);
-		indexToId.try_emplace(entities.size() - 1, id);
 	}
 }
 
-bool sl::EntityStorage::removeEntityById(const uint32_t& id)
+bool sl::EntityStorage::removeEntityById(uint32_t id)
 {
 	auto it = idToIndex.find(id);
 	if (it == idToIndex.end()) { return false; }
@@ -21,26 +23,17 @@ bool sl::EntityStorage::removeEntityById(const uint32_t& id)
 	size_t lastIdx = entities.size() - 1;
 
 	if (removedIdx != lastIdx) {
+		uint32_t movedId = entities[lastIdx]->getGlobalId();
+
 		entities[removedIdx] = std::move(entities[lastIdx]);
 
-		uint32_t movedToken = indexToId[lastIdx];
-		idToIndex[movedToken] = removedIdx;
-		indexToId[removedIdx] = movedToken;
+		idToIndex[movedId] = removedIdx;
 	}
 
-	idToIndex.erase(id);
-	indexToId.erase(lastIdx);
+	idToIndex.erase(it);
 	entities.pop_back();
 
 	return true;
-}
-
-bool sl::EntityStorage::removeEntityByIndex(const size_t& index)
-{
-	auto it = indexToId.find(index);
-	if (it == indexToId.end()) { return false; }
-
-	return removeEntityById(it->second);
 }
 
 std::weak_ptr<sl::Entity> sl::EntityStorage::getEntityToId(uint32_t id) const
@@ -60,16 +53,7 @@ std::weak_ptr<sl::Entity> sl::EntityStorage::getEntityToIndex(size_t index) cons
 	return {};
 }
 
-std::optional<uint32_t> sl::EntityStorage::getIdToIndex(size_t index) const
-{
-	auto it = indexToId.find(index);
-	if (it != indexToId.end()) {
-		return it->second;
-	}
-	return {};
-}
-
-std::optional<size_t> sl::EntityStorage::getIndexToId(uint32_t id) const
+std::optional<size_t> sl::EntityStorage::getIndexById(uint32_t id) const
 {
 	auto it = idToIndex.find(id);
 	if (it != idToIndex.end()) {

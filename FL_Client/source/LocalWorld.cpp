@@ -35,9 +35,9 @@ void LocalWorld::addPlayerEntity(std::unique_ptr<sl::Entity> entity, uint32_t id
 		return; 
 	}
 
-	size_t index = addEntity(std::move(entity), id);
+	addEntity(std::move(entity), id);
 
-	playerEntityIndex = index;
+	playerEntityId = id;
 
 	isPlayerEntityAssigned = true;
 
@@ -72,43 +72,14 @@ void LocalWorld::render()
 	}
 }
 
-bool LocalWorld::removeEntityByIndex(size_t index)
-{
-	if (index >= entities.getEntities().size())
-	{
-		game_logger->error("LocalWorld::removeEntityByIndex: entity with current index {} is not existing", index);
-		return false;
-	}
-
-	if (index == playerEntityIndex)
-	{
-		isPlayerEntityAssigned = false;
-		OnSetPlayerEntity.broadcast(getPlayerEntity());
-	}
-
-	if (playerEntityIndex == entities.getEntities().size() - 1 && index != entities.getEntities().size() - 1)
-	{
-		playerEntityIndex = index;
-	}
-
-	return entities.removeEntityByIndex(index);
-}
-
 bool LocalWorld::removeEntityById(uint32_t id)
 {
-	auto indexOpt = entities.getIndexToId(id);
-	if (!indexOpt.has_value()) 
-	{
-		game_logger->error("LocalWorld::removeEntityById: entity with current id {} is not existing", id);
-		return false;
-	}
-	
-	if (indexOpt.value() == playerEntityIndex) {
+	if (id == playerEntityId) {
 		isPlayerEntityAssigned = false;
 		OnSetPlayerEntity.broadcast(getPlayerEntity());
 	}
 
-	return false;
+	return entities.removeEntityById(id);
 }
 
 void LocalWorld::onUpdate(float updateTime)
@@ -135,7 +106,7 @@ void LocalWorld::onAbsenceEntity(const sl::net::EntityData& enData)
 
 void LocalWorld::onAbsenceEntityOnStatusPacket(uint32_t id)
 {
-	entities.removeEntityById(id);
+	removeEntityById(id);
 }
 
 void LocalWorld::onAuth(const sl::net::EntityData& enData)
@@ -160,5 +131,5 @@ const std::weak_ptr<sl::Entity> LocalWorld::getPlayerEntity() const
 {
 	if (!isPlayerEntityAssigned) { return {}; }
 
-	return entities.getEntityToIndex(playerEntityIndex);
+	return entities.getEntityToId(playerEntityId);
 }

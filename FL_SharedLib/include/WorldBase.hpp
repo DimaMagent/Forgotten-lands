@@ -19,7 +19,6 @@ namespace sl {
 		void update(float deltaTime);
 		virtual size_t addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id);
 		virtual bool removeEntityById(uint32_t id);
-		virtual bool removeEntityByIndex(size_t index);
 		virtual std::optional<std::reference_wrapper<sl::Entity>> getEntityById(uint32_t id) const;
 		virtual const EntityStorage& getEntityStorage() const { return entities; }
 	protected:

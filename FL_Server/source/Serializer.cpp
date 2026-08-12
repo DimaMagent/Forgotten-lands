@@ -28,7 +28,7 @@ void Serializer::serializeObjects() const
 	}
 
 	for (size_t i = 0; i < entitiesStorage.getEntities().size(); ++i) {
-		if (auto tokenOpt = world.getTokenByIndex(i); tokenOpt.has_value()) {
+		if (auto tokenOpt = world.getTokenById(entitiesStorage.getEntities()[i]->getGlobalId()); tokenOpt.has_value()) {
 			Packer::send<sl::net::StatusPacket>(tokenOpt.value(), localBuf);
 		}
 	}
