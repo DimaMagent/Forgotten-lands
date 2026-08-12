@@ -14,10 +14,10 @@ namespace sl {
 	public:
 		CollisionCellMap(cellIndex mapSizeX, cellIndex mapSizeY);
 		void recordEntityToCollisionMap(const sl::Entity& entity);
-		void removeEntityToCollisionMap(const sl::Entity& entity);
+		void removeEntityFromCollisionMap(const sl::Entity& entity);
 		std::vector<uint32_t> getEntityIdsToCollisionMap(sf::Vector2f pos) const;
-		std::vector<uint32_t> getNearestEntityIdsToPosition(sf::Vector2f pos, uint8_t searchDepth = 1) const;
-		std::vector<uint32_t> getNearestEntityIdsToEntity(AABB aabb, sf::Vector2f pos, uint8_t searchDepth = 1) const;
+		bool getNearestEntityIdsToPosition(sf::Vector2f pos, std::vector<uint32_t>& entityIdsOut, uint8_t searchDepth = 1) const;
+		bool getNearestEntityIdsToEntity(const AABB& aabb, sf::Vector2f pos, std::vector<uint32_t>& entityIdsOut, uint8_t searchDepth = 1) const;
 	private:
 		//stores <cell, EntityIds>
 		std::unordered_map<Cell, std::vector<uint32_t>> cellToEntityIds;

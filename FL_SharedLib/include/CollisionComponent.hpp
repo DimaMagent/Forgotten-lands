@@ -18,13 +18,13 @@ namespace sl {
 
 	class CollisionComponent : public Component {
 	public:
-		CollisionComponent(float width, float height, bool isSataticCollisioner, CollisionType collisionType);
+		CollisionComponent(float width, float height, bool staticCollisioner, CollisionType collisionType);
 
 		AABB getAABB() const { return aabb; }
 
-		bool isStaticCollisioner() const { return isSataticCollisioner; }
+		bool isStaticCollisioner() const { return staticCollisioner; }
 
-		CollisionType isRelativeCollisionWith(float posX, float posY, AABB otherAABB, float otherPosX, float otherPosY) const;
+		CollisionType isRelativeCollisionWith(float posX, float posY, const AABB& otherAABB, float otherPosX, float otherPosY) const;
 
 		void setOccupiedCells(const std::vector<sl::Cell>& cells) { occupiedCells = cells; }
 		void addOccupiedCell(const sl::Cell& cell) { occupiedCells.push_back(cell); }
@@ -35,14 +35,14 @@ namespace sl {
 	private:
 		AABB aabb;
 
-		bool isSataticCollisioner;
+		bool staticCollisioner;
 
 		CollisionType collisionType;
 
 		//stores cells occupied by aabb in CollisionMap
 		std::vector<sl::Cell> occupiedCells;
 
-		AABB getRelativeAABB(AABB aabb, float posX, float posY) const;
+		AABB getRelativeAABB(const AABB& aabb, float posX, float posY) const;
 	};
 
 }

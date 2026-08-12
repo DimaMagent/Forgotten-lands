@@ -47,7 +47,9 @@ void sl::CollisionSystem::onUpdate(float updateTime) {
 
 			reusableEntityIdsBuffer.clear();
 
-			reusableEntityIdsBuffer = collisionCellMap.getNearestEntityIdsToEntity(aabb, position, searchDepth);
+			bool isSuccess = collisionCellMap.getNearestEntityIdsToEntity(aabb, position, reusableEntityIdsBuffer, searchDepth);
+
+			if (!isSuccess) { continue; }
 
 			for (uint32_t id : reusableEntityIdsBuffer) {
 

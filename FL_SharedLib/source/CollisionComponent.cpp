@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "CollisionComponent.hpp"
 
-sl::CollisionComponent::CollisionComponent(float width, float height, bool isSataticCollisioner, CollisionType collisionType)
-	:isSataticCollisioner(isSataticCollisioner), collisionType(collisionType)
+sl::CollisionComponent::CollisionComponent(float width, float height, bool staticCollisioner, CollisionType collisionType)
+	:staticCollisioner(staticCollisioner), collisionType(collisionType)
 {
 	aabb.minX = 0.f;
 	aabb.minY = 0.f;
@@ -10,7 +10,7 @@ sl::CollisionComponent::CollisionComponent(float width, float height, bool isSat
 	aabb.maxY = height;
 }
 
-sl::CollisionType sl::CollisionComponent::isRelativeCollisionWith(float posX, float posY, AABB otherAABB, float otherPosX, float otherPosY) const
+sl::CollisionType sl::CollisionComponent::isRelativeCollisionWith(float posX, float posY, const AABB& otherAABB, float otherPosX, float otherPosY) const
 {
 	AABB relativeAABB = getRelativeAABB(this->aabb, posX, posY);
 	AABB otherRelativeAABB = getRelativeAABB(otherAABB, otherPosX, otherPosY);
@@ -19,7 +19,7 @@ sl::CollisionType sl::CollisionComponent::isRelativeCollisionWith(float posX, fl
 	return CollisionType::None;
 }
 
-sl::AABB sl::CollisionComponent::getRelativeAABB(AABB aabb, float posX, float posY) const
+sl::AABB sl::CollisionComponent::getRelativeAABB(const AABB& aabb, float posX, float posY) const
 {
 	return AABB(posX + aabb.minX, posY + aabb.minY, posX + aabb.maxX, posY + aabb.maxY);
 }

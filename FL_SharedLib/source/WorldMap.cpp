@@ -17,5 +17,5 @@ void sl::WorldMap::onEntityAdded(const sl::Entity& en)
 
 void sl::WorldMap::onEntityRemoved(const sl::Entity& en)
 {
-	collisionMap->removeEntityToCollisionMap(en);
+	collisionMap->removeEntityFromCollisionMap(en);
 }

@@ -40,7 +40,7 @@ void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
 
 }
 
-void sl::CollisionCellMap::removeEntityToCollisionMap(const sl::Entity& entity)
+void sl::CollisionCellMap::removeEntityFromCollisionMap(const sl::Entity& entity)
 {
 
 	bool isSuccess = occupiedCellsRemove(entity);
@@ -69,11 +69,11 @@ std::vector<uint32_t> sl::CollisionCellMap::getEntityIdsToCollisionMap(sf::Vecto
 	return it->second;
 }
 
-std::vector<uint32_t> sl::CollisionCellMap::getNearestEntityIdsToPosition(sf::Vector2f pos, uint8_t searchDepth) const
+bool sl::CollisionCellMap::getNearestEntityIdsToPosition(sf::Vector2f pos, std::vector<uint32_t>& entityIdsOut, uint8_t searchDepth) const
 {
 	std::vector<uint32_t> entityIds;
 
-	if (pos.x < 0.f || pos.y < 0.f) { return entityIds; }
+	if (pos.x < 0.f || pos.y < 0.f) { return false; }
 	Cell centerCell(pos.x, pos.y);
 
 	int minX = std::max(0, static_cast<int>(centerCell.x) - searchDepth);
@@ -89,21 +89,21 @@ std::vector<uint32_t> sl::CollisionCellMap::getNearestEntityIdsToPosition(sf::Ve
 
 			auto it = cellToEntityIds.find(cell);
 			if (it != cellToEntityIds.end()) {
-				entityIds.insert(entityIds.end(), it->second.begin(), it->second.end());
+				entityIdsOut.insert(entityIdsOut.end(), it->second.begin(), it->second.end());
 			}
 		}
 	}
 
-	return entityIds;
+	return true;
 }
 
-std::vector<uint32_t> sl::CollisionCellMap::getNearestEntityIdsToEntity(AABB aabb, sf::Vector2f pos, uint8_t searchDepth) const
+bool sl::CollisionCellMap::getNearestEntityIdsToEntity(const AABB& aabb, sf::Vector2f pos, std::vector<uint32_t>& entityIdsOut, uint8_t searchDepth) const
 {
 	std::vector<uint32_t> entityIds;
 
-	if (!aabb.exists()) { return entityIds; }
+	if (!aabb.exists()) { return false; }
 
-	if (!onMapBound(aabb, pos)) { return entityIds; }
+	if (!onMapBound(aabb, pos)) { return false; }
 
 	Cell minCell(aabb.minX + pos.x, aabb.minY + pos.y);
 	Cell maxCell(aabb.maxX + pos.x, aabb.maxY + pos.y);
@@ -121,12 +121,12 @@ std::vector<uint32_t> sl::CollisionCellMap::getNearestEntityIdsToEntity(AABB aab
 
 			auto it = cellToEntityIds.find(cell);
 			if (it != cellToEntityIds.end()) {
-				entityIds.insert(entityIds.end(), it->second.begin(), it->second.end());
+				entityIdsOut.insert(entityIdsOut.end(), it->second.begin(), it->second.end());
 			}
 		}
 	}
 
-	return entityIds;
+	return true;
 }
 
 bool sl::CollisionCellMap::onMapBound(const AABB& aabb, sf::Vector2f pos) const
