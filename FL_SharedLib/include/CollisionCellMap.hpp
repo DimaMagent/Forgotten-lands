@@ -9,10 +9,11 @@
 namespace sl {
 	class Entity;
 	class CollisionComponent;
+	class WorldBase;
 
 	class CollisionCellMap {
 	public:
-		CollisionCellMap(cellIndex mapSizeX, cellIndex mapSizeY);
+		CollisionCellMap(const WorldBase& world, cellIndex mapSizeX, cellIndex mapSizeY);
 		void recordEntityToCollisionMap(const sl::Entity& entity);
 		void removeEntityFromCollisionMap(const sl::Entity& entity);
 		std::vector<uint32_t> getEntityIdsToCollisionMap(sf::Vector2f pos) const;
@@ -25,9 +26,11 @@ namespace sl {
 		//stores <EntityIds, DelegateToken> for remove
 		std::unordered_map<uint32_t, uint64_t> entityIdToDelegateToken;
 
+		const WorldBase& world;
+
 		bool onMapBound(const AABB& aabb, sf::Vector2f pos) const;
-		bool adjustingEntityOnMap(const sl::Entity& entity, sf::Vector2f pos);
-		bool occupiedCellsAdd(uint32_t EntityId, sf::Vector2f pos, sl::CollisionComponent& colisComp);
-		bool occupiedCellsRemove(const sl::Entity& entity);
+		bool adjustingEntityOnMap(uint32_t entityId, sf::Vector2f pos);
+		bool occupiedCellsAdd(uint32_t entityId, sf::Vector2f pos);
+		bool occupiedCellsRemove(uint32_t entityId);
 	};
 }

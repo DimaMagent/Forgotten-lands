@@ -12,7 +12,7 @@
 World::World(ConnectionEvents& connectionEvents) : WorldBase()
 {
 	serializer = std::make_unique<Serializer>(*this);
-	worldMap = std::make_unique<sl::WorldMap>();
+	worldMap = std::make_unique<sl::WorldMap>(*this);
 	collisionSystem = std::make_unique<sl::CollisionSystem>(worldMap->getCollisionMap(), *this);
 	connectionEvents.OnClientDisconnected.addFunction([this](uint32_t token) {
 		removePlayerEntityByToken(token);

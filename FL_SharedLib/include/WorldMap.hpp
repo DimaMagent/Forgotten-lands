@@ -5,10 +5,11 @@
 namespace sl {
 	class CollisionCellMap;
 	class Entity;
+	class WorldBase;
 
 	class WorldMap {
 	public:
-		WorldMap(cellIndex mapSizeX = 10, cellIndex mapSizeY = 10);
+		WorldMap(const WorldBase& world, cellIndex mapSizeX = 10, cellIndex mapSizeY = 10);
 		~WorldMap();
 		sl::CollisionCellMap& getCollisionMap() const { return *collisionMap; }
 		void onEntityAdded(const sl::Entity& en);

@@ -3,12 +3,14 @@
 #include "Entity.hpp"
 #include "CollisionComponent.hpp"
 #include "TransformComponent.hpp"
+#include "WorldBase.hpp"
 #include <queue>
 #include <array>
 #include "Utils.hpp"
 
 
-sl::CollisionCellMap::CollisionCellMap(cellIndex mapSizeX, cellIndex mapSizeY)
+sl::CollisionCellMap::CollisionCellMap(const WorldBase& world, cellIndex mapSizeX, cellIndex mapSizeY):
+	world(world)
 {
 	for (cellIndex x = 0; x < mapSizeX; ++x) {
 		for (cellIndex y = 0; y < mapSizeY; ++y) {
@@ -32,8 +34,10 @@ void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
 
 	if (!isSuccess) { return; }
 
-	uint64_t token = transComp->onCellChanged.addFunction([this, &entity](sf::Vector2f pos) {
-		adjustingEntityOnMap(entity, pos);
+	uint32_t entityId = entity.getGlobalId();
+
+	uint64_t token = transComp->onCellChanged.addFunction([this, entityId](sf::Vector2f pos) {
+		adjustingEntityOnMap(entityId, pos);
 		});
 
 	entityIdToDelegateToken.try_emplace(entity.getGlobalId(), token);
@@ -71,8 +75,6 @@ std::vector<uint32_t> sl::CollisionCellMap::getEntityIdsToCollisionMap(sf::Vecto
 
 bool sl::CollisionCellMap::getNearestEntityIdsToPosition(sf::Vector2f pos, std::vector<uint32_t>& entityIdsOut, uint8_t searchDepth) const
 {
-	std::vector<uint32_t> entityIds;
-
 	if (pos.x < 0.f || pos.y < 0.f) { return false; }
 	Cell centerCell(pos.x, pos.y);
 
@@ -99,8 +101,6 @@ bool sl::CollisionCellMap::getNearestEntityIdsToPosition(sf::Vector2f pos, std::
 
 bool sl::CollisionCellMap::getNearestEntityIdsToEntity(const AABB& aabb, sf::Vector2f pos, std::vector<uint32_t>& entityIdsOut, uint8_t searchDepth) const
 {
-	std::vector<uint32_t> entityIds;
-
 	if (!aabb.exists()) { return false; }
 
 	if (!onMapBound(aabb, pos)) { return false; }
@@ -136,21 +136,27 @@ bool sl::CollisionCellMap::onMapBound(const AABB& aabb, sf::Vector2f pos) const
 	return true;
 }
 
-bool sl::CollisionCellMap::adjustingEntityOnMap(const sl::Entity& entity, sf::Vector2f pos)
+bool sl::CollisionCellMap::adjustingEntityOnMap(uint32_t entityId, sf::Vector2f pos)
 {
-	bool isSuccess = occupiedCellsRemove(entity);
+	bool isSuccess = occupiedCellsRemove(entityId);
 
 	if (!isSuccess) { return false; }
+
+	return occupiedCellsAdd(entityId, pos);
+}
+
+bool sl::CollisionCellMap::occupiedCellsAdd(uint32_t entityId, sf::Vector2f pos)
+{
+	auto entityOpt = world.getEntityById(entityId);
+
+	if (!entityOpt.has_value()) { return false; }
+
+	sl::Entity& entity = entityOpt.value().get();
 
 	sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
 	if (!colisComp) { return false; }
 
-	return occupiedCellsAdd(entity.getGlobalId(), pos, *colisComp);
-}
-
-bool sl::CollisionCellMap::occupiedCellsAdd(uint32_t EntityId, sf::Vector2f pos, sl::CollisionComponent& colisComp)
-{
-	AABB aabb = colisComp.getAABB();
+	AABB aabb = colisComp->getAABB();
 
 	if (!aabb.exists()) { return false; }
 
@@ -164,15 +170,21 @@ bool sl::CollisionCellMap::occupiedCellsAdd(uint32_t EntityId, sf::Vector2f pos,
 	for (cellIndex cellNumX = minCellX; cellNumX <= maxCellX; ++cellNumX) {
 		for (cellIndex cellNumY = minCellY; cellNumY <= maxCellY; ++cellNumY) {
 			Cell currentCell(cellNumX, cellNumY);
-			cellToEntityIds[currentCell].push_back(EntityId);
-			colisComp.addOccupiedCell(currentCell);
+			cellToEntityIds[currentCell].push_back(entityId);
+			colisComp->addOccupiedCell(currentCell);
 		}
 	}
 	return true;
 }
 
-bool sl::CollisionCellMap::occupiedCellsRemove(const sl::Entity& entity)
+bool sl::CollisionCellMap::occupiedCellsRemove(uint32_t entityId)
 {
+	auto entityOpt = world.getEntityById(entityId);
+
+	if (!entityOpt.has_value()) { return false; }
+
+	sl::Entity& entity = entityOpt.value().get();
+
 	sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
 	if (!colisComp) { return false; }
 
