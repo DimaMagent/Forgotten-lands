@@ -11,7 +11,7 @@ sl::WorldBase::WorldBase()
 {
 	worldMap = std::make_unique<sl::WorldMap>(*this);
 	collisionSystem = std::make_unique<sl::CollisionSystem>(worldMap->getCollisionMap(), *this);
-	movementSystem = std::make_unique<MovementSystem>(*collisionSystem);
+	movementSystem = std::make_unique<MovementSystem>(worldMap->getCollisionMap(), *this);
 }
 
 sl::WorldBase::~WorldBase() = default;

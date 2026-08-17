@@ -14,16 +14,13 @@ namespace sl {
 	public:
 		CollisionSystem(const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
 		void onUpdate(float updateTime);
-		bool isBlockedOnPosition(sl::Entity& entity, const sf::Vector2f& testPos);
 
 		sl::LockFreeDelegate<sl::Entity&, sl::Entity&, sl::CollisionType> onCollisionDetected;
 	private:
 		float updateRate = 1.0f / 10.0f;
 		float currentTime = 0.f;
 
-		const int searchDepth = 1;
-		const int onPositionSearchDepth = 1;
-		const float delta = 1.f;
+		const int SEARCH_DEPTH = 1;
 
 		std::vector<uint32_t> reusableEntityIdsBuffer;
 

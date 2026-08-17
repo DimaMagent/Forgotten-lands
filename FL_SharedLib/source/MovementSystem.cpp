@@ -3,19 +3,23 @@
 #include "MovementSystem.hpp"
 #include "MovementComponent.hpp"
 #include "TransformComponent.hpp"
+#include "CollisionComponent.hpp"
 #include "StateComponent.hpp"
-#include "CollisionSystem.hpp"
+#include "CollisionCellMap.hpp"
+#include "WorldBase.hpp"
 #include <algorithm>
 
-sl::MovementSystem::MovementSystem(CollisionSystem& collisionSystem): collisionSystem(collisionSystem)
+sl::MovementSystem::MovementSystem(const sl::CollisionCellMap& collisionCellMap, const WorldBase& world):
+    collisionCellMap(collisionCellMap), world(world)
 {
+    reusableEntityIdsBuffer = std::vector<uint32_t>();
 }
 
-void sl::MovementSystem::onUpdate(sl::Entity& entity, float updateTime) const{
+void sl::MovementSystem::onUpdate(sl::Entity& entity, float updateTime){
     movingWithCollisionCheck(entity, updateTime);
 }
 
-void sl::MovementSystem::movingWithCollisionCheck(sl::Entity& entity, float updateTime) const
+void sl::MovementSystem::movingWithCollisionCheck(sl::Entity& entity, float updateTime)
 {
     sl::MovementComponent* movComp = entity.getComponent<sl::MovementComponent>();
     sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
@@ -48,24 +52,24 @@ void sl::MovementSystem::movingWithCollisionCheck(sl::Entity& entity, float upda
     movComp->isMovementAlreadyReseted = false;
 }
 
-void sl::MovementSystem::standartPositionCalculate(sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos) const
+void sl::MovementSystem::standartPositionCalculate(sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos)
 {
     if (delta.x != 0.f) {
         sf::Vector2f targetPosX = { currentPos.x + delta.x, currentPos.y };
-        if (!collisionSystem.isBlockedOnPosition(entity, targetPosX)) {
+        if (!isBlockedOnPosition(entity, targetPosX)) {
             currentPos.x = targetPosX.x;
         }
     }
 
     if (delta.y != 0.f) {
         sf::Vector2f targetPosY = { currentPos.x, currentPos.y + delta.y };
-        if (!collisionSystem.isBlockedOnPosition(entity, targetPosY)) {
+        if (!isBlockedOnPosition(entity, targetPosY)) {
             currentPos.y = targetPosY.y;
         }
     }
 }
 
-void sl::MovementSystem::subSteppingPositionCalculate(sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos) const
+void sl::MovementSystem::subSteppingPositionCalculate(sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos)
 {
     float maxStepSize = MAX_STEP_SIZE;
 
@@ -78,7 +82,7 @@ void sl::MovementSystem::subSteppingPositionCalculate(sl::Entity& entity, const 
 
         if (subDelta.x != 0.f) {
             sf::Vector2f targetPosX = { currentPos.x + subDelta.x, currentPos.y };
-            if (!collisionSystem.isBlockedOnPosition(entity, targetPosX)) {
+            if (!isBlockedOnPosition(entity, targetPosX)) {
                 currentPos.x = targetPosX.x;
             }
             else {
@@ -88,7 +92,7 @@ void sl::MovementSystem::subSteppingPositionCalculate(sl::Entity& entity, const 
 
         if (subDelta.y != 0.f) {
             sf::Vector2f targetPosY = { currentPos.x, currentPos.y + subDelta.y };
-            if (!collisionSystem.isBlockedOnPosition(entity, targetPosY)) {
+            if (!isBlockedOnPosition(entity, targetPosY)) {
                 currentPos.y = targetPosY.y;
             }
             else {
@@ -102,4 +106,39 @@ void sl::MovementSystem::subSteppingPositionCalculate(sl::Entity& entity, const 
     }
 }
 
+bool sl::MovementSystem::isBlockedOnPosition(sl::Entity& entity, const sf::Vector2f& testPos)
+{
+    sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
+    if (!colisComp) { return false; }
 
+    AABB aabb = colisComp->getAABB();
+    reusableEntityIdsBuffer.clear();
+
+    if (!collisionCellMap.getNearestEntityIdsToEntity(aabb, testPos, reusableEntityIdsBuffer, ON_POSITION_SEARCH_DEPTH)) {
+        return false;
+    }
+
+    for (uint32_t id : reusableEntityIdsBuffer) {
+        if (id == entity.getGlobalId()) continue;
+
+        auto entityOpt = world.getEntityById(id);
+        if (!entityOpt.has_value()) continue;
+
+        sl::CollisionComponent* anotherColisComp = entityOpt.value().get().getComponent<sl::CollisionComponent>();
+        sl::TransformComponent* anotherTransComp = entityOpt.value().get().getComponent<sl::TransformComponent>();
+        if (!anotherColisComp || !anotherTransComp) continue;
+
+        if (anotherColisComp->getCollisionType() != CollisionType::Block) continue;
+
+        AABB otherAABB = anotherColisComp->getAABB();
+        sf::Vector2f otherPosition = anotherTransComp->getPosition();
+
+        sl::CollisionType type = colisComp->isRelativeCollisionWith(testPos.x, testPos.y, otherAABB, otherPosition.x, otherPosition.y);
+
+        if (type == sl::CollisionType::Block) {
+            return true;
+        }
+    }
+
+    return false;
+}

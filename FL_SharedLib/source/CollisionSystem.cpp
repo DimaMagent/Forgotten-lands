@@ -47,7 +47,7 @@ void sl::CollisionSystem::onUpdate(float updateTime) {
 
 			reusableEntityIdsBuffer.clear();
 
-			bool isSuccess = collisionCellMap.getNearestEntityIdsToEntity(aabb, position, reusableEntityIdsBuffer, searchDepth);
+			bool isSuccess = collisionCellMap.getNearestEntityIdsToEntity(aabb, position, reusableEntityIdsBuffer, SEARCH_DEPTH);
 
 			if (!isSuccess) { continue; }
 
@@ -80,41 +80,4 @@ void sl::CollisionSystem::onUpdate(float updateTime) {
 		}
 
 	}
-}
-
-bool sl::CollisionSystem::isBlockedOnPosition(sl::Entity& entity, const sf::Vector2f& testPos)
-{
-	sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
-	if (!colisComp) { std::cout << "collisionComp is null\n"; return false; }
-
-	AABB aabb = colisComp->getAABB();
-	reusableEntityIdsBuffer.clear();
-
-	if (!collisionCellMap.getNearestEntityIdsToEntity(aabb, testPos, reusableEntityIdsBuffer, onPositionSearchDepth)) {
-		return false;
-	}
-
-	for (uint32_t id : reusableEntityIdsBuffer) {
-		if (id == entity.getGlobalId()) continue;
-
-		auto entityOpt = world.getEntityById(id);
-		if (!entityOpt.has_value()) continue;
-
-		sl::CollisionComponent* anotherColisComp = entityOpt.value().get().getComponent<sl::CollisionComponent>();
-		sl::TransformComponent* anotherTransComp = entityOpt.value().get().getComponent<sl::TransformComponent>();
-		if (!anotherColisComp || !anotherTransComp) continue;
-
-		if (anotherColisComp->getCollisionType() != CollisionType::Block) continue;
-
-		AABB otherAABB = anotherColisComp->getAABB();
-		sf::Vector2f otherPosition = anotherTransComp->getPosition();
-
-		sl::CollisionType type = colisComp->isRelativeCollisionWith(testPos.x, testPos.y, otherAABB, otherPosition.x, otherPosition.y);
-
-		if (type == sl::CollisionType::Block) {
-			return true;
-		}
-	}
-
-	return false;
 }
