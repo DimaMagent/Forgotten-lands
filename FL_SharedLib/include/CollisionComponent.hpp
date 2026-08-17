@@ -27,9 +27,14 @@ namespace sl {
 		CollisionType isRelativeCollisionWith(float posX, float posY, const AABB& otherAABB, float otherPosX, float otherPosY) const;
 
 		void setOccupiedCells(const std::vector<sl::Cell>& cells) { occupiedCells = cells; }
+
 		void addOccupiedCell(const sl::Cell& cell) { occupiedCells.push_back(cell); }
+
 		const std::vector<sl::Cell>& getOccupiedCells() const { return occupiedCells; }
+
 		void occupiedCellsClear() { occupiedCells.clear(); }
+
+		CollisionType getCollisionType() const { return collisionType; }
 
 		COMPONENT_TYPE(CollisionComponent);
 	private:

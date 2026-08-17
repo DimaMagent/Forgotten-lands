@@ -30,14 +30,17 @@ void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
 
 	sf::Vector2f position = transComp->getPosition();
 
-	bool isSuccess = occupiedCellsAdd(entity.getGlobalId(), position, *colisComp);
+	bool isSuccess = occupiedCellsAdd(entity.getGlobalId(), position);
 
 	if (!isSuccess) { return; }
 
 	uint32_t entityId = entity.getGlobalId();
 
 	uint64_t token = transComp->onCellChanged.addFunction([this, entityId](sf::Vector2f pos) {
-		adjustingEntityOnMap(entityId, pos);
+		if (!adjustingEntityOnMap(entityId, pos)) {
+			std::cout << "sl::CollisionCellMap::recordEntityToCollisionMap: adjustingEntityOnMap failed\n";
+		}
+		
 		});
 
 	entityIdToDelegateToken.try_emplace(entity.getGlobalId(), token);
@@ -47,7 +50,7 @@ void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
 void sl::CollisionCellMap::removeEntityFromCollisionMap(const sl::Entity& entity)
 {
 
-	bool isSuccess = occupiedCellsRemove(entity);
+	bool isSuccess = occupiedCellsRemove(entity.getGlobalId());
 
 	if (!isSuccess) { return; }
 
@@ -128,6 +131,7 @@ bool sl::CollisionCellMap::getNearestEntityIdsToEntity(const AABB& aabb, sf::Vec
 
 	return true;
 }
+
 
 bool sl::CollisionCellMap::onMapBound(const AABB& aabb, sf::Vector2f pos) const
 {

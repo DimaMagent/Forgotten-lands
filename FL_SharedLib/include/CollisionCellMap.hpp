@@ -17,8 +17,8 @@ namespace sl {
 		void recordEntityToCollisionMap(const sl::Entity& entity);
 		void removeEntityFromCollisionMap(const sl::Entity& entity);
 		std::vector<uint32_t> getEntityIdsToCollisionMap(sf::Vector2f pos) const;
-		bool getNearestEntityIdsToPosition(sf::Vector2f pos, std::vector<uint32_t>& entityIdsOut, uint8_t searchDepth = 1) const;
-		bool getNearestEntityIdsToEntity(const AABB& aabb, sf::Vector2f pos, std::vector<uint32_t>& entityIdsOut, uint8_t searchDepth = 1) const;
+		[[nodiscard]] bool getNearestEntityIdsToPosition(sf::Vector2f pos, std::vector<uint32_t>& entityIdsOut, uint8_t searchDepth = 1) const;
+		[[nodiscard]] bool getNearestEntityIdsToEntity(const AABB& aabb, sf::Vector2f pos, std::vector<uint32_t>& entityIdsOut, uint8_t searchDepth = 1) const;
 	private:
 		//stores <cell, EntityIds>
 		std::unordered_map<Cell, std::vector<uint32_t>> cellToEntityIds;
@@ -28,9 +28,9 @@ namespace sl {
 
 		const WorldBase& world;
 
-		bool onMapBound(const AABB& aabb, sf::Vector2f pos) const;
-		bool adjustingEntityOnMap(uint32_t entityId, sf::Vector2f pos);
-		bool occupiedCellsAdd(uint32_t entityId, sf::Vector2f pos);
-		bool occupiedCellsRemove(uint32_t entityId);
+		[[nodiscard]] bool onMapBound(const AABB& aabb, sf::Vector2f pos) const;
+		[[nodiscard]] bool adjustingEntityOnMap(uint32_t entityId, sf::Vector2f pos);
+		[[nodiscard]] bool occupiedCellsAdd(uint32_t entityId, sf::Vector2f pos);
+		[[nodiscard]] bool occupiedCellsRemove(uint32_t entityId);
 	};
 }

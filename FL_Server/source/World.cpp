@@ -12,8 +12,6 @@
 World::World(ConnectionEvents& connectionEvents) : WorldBase()
 {
 	serializer = std::make_unique<Serializer>(*this);
-	worldMap = std::make_unique<sl::WorldMap>(*this);
-	collisionSystem = std::make_unique<sl::CollisionSystem>(worldMap->getCollisionMap(), *this);
 	connectionEvents.OnClientDisconnected.addFunction([this](uint32_t token) {
 		removePlayerEntityByToken(token);
 	});
@@ -23,7 +21,6 @@ World::~World() = default;
 
 void World::onUpdate(float updateTime)
 {
-	collisionSystem->onUpdate(updateTime);
 	serializer->onUpdate(updateTime);
 	OnUpdate.broadcast(updateTime);
 }
@@ -40,7 +37,7 @@ std::vector<uint8_t> World::addPlayerEntity(std::unique_ptr<sl::Entity> entity, 
 
 	uint32_t entityId = entity->getGlobalId();
 
-	size_t index = addEntity(std::move(entity), entity->getGlobalId());
+	addEntity(std::move(entity), entity->getGlobalId());
 
 	entityIdToToken.try_emplace(entityId, sessionToken);
 	tokenToEntityId.try_emplace(sessionToken, entityId);
@@ -48,8 +45,6 @@ std::vector<uint8_t> World::addPlayerEntity(std::unique_ptr<sl::Entity> entity, 
 	auto enPtr = entities.getEntityToId(entityId).lock();
 
 	if (enPtr) {
-		worldMap->onEntityAdded(*enPtr);
-
 		return serializer->serializeEntity(*enPtr);
 	}
 

@@ -4,10 +4,14 @@
 #include "TransformComponent.hpp"
 #include "Entity.hpp"
 #include "MovementSystem.hpp"
+#include "CollisionSystem.hpp"
+#include "WorldMap.hpp"
 
 sl::WorldBase::WorldBase()
 {
-	movementSystem = std::make_unique<MovementSystem>();
+	worldMap = std::make_unique<sl::WorldMap>(*this);
+	collisionSystem = std::make_unique<sl::CollisionSystem>(worldMap->getCollisionMap(), *this);
+	movementSystem = std::make_unique<MovementSystem>(*collisionSystem);
 }
 
 sl::WorldBase::~WorldBase() = default;
@@ -18,6 +22,8 @@ void sl::WorldBase::update(float deltaTime) {
 		timeSinceLastUpdate -= updateTime;
 
 		float updateTimeCount = updateTime.asSeconds();
+
+		collisionSystem->onUpdate(updateTimeCount);
 
 		onUpdate(updateTimeCount);
 
@@ -37,14 +43,18 @@ bool sl::WorldBase::removeEntityById(uint32_t id)
 	return entities.removeEntityById(id);
 }
 
-size_t sl::WorldBase::addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id)
+void sl::WorldBase::addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id)
 {
 	if (!entity) {
 		throw std::runtime_error("sl::WorldBase::addEntity: entity is nullptr, adding player entity is not possible");
 	}
 
 	entities.addEntity(std::move(entity), id);
-	return entities.getEntities().size() - 1;
+
+	auto enPtr = entities.getEntityToId(id).lock();
+	if (enPtr) {
+		worldMap->onEntityAdded(*enPtr);
+	}
 }
 
 std::optional<std::reference_wrapper<sl::Entity>> sl::WorldBase::getEntityById(uint32_t id) const

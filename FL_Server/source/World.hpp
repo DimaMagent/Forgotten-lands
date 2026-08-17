@@ -9,8 +9,6 @@ class Serializer;
 class ConnectionEvents;
 namespace sl {
 	class Entity;
-	class WorldMap;
-	class CollisionSystem;
 }
 
 
@@ -33,8 +31,7 @@ protected:
 
 private:
 	std::unique_ptr<Serializer> serializer;
-	std::unique_ptr<sl::WorldMap> worldMap;
-	std::unique_ptr<sl::CollisionSystem> collisionSystem;
+
 
 	std::unordered_map<uint32_t, uint32_t> tokenToEntityId;
 	std::unordered_map<uint32_t, uint32_t> entityIdToToken;

@@ -22,17 +22,27 @@ namespace sl {
 		void addDirection(sf::Vector2i direction);
 
 		sf::Vector2f move(float deltaTime, const sf::Vector2f& position);
+
+		sf::Vector2f calculateDelta(float deltaTime);
+
 		void braking(float deltaTime);
+
 		sf::Vector2f getVelocity() const { return velocityVector; }
+
 		sf::Vector2i getVelocityDirection() const { return velocityDirectionVector; }
+
 		void setVelocityDirection(const sf::Vector2i& direction);
+
 		void resetVelocity() { velocityVector = sf::Vector2f(0.f, 0.f); }
 
 		bool isMoving() const { return velocityDirectionVector != sf::Vector2i(0, 0); }
 
 		virtual void serialize(std::vector<uint8_t>& out) const override;
+
 		virtual bool deserialize(const std::vector<uint8_t>& out, size_t& offset) override;
+
 		virtual uint32_t getSerializeDataSize() const override;
+
 		virtual uint32_t getDeserializeDataSize() const override;
 
 		bool isMovementAlreadyReseted = false;
@@ -45,10 +55,6 @@ namespace sl {
 		float currentSpeed = 0.f;
 		sf::Time maxAccelerationTime;
 		sf::Time currentAccelerationTime;
-		
-		sf::Vector2f asNormalized(const sf::Vector2f& vector) const;
-		sf::Vector2i asNormalized(const sf::Vector2i& vector) const;
-		sf::Vector2i inBounds(const sf::Vector2i& vector, const sf::Vector2i& minBounds, const sf::Vector2i& maxBounds) const;
 
 	};
 }

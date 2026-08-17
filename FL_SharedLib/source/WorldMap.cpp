@@ -5,7 +5,7 @@
 sl::WorldMap::WorldMap(const WorldBase& world, cellIndex mapSizeX, cellIndex mapSizeY) :
 	mapBoundsX(mapSizeX), mapBoundsY(mapSizeY)
 {
-	collisionMap = std::make_unique<sl::CollisionCellMap>(mapSizeX, mapSizeY);
+	collisionMap = std::make_unique<sl::CollisionCellMap>(world, mapSizeX, mapSizeY);
 }
 
 sl::WorldMap::~WorldMap() = default;

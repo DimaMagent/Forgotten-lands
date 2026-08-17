@@ -22,4 +22,7 @@ namespace sl {
 		vec.pop_back();
 	}
 
+	sf::Vector2f asNormalized(const sf::Vector2f& vector);
+	sf::Vector2i asNormalized(const sf::Vector2i& vector);
+
 }

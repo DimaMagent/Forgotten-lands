@@ -1,6 +1,7 @@
 #pragma once
 #include "LockFreeDelegate.hpp"
 #include <vector>
+#include "SFML/System/Vector2.hpp"
 
 namespace sl {
 	class Entity;
@@ -13,6 +14,7 @@ namespace sl {
 	public:
 		CollisionSystem(const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
 		void onUpdate(float updateTime);
+		bool isBlockedOnPosition(sl::Entity& entity, const sf::Vector2f& testPos);
 
 		sl::LockFreeDelegate<sl::Entity&, sl::Entity&, sl::CollisionType> onCollisionDetected;
 	private:
@@ -20,6 +22,8 @@ namespace sl {
 		float currentTime = 0.f;
 
 		const int searchDepth = 1;
+		const int onPositionSearchDepth = 1;
+		const float delta = 1.f;
 
 		std::vector<uint32_t> reusableEntityIdsBuffer;
 

@@ -45,7 +45,7 @@ void LocalWorld::addPlayerEntity(std::unique_ptr<sl::Entity> entity, uint32_t id
 	
 }
 
-size_t LocalWorld::addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id)
+void LocalWorld::addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id)
 {
 	if (!entity)
 	{

@@ -23,7 +23,7 @@ public:
 	LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::RenderTarget& renderTarget);
 	~LocalWorld();
 	void addPlayerEntity(std::unique_ptr<sl::Entity> entity, uint32_t id);
-	size_t addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id) override;
+	void addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id) override;
 	void render();
 	bool removeEntityById(uint32_t id) override;
 	std::weak_ptr<StateManager> getStateManager() const { return stateManager; }

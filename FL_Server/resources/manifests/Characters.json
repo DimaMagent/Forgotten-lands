@@ -12,7 +12,7 @@
     "StateComponent": {},
     "CollisionComponent": {
       "width": 40,
-      "height": 65,
+      "height": 60,
       "isStatic": false,
       "CollisionType": "Block"
     }
