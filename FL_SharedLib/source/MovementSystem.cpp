@@ -36,11 +36,9 @@ void sl::MovementSystem::movingWithCollisionCheck(sl::Entity& entity, float upda
     sf::Vector2f currentPos = trComp->getPosition();
 
     if (delta.x < MIN_SPEED_FOR_SUB_STEPPING_ALGORITHM && delta.y < MIN_SPEED_FOR_SUB_STEPPING_ALGORITHM) {
-        std::cout << "standart algorithm\n";
         standartPositionCalculate(entity, delta, currentPos);
     }
     else {
-        std::cout << "subStepping algorithm\n";
         subSteppingPositionCalculate(entity, delta, currentPos);
     }
 

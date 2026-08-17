@@ -23,7 +23,8 @@ void ServerEntityFactory::registrationComponents()
 		entity.addComponent<sl::StateComponent>();
 		});
 	registry.try_emplace(sl::CollisionComponent::ComponentName, [](sl::Entity& entity, const json& js) {
-		entity.addComponent<sl::CollisionComponent>(js.value("width", 96.0f),
+		entity.addComponent<sl::CollisionComponent>(
+			js.value("width", 96.0f),
 			js.value("height", 96.0f),
 			js.value("isStatic", true),
 			sl::stringToCollisionType(js.value("CollisionType", "None"))

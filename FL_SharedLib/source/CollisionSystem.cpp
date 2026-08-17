@@ -85,7 +85,7 @@ void sl::CollisionSystem::onUpdate(float updateTime) {
 bool sl::CollisionSystem::isBlockedOnPosition(sl::Entity& entity, const sf::Vector2f& testPos)
 {
 	sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
-	if (!colisComp) { return false; }
+	if (!colisComp) { std::cout << "collisionComp is null\n"; return false; }
 
 	AABB aabb = colisComp->getAABB();
 	reusableEntityIdsBuffer.clear();

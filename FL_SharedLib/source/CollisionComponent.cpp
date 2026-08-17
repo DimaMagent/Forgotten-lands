@@ -1,13 +1,18 @@
 #include "pch.h"
 #include "CollisionComponent.hpp"
 
+sl::CollisionComponent::CollisionComponent()
+{
+	aabb = AABB();
+	staticCollisioner = true;
+	collisionType = CollisionType::None;
+}
+
 sl::CollisionComponent::CollisionComponent(float width, float height, bool staticCollisioner, CollisionType collisionType)
 	:staticCollisioner(staticCollisioner), collisionType(collisionType)
 {
-	aabb.minX = 0.f;
-	aabb.minY = 0.f;
-	aabb.maxX = width;
-	aabb.maxY = height;
+	aabb = AABB(0.f, 0.f, width, height);
+
 }
 
 sl::CollisionType sl::CollisionComponent::isRelativeCollisionWith(float posX, float posY, const AABB& otherAABB, float otherPosX, float otherPosY) const
@@ -19,9 +24,62 @@ sl::CollisionType sl::CollisionComponent::isRelativeCollisionWith(float posX, fl
 	return CollisionType::None;
 }
 
+void sl::CollisionComponent::serialize(std::vector<uint8_t>& out) const
+{
+	sl::net::write_uint32_t(out, TypeId);
+	sl::net::write_uint32_t(out, getDeserializeDataSize());
+	writeAABB(out, aabb);
+	sl::net::write_uint8_t(out, static_cast<uint8_t>(collisionType));
+	sl::net::write_uint8_t(out, staticCollisioner);
+
+}
+
+bool sl::CollisionComponent::deserialize(const std::vector<uint8_t>& out, size_t& offset)
+{
+	if (offset + getDeserializeDataSize() > out.size()) { return false; }
+	aabb = readAABB(out, offset);
+	collisionType = static_cast<CollisionType>(sl::net::read_uint8_t(out, offset));
+	staticCollisioner = sl::net::read_uint8_t(out, offset);
+
+	return true;
+}
+
+uint32_t sl::CollisionComponent::getSerializeDataSize() const
+{
+	return sizeof(aabb.minX) + sizeof(aabb.minY)
+		+ sizeof(aabb.maxX) + sizeof(aabb.maxY)
+		+ sizeof(collisionType) + sizeof(staticCollisioner)
+		+ sizeof(TypeId) + sizeof(uint32_t);
+}
+
+uint32_t sl::CollisionComponent::getDeserializeDataSize() const
+{
+	return getSerializeDataSize() - sizeof(TypeId) - sizeof(uint32_t);;
+}
+
 sl::AABB sl::CollisionComponent::getRelativeAABB(const AABB& aabb, float posX, float posY) const
 {
 	return AABB(posX + aabb.minX, posY + aabb.minY, posX + aabb.maxX, posY + aabb.maxY);
+}
+
+void sl::CollisionComponent::writeAABB(std::vector<uint8_t>& out, const AABB& aabb) const
+{
+	sl::net::write_float(out, aabb.minX);
+	sl::net::write_float(out, aabb.minY);
+	sl::net::write_float(out, aabb.maxX);
+	sl::net::write_float(out, aabb.maxY);
+}
+
+sl::AABB sl::CollisionComponent::readAABB(const std::vector<uint8_t>& in, size_t& offset)
+{
+	sl::AABB aabb;
+
+	aabb.minX = sl::net::read_float(in, offset);
+	aabb.minY = sl::net::read_float(in, offset);
+	aabb.maxX = sl::net::read_float(in, offset);
+	aabb.maxY = sl::net::read_float(in, offset);
+
+	return aabb;
 }
 
 sl::CollisionType sl::stringToCollisionType(const std::string& str)

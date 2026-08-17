@@ -3,6 +3,7 @@
 #include "TransformComponent.hpp"
 #include "MovementComponent.hpp"
 #include "StateComponent.hpp"
+#include "CollisionComponent.hpp"
 
 NetworkComponentRegistry::NetworkComponentRegistry() {
 	registerComponents();
@@ -22,4 +23,5 @@ void NetworkComponentRegistry::registerComponents()
 	registerComponent<sl::TransformComponent>();
 	registerComponent<sl::MovementComponent>();
 	registerComponent<sl::StateComponent>();
+	registerComponent<sl::CollisionComponent>();
 }

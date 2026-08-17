@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.hpp"
+#include "Serializable.hpp"
 #include "Aabb.hpp"
 #include <cstdint>
 #include <string>
@@ -16,8 +17,10 @@ namespace sl {
 
 	CollisionType stringToCollisionType(const std::string& str);
 
-	class CollisionComponent : public Component {
+	class CollisionComponent : public Component, public sl::Serializable {
 	public:
+		CollisionComponent();
+
 		CollisionComponent(float width, float height, bool staticCollisioner, CollisionType collisionType);
 
 		AABB getAABB() const { return aabb; }
@@ -36,6 +39,14 @@ namespace sl {
 
 		CollisionType getCollisionType() const { return collisionType; }
 
+		virtual void serialize(std::vector<uint8_t>& out) const override;
+
+		virtual bool deserialize(const std::vector<uint8_t>& out, size_t& offset) override;
+
+		virtual uint32_t getSerializeDataSize() const override;
+
+		virtual uint32_t getDeserializeDataSize() const override;
+
 		COMPONENT_TYPE(CollisionComponent);
 	private:
 		AABB aabb;
@@ -48,6 +59,9 @@ namespace sl {
 		std::vector<sl::Cell> occupiedCells;
 
 		AABB getRelativeAABB(const AABB& aabb, float posX, float posY) const;
+
+		void writeAABB(std::vector<uint8_t>& out, const AABB& aabb) const;
+		AABB readAABB(const std::vector<uint8_t>& in, size_t& offset);
 	};
 
 }
