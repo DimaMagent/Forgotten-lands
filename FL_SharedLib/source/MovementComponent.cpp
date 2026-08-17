@@ -18,27 +18,6 @@ void sl::MovementComponent::addDirection(sf::Vector2i direction)
 	velocityDirectionVector = sl::inBounds(sl::asNormalized(direction) + velocityDirectionVector, sf::Vector2i(-1, -1), sf::Vector2i(1, 1));
 }
 
-sf::Vector2f sl::MovementComponent::move(float deltaTime, const sf::Vector2f& position)
-{
-	if (velocityDirectionVector != sf::Vector2i(0, 0)) {
-		currentAccelerationTime > maxAccelerationTime ? currentAccelerationTime = maxAccelerationTime :
-			currentAccelerationTime = std::min(sf::seconds(deltaTime) + currentAccelerationTime, maxAccelerationTime);
-		float t = currentAccelerationTime.asSeconds() / maxAccelerationTime.asSeconds();
-		currentSpeed = maxSpeed * (3 * t * t - 2 * t * t * t);
-	}
-
-	if (currentSpeed > 0.f) {
-		if (velocityDirectionVector == sf::Vector2i(1, 1) || velocityDirectionVector == sf::Vector2i(-1, 1) || velocityDirectionVector == sf::Vector2i(1, -1) || velocityDirectionVector == sf::Vector2i(-1, -1)) {
-			currentSpeed /= std::sqrt(velocityDirectionVector.x * velocityDirectionVector.x + velocityDirectionVector.y * velocityDirectionVector.y);
-		}
-		velocityVector += sf::Vector2f(velocityDirectionVector) * currentSpeed * deltaTime;
-	}
-
-	sf::Vector2f newPosition = position + velocityVector;
-	resetVelocity();
-	return newPosition;
-}
-
 sf::Vector2f sl::MovementComponent::calculateDelta(float deltaTime)
 {
 	if (velocityDirectionVector != sf::Vector2i(0, 0)) {
