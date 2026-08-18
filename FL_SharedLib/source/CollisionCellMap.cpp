@@ -6,6 +6,7 @@
 #include "WorldBase.hpp"
 #include <queue>
 #include <array>
+#include <cmath>
 #include "Utils.hpp"
 
 
@@ -132,6 +133,10 @@ bool sl::CollisionCellMap::getNearestEntityIdsToEntity(const AABB& aabb, sf::Vec
 	return true;
 }
 
+uint8_t sl::CollisionCellMap::getSearchDepthByDistance(float distance)
+{
+	return static_cast<uint8_t>(ceil(distance / Cell::getCellSize()));
+}
 
 bool sl::CollisionCellMap::onMapBound(const AABB& aabb, sf::Vector2f pos) const
 {

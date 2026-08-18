@@ -20,5 +20,6 @@
 #include <memory>
 #include <unordered_map>
 #include <algorithm>
+#include <optional>
 
 #endif //PCH_H

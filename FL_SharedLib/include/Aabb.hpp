@@ -6,6 +6,7 @@ namespace sl {
 		float minY;
 		float maxX;
 		float maxY;
+
 		AABB(float minX, float minY, float maxX, float maxY)
 			: minX(minX), minY(minY), maxX(maxX), maxY(maxY) {}
 

@@ -13,12 +13,20 @@ namespace sl {
 
 	class CollisionCellMap {
 	public:
+		
 		CollisionCellMap(const WorldBase& world, cellIndex mapSizeX, cellIndex mapSizeY);
+		
 		void recordEntityToCollisionMap(const sl::Entity& entity);
+		
 		void removeEntityFromCollisionMap(const sl::Entity& entity);
+		
 		std::vector<uint32_t> getEntityIdsToCollisionMap(sf::Vector2f pos) const;
+		
 		[[nodiscard]] bool getNearestEntityIdsToPosition(sf::Vector2f pos, std::vector<uint32_t>& entityIdsOut, uint8_t searchDepth = 1) const;
+		
 		[[nodiscard]] bool getNearestEntityIdsToEntity(const AABB& aabb, sf::Vector2f pos, std::vector<uint32_t>& entityIdsOut, uint8_t searchDepth = 1) const;
+		
+		static uint8_t getSearchDepthByDistance(float distance);
 	private:
 		//stores <cell, EntityIds>
 		std::unordered_map<Cell, std::vector<uint32_t>> cellToEntityIds;

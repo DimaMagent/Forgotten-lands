@@ -20,7 +20,7 @@ namespace sl {
 		float updateRate = 1.0f / 10.0f;
 		float currentTime = 0.f;
 
-		const int SEARCH_DEPTH = 1;
+		const uint8_t SEARCH_DEPTH = 1;
 
 		std::vector<uint32_t> reusableEntityIdsBuffer;
 

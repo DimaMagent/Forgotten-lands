@@ -6,10 +6,16 @@ namespace sl {
 
 	class WeaponComponent :public Component {
 	public:
-		WeaponComponent(float attackWidth, float attackHeight);
+		WeaponComponent(float attackDistance, float attackDegrees);
 
+		float getAttackDistance() const { return attackDistance; }
+		float getAttackDegrees() const { return attackDegrees; }
+
+
+		COMPONENT_TYPE(WeaponComponent);
 	private:
-		sf::Vector2f attackDistance;
+		float attackDistance;
+		float attackDegrees;
 	};
 
 }

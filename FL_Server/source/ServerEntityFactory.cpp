@@ -5,6 +5,7 @@
 #include "StateComponent.hpp"
 #include "HealthComponent.hpp"
 #include "CollisionComponent.hpp"
+#include "WeaponComponent.hpp"
 #include "Entity.hpp"
 #include "ServerDataLoader.hpp"
 
@@ -37,6 +38,10 @@ void ServerEntityFactory::registrationComponents()
 
 	registry.try_emplace(sl::HealthComponent::ComponentName, [](sl::Entity& entity, const json& js) {
 		entity.addComponent<sl::HealthComponent>(js.value("maxHealth", 1.0f));
+		});
+
+	registry.try_emplace(sl::WeaponComponent::ComponentName, [](sl::Entity& entity, const json& js) {
+		entity.addComponent<sl::WeaponComponent>(js.value("attackDistance", 0.0f), js.value("attackDegrees", 0.0f));
 		});
 }
 

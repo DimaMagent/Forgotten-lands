@@ -17,7 +17,11 @@
       "CollisionType": "Block"
     },
     "HealthComponent": {
-      "maxHealth":  100.0
+      "maxHealth": 100.0
+    },
+    "WeaponComponent": {
+      "attackDistance": 100.0,
+      "attackDegrees":  45.0
     }
   }
 }
