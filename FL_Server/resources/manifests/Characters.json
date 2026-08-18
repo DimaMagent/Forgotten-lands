@@ -15,6 +15,9 @@
       "height": 60,
       "isStatic": false,
       "CollisionType": "Block"
+    },
+    "HealthComponent": {
+      "maxHealth":  100.0
     }
   }
 }

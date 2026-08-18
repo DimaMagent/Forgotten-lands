@@ -3,6 +3,7 @@
 #include "TransformComponent.hpp"
 #include "MovementComponent.hpp"
 #include "StateComponent.hpp"
+#include "HealthComponent.hpp"
 #include "CollisionComponent.hpp"
 
 NetworkComponentRegistry::NetworkComponentRegistry() {
@@ -15,6 +16,7 @@ sl::Serializable* NetworkComponentRegistry::createAndAttach(uint32_t typeId, sl:
 	if (it != registry.end()) {
 		return it->second(entity);
 	}
+
 	return nullptr;
 }
 
@@ -24,4 +26,5 @@ void NetworkComponentRegistry::registerComponents()
 	registerComponent<sl::MovementComponent>();
 	registerComponent<sl::StateComponent>();
 	registerComponent<sl::CollisionComponent>();
+	registerComponent<sl::HealthComponent>();
 }
