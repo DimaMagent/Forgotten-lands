@@ -8,6 +8,8 @@
 
 namespace sl {
 
+	using delegate_token = std::uint64_t;
+
 	template<typename... Args>
 	class LockFreeDelegate {
 	public:
@@ -16,8 +18,8 @@ namespace sl {
 			nextId.store(1, std::memory_order_relaxed);
 		}
 
-		std::uint64_t addFunction(std::function<void(Args...)> func) {
-			const std::uint64_t id = nextId.fetch_add(1, std::memory_order_relaxed);
+		delegate_token addFunction(std::function<void(Args...)> func) {
+			const delegate_token id = nextId.fetch_add(1, std::memory_order_relaxed);
 			auto fptr = std::make_shared<std::function<void(Args...)>>(std::move(func));
 
 			auto expected = functions.load(std::memory_order_acquire);
@@ -32,7 +34,7 @@ namespace sl {
 			}
 		}
 
-		void removeFunction(std::uint64_t id) {
+		void removeFunction(delegate_token id) {
 			auto expected = functions.load(std::memory_order_acquire);
 			for (;;) {
 				bool found = false;
@@ -62,12 +64,12 @@ namespace sl {
 
 	private:
 		struct Entry {
-			std::uint64_t id;
+			delegate_token id;
 			std::shared_ptr<std::function<void(Args...)>> func;
 		};
 
 		mutable std::atomic<std::shared_ptr<std::vector<Entry>>> functions;
-		std::atomic<std::uint64_t> nextId;
+		std::atomic<delegate_token> nextId;
 	};
 
 }

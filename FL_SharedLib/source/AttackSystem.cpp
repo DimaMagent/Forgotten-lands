@@ -76,7 +76,7 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity) {
             std::cout << "Entity with id: " << attackingEntity.getGlobalId() << "attacked entity with id" << id << "\n";
         }
     }
-
+    return true;
 }
 
 bool sl::AttackSystem::isAABBinAttackCone(

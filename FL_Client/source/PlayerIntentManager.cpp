@@ -8,8 +8,7 @@
 PlayerIntentManager::PlayerIntentManager(
 	sl::LockFreeDelegate<sl::net::Action>& onNewAction,
 	sl::LockFreeDelegate<const sf::Vector2i& >& onSetMovementDirection,
-	sl::LockFreeDelegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntity
-)
+	sl::LockFreeDelegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntity)
 {
 	game_logger = spdlog::get("game");
 

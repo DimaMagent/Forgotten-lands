@@ -25,7 +25,7 @@ public:
 private:
 	std::shared_ptr<spdlog::logger> game_logger;
 
-	std::unordered_map<sf::Keyboard::Key, std::function<void()>> keyBindings;
+	std::unordered_map<sf::Keyboard::Key, bool> keyStates;
 
 	std::weak_ptr<sl::Entity> playerEntity;
 
@@ -38,6 +38,8 @@ private:
 	void onPlayerEntitySet(std::weak_ptr<sl::Entity> playerEntity);
 
 	void initKeyBindings();
+
+	void updateMovementDirection();
 
 
 };

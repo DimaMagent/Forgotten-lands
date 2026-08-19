@@ -17,22 +17,36 @@ Controller::~Controller() = default;
 
 
 void Controller::onEvent(const sf::Event& event) {
-	if (const auto* keyEvent = event.getIf<sf::Event::KeyPressed>()) {
-		if (auto it = keyBindings.find(keyEvent->code); it != keyBindings.end()) {
-			reverseInputMultiplier = 1;
-			it->second();
+	try {
+		if (const auto* keyEvent = event.getIf<sf::Event::KeyPressed>()) {
+			if (keyEvent->scancode == sf::Keyboard::Scan::Unknown) return;
 
+			switch (keyEvent->code) {
+			case sf::Keyboard::Key::W: keyStates.at(sf::Keyboard::Key::W) = true; updateMovementDirection(); break;
+			case sf::Keyboard::Key::A: keyStates.at(sf::Keyboard::Key::A) = true; updateMovementDirection(); break;
+			case sf::Keyboard::Key::S: keyStates.at(sf::Keyboard::Key::S) = true; updateMovementDirection(); break;
+			case sf::Keyboard::Key::D: keyStates.at(sf::Keyboard::Key::D) = true; updateMovementDirection(); break;
+			case sf::Keyboard::Key::Q:
+				onNewAction.broadcast(sl::net::Action::Attack);
+				break;
+			default: break;
+
+			}
 		}
-		return;
+
+		if (const auto* keyEvent = event.getIf<sf::Event::KeyReleased>()) {
+			switch (keyEvent->code) {
+			case sf::Keyboard::Key::W: keyStates.at(sf::Keyboard::Key::W) = false; updateMovementDirection(); break;
+			case sf::Keyboard::Key::A: keyStates.at(sf::Keyboard::Key::A) = false; updateMovementDirection(); break;
+			case sf::Keyboard::Key::S: keyStates.at(sf::Keyboard::Key::S) = false; updateMovementDirection(); break;
+			case sf::Keyboard::Key::D: keyStates.at(sf::Keyboard::Key::D) = false; updateMovementDirection(); break;
+			default: break;
+			}
+		}
 	}
-
-	if (const auto* keyEvent = event.getIf<sf::Event::KeyReleased>()) {
-		if (auto it = keyBindings.find(keyEvent->code); it != keyBindings.end()) {
-			reverseInputMultiplier = -1;
-			it->second();
-
-		}
-		return;
+	catch (std::exception& e) {
+		game_logger->warn("Controller::onEvent key bindings were not initialized. Starting initKeyBindings");
+		initKeyBindings();
 	}
 }
 
@@ -47,44 +61,30 @@ void Controller::onPlayerEntitySet(std::weak_ptr<sl::Entity> playerEntity)
 }
 
 void Controller::initKeyBindings(){
-	keyBindings[sf::Keyboard::Key::W] = [this]() {
-		lastMovementDirectionIntent = sl::inBounds(
-			lastMovementDirectionIntent + sf::Vector2i(0, -1) * reverseInputMultiplier,
-			sf::Vector2i(-1, -1),
-			sf::Vector2i(1, 1)
-		);
-		onSetMovementDirection.broadcast(lastMovementDirectionIntent);
-		};
 
-	keyBindings[sf::Keyboard::Key::A] = [this]() {
-		lastMovementDirectionIntent = sl::inBounds(
-			lastMovementDirectionIntent + sf::Vector2i(-1, 0) * reverseInputMultiplier,
-			sf::Vector2i(-1, -1),
-			sf::Vector2i(1, 1)
-		);
-		onSetMovementDirection.broadcast(lastMovementDirectionIntent);
-		};
+	keyStates.try_emplace(sf::Keyboard::Key::W, false);
+	keyStates.try_emplace(sf::Keyboard::Key::A, false);
+	keyStates.try_emplace(sf::Keyboard::Key::S, false);
+	keyStates.try_emplace(sf::Keyboard::Key::D, false);
+	keyStates.try_emplace(sf::Keyboard::Key::Q, false);
+}
 
-	keyBindings[sf::Keyboard::Key::S] = [this]() {
-		lastMovementDirectionIntent = sl::inBounds(
-			lastMovementDirectionIntent + sf::Vector2i(0, 1) * reverseInputMultiplier,
-			sf::Vector2i(-1, -1),
-			sf::Vector2i(1, 1)
-		);
-		onSetMovementDirection.broadcast(lastMovementDirectionIntent);
-		};
+void Controller::updateMovementDirection() {
+	try {
+		sf::Vector2i newDirection(0, 0);
 
-	keyBindings[sf::Keyboard::Key::D] = [this]() {
-		lastMovementDirectionIntent = sl::inBounds(
-			lastMovementDirectionIntent + sf::Vector2i(1, 0) * reverseInputMultiplier,
-			sf::Vector2i(-1, -1),
-			sf::Vector2i(1, 1)
-		);
-		onSetMovementDirection.broadcast(lastMovementDirectionIntent);
-		};
+		if (keyStates.at(sf::Keyboard::Key::W)) newDirection.y -= 1;
+		if (keyStates.at(sf::Keyboard::Key::S)) newDirection.y += 1;
+		if (keyStates.at(sf::Keyboard::Key::A)) newDirection.x -= 1;
+		if (keyStates.at(sf::Keyboard::Key::D)) newDirection.x += 1;
 
-	keyBindings[sf::Keyboard::Key::Q] = [this]() {
-		onNewAction.broadcast(sl::net::Action::Attack);
-		};
-
+		if (newDirection != lastMovementDirectionIntent) {
+			lastMovementDirectionIntent = newDirection;
+			onSetMovementDirection.broadcast(lastMovementDirectionIntent);
+		}
+	}
+	catch (std::exception& e) {
+		game_logger->warn("Controller::updateMovementDirection key bindings were not initialized. Starting initKeyBindings");
+		initKeyBindings();
+	}
 }
