@@ -23,6 +23,6 @@ namespace sl::net {
 		this->data.sequenceNumber = sequenceNumber;
 		this->data.type = static_cast<uint8_t>(type);
 		this->data.token = token;
-		this->data.size = sizeof(sequenceNumber) + sizeof(type) + sizeof(token) + dataSize;
+		this->data.size = HEADER_SIZE + dataSize;
 	}
 }

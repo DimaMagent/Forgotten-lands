@@ -39,7 +39,7 @@ void ServerDataLoader::loadData()
 			load_logger->error("ServerDataLoader::loadData exception: {}", e.what());
 		}
 		else {
-			std::cerr << "load_logger is not valid.\ServerDataLoader::loadData exception:" << e.what() << "\n";
+			std::cerr << "load_logger is not valid. ServerDataLoader::loadData exception:" << e.what() << "\n";
 		}
 	}
 }

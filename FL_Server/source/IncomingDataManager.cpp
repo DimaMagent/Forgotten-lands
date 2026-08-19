@@ -40,7 +40,7 @@ void IncomingDataManager::assemblePacket()
 			return;
 		}
 
-		size_t totalPacketBytes = sizeof(uint32_t) + static_cast<size_t>(headerSize);
+		size_t totalPacketBytes = static_cast<size_t>(headerSize);
 
 		if (buffer.size() < totalPacketBytes) {
 			return;

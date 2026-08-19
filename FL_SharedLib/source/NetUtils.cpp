@@ -4,14 +4,14 @@
 
 uint32_t sl::net::write_uint8_t(std::vector<uint8_t>& out, uint8_t value) {
 	 out.push_back(value);
-	 return 8;
+	 return 1;
 }
 
 uint32_t sl::net::write_uint16_t(std::vector<uint8_t>& out, uint16_t value)
 {
 	out.push_back((value >> 8) & 0xFF);
 	out.push_back(value & 0xFF);
-	return 16;
+	return 2;
 }
 
 uint32_t sl::net::write_uint32_t(std::vector<uint8_t>& out, uint32_t value)
@@ -20,7 +20,7 @@ uint32_t sl::net::write_uint32_t(std::vector<uint8_t>& out, uint32_t value)
 	out.push_back((value >> 16) & 0xFF);
 	out.push_back((value >> 8) & 0xFF);
 	out.push_back(value & 0xFF);
-	return 32;
+	return 4;
 }
 
 uint8_t sl::net::read_uint8_t(const std::vector<uint8_t>& in, size_t& offset)
@@ -28,7 +28,7 @@ uint8_t sl::net::read_uint8_t(const std::vector<uint8_t>& in, size_t& offset)
 	if (offset + 1 <= in.size()) {
 		return in[offset++];
 	}
-	return 0;
+	return 1;
 }
 
 uint16_t sl::net::read_uint16_t(const std::vector<uint8_t>& in, size_t& offset)
@@ -38,7 +38,7 @@ uint16_t sl::net::read_uint16_t(const std::vector<uint8_t>& in, size_t& offset)
 		offset += 2;
 		return value;
 	}
-	return 0;
+	return 2;
 }
 
 uint32_t sl::net::read_uint32_t(const std::vector<uint8_t>& in, size_t& offset)
@@ -48,7 +48,7 @@ uint32_t sl::net::read_uint32_t(const std::vector<uint8_t>& in, size_t& offset)
 		offset += 4;
 		return value;
 	}
-	return 0;
+	return 4;
 }
 
 uint32_t sl::net::write_float(std::vector<uint8_t>& out, float value)

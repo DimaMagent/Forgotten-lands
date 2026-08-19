@@ -44,7 +44,7 @@ void IncomingDataManager::assemblePacket() {
 
 		uint32_t headerSize = header.getData().size;
 
-		uint32_t totalPacketBytes = sizeof(uint32_t) + headerSize;
+		uint32_t totalPacketBytes = headerSize;
 
 		if (buffer.size() < totalPacketBytes) {
 			return;
