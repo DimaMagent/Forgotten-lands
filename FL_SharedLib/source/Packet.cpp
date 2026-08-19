@@ -6,7 +6,7 @@ namespace sl::net {
 	{
 		Header header;
 		HeaderData headerData = header.getData();
-		if (in.size() < sl::net::Header::HEADER_SIZE) {
+		if (in.size() < offset + sl::net::Header::HEADER_SIZE) {
 			return std::nullopt;
 		}
 		header.read(in, offset);

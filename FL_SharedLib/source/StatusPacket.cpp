@@ -33,9 +33,9 @@ namespace sl::net {
 
 	void StatusData::read(const std::vector<uint8_t>& in, size_t& offset)
 	{
-		if (offset < in.size()) {
+		if (offset + sl::net::Header::HEADER_SIZE <= in.size()) {
 			header.read(in, offset);
-			if (in.size() > offset) {
+			if (offset + data.size() < in.size()) {
 				data.reserve(in.size());
 				data.insert(data.end(), in.begin() + offset, in.end());
 				offset += data.size();
