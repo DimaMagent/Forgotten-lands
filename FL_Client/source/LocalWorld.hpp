@@ -2,7 +2,7 @@
 #include "WorldBase.hpp"
 #include <memory>
 #include <vector>
-#include "Delegate.hpp"
+#include "LockFreeDelegate.hpp"
 #include "SFML/System/Time.hpp"
 #include "EntityType.hpp"
 
@@ -11,6 +11,7 @@ namespace sl {
 	namespace net {
 		struct EntityData;
 	}
+	class AttackSystem;
 }
 class RenderManager;
 class StateManager;
@@ -19,7 +20,7 @@ class AnimationSystem;
 
 class LocalWorld: public sl::WorldBase {
 public:
-	sl::Delegate<const std::weak_ptr<sl::Entity>> OnSetPlayerEntity;
+	sl::LockFreeDelegate<const std::weak_ptr<sl::Entity>> OnSetPlayerEntity;
 	LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::RenderTarget& renderTarget);
 	~LocalWorld();
 	void addPlayerEntity(std::unique_ptr<sl::Entity> entity, uint32_t id);

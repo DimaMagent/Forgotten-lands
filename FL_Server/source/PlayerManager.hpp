@@ -6,6 +6,7 @@
 #include <functional>
 #include "PacketDataTypes.hpp"
 #include "SFML/System/Vector2.hpp"
+#include "Intentions.hpp"
 
 class World;
 namespace sl {
@@ -16,10 +17,10 @@ namespace sl {
 class PlayerManager {
 public:
 	PlayerManager(World& world);
-	void updatePlayerInputState(uint32_t playerToken, sf::Vector2i movementDirectionIntentions, uint8_t inputState, uint8_t inputAction);
+	void updatePlayerInputState(uint32_t playerToken, sl::Intentions intentions);
 private:
 	World& world;
-	std::unordered_map<sl::net::InputState, std::function<void(sl::Entity& entity)>> playerActions;
+	std::unordered_map<sl::net::Action, std::function<void(sl::Entity& entity)>> playerActions;
 	void initPlayerActions();
 	void movementUpdate(sl::Entity& entity, sf::Vector2i movementDirectionIntentions);
 };

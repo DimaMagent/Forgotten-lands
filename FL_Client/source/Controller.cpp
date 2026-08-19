@@ -1,18 +1,16 @@
 #include "pch.hpp"
 #include "Controller.hpp"
 #include "InputManager.hpp"
-#include "LocalWorld.hpp"
 #include "Entity.hpp"
-#include "Packer.hpp"
-#include "MovementComponent.hpp"
-#include "InputStatePacket.hpp"
 #include "Utils.hpp"
 
-Controller::Controller(InputManager& im, LocalWorld& world)
+Controller::Controller(InputManager& im, sl::LockFreeDelegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntity)
 {
-	game_logger = spdlog::get("game") ;
+	game_logger = spdlog::get("game");
+	lastMovementDirectionIntent = sf::Vector2i(0, 0);
 	im.onEvent.addFunction([this](const sf::Event& event) { onEvent(event); });
-	world.OnSetPlayerEntity.addFunction([this](const std::weak_ptr<sl::Entity> playerEntity) { onPlayerEntitySet(playerEntity); });
+	onSetPlayerEntity.addFunction([this](const std::weak_ptr<sl::Entity> playerEntity) { onPlayerEntitySet(playerEntity); });
+	initKeyBindings();
 }
 
 Controller::~Controller() = default;
@@ -22,19 +20,19 @@ void Controller::onEvent(const sf::Event& event) {
 	if (const auto* keyEvent = event.getIf<sf::Event::KeyPressed>()) {
 		if (auto it = keyBindings.find(keyEvent->code); it != keyBindings.end()) {
 			reverseInputMultiplier = 1;
-			isInputStateChanged = true;
 			it->second();
 
 		}
 		return;
 	}
+
 	if (const auto* keyEvent = event.getIf<sf::Event::KeyReleased>()) {
 		if (auto it = keyBindings.find(keyEvent->code); it != keyBindings.end()) {
 			reverseInputMultiplier = -1;
-			isInputStateChanged = true;
 			it->second();
 
 		}
+		return;
 	}
 }
 
@@ -46,54 +44,47 @@ void Controller::onPlayerEntitySet(std::weak_ptr<sl::Entity> playerEntity)
 	}
 	game_logger->info("Player character set in controller.");
 	this->playerEntity = playerEntity;
-	initKeyBindings();
 }
 
 void Controller::initKeyBindings(){
 	keyBindings[sf::Keyboard::Key::W] = [this]() {
-		currentInputStates.movementDirectionIntentions = sl::inBounds(currentInputStates.movementDirectionIntentions + sf::Vector2i(0, -1) * reverseInputMultiplier, sf::Vector2i(-1, -1), sf::Vector2i(1, 1));
-		return sl::net::IS_MoveUp; };
+		lastMovementDirectionIntent = sl::inBounds(
+			lastMovementDirectionIntent + sf::Vector2i(0, -1) * reverseInputMultiplier,
+			sf::Vector2i(-1, -1),
+			sf::Vector2i(1, 1)
+		);
+		onSetMovementDirection.broadcast(lastMovementDirectionIntent);
+		};
 
 	keyBindings[sf::Keyboard::Key::A] = [this]() {
-		currentInputStates.movementDirectionIntentions = sl::inBounds(currentInputStates.movementDirectionIntentions + sf::Vector2i(-1, 0) * reverseInputMultiplier, sf::Vector2i(-1, -1), sf::Vector2i(1, 1));
-		return sl::net::IS_MoveLeft; };
+		lastMovementDirectionIntent = sl::inBounds(
+			lastMovementDirectionIntent + sf::Vector2i(-1, 0) * reverseInputMultiplier,
+			sf::Vector2i(-1, -1),
+			sf::Vector2i(1, 1)
+		);
+		onSetMovementDirection.broadcast(lastMovementDirectionIntent);
+		};
 
 	keyBindings[sf::Keyboard::Key::S] = [this]() {
-		currentInputStates.movementDirectionIntentions = sl::inBounds(currentInputStates.movementDirectionIntentions + sf::Vector2i(0, 1) * reverseInputMultiplier, sf::Vector2i(-1, -1), sf::Vector2i(1, 1));
-		return sl::net::IS_MoveDown; };
+		lastMovementDirectionIntent = sl::inBounds(
+			lastMovementDirectionIntent + sf::Vector2i(0, 1) * reverseInputMultiplier,
+			sf::Vector2i(-1, -1),
+			sf::Vector2i(1, 1)
+		);
+		onSetMovementDirection.broadcast(lastMovementDirectionIntent);
+		};
 
 	keyBindings[sf::Keyboard::Key::D] = [this]() {
-		currentInputStates.movementDirectionIntentions = sl::inBounds(currentInputStates.movementDirectionIntentions + sf::Vector2i(1, 0) * reverseInputMultiplier, sf::Vector2i(-1, -1), sf::Vector2i(1, 1));
-		return sl::net::IS_MoveRight; };
-}
+		lastMovementDirectionIntent = sl::inBounds(
+			lastMovementDirectionIntent + sf::Vector2i(1, 0) * reverseInputMultiplier,
+			sf::Vector2i(-1, -1),
+			sf::Vector2i(1, 1)
+		);
+		onSetMovementDirection.broadcast(lastMovementDirectionIntent);
+		};
 
-bool Controller::setMovingDirection()
-{
-	auto player = playerEntity.lock();
-	if (!player) { return false; }
+	keyBindings[sf::Keyboard::Key::Q] = [this]() {
+		onNewAction.broadcast(sl::net::Action::Attack);
+		};
 
-	sl::MovementComponent* movComp = player->getComponent<sl::MovementComponent>();
-
-	if (!movComp) { return false; }
-
-	if (movComp->getVelocityDirection() == currentInputStates.movementDirectionIntentions) { return false; }
-
-	movComp->setVelocityDirection(currentInputStates.movementDirectionIntentions);
-
-	return true;
-}
-
-void Controller::tick(float dt) {
-	timeSinceLastUpdate += std::min(sf::seconds(dt), sf::seconds(0.1f));
-	while (timeSinceLastUpdate >= updateTime) {
-		timeSinceLastUpdate -= updateTime;
-		if (!isInputStateChanged) { return; }
-
-		//sends packet if direction was changed
-		if (setMovingDirection()) {
-			Packer::send<sl::net::InputStatePacket>(currentInputStates.movementDirectionIntentions, 0, 0);
-		}
-
-		isInputStateChanged = false;
-	}
 }

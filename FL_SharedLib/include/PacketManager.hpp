@@ -7,7 +7,6 @@ namespace sl::net
 {
 	class Packet;
 
-	//TODO возможно, стоит удалить этот класс, он пока ничего особенно не делает
 	class PacketManager {
 	public:
 		PacketManager() = delete;

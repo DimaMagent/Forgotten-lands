@@ -8,6 +8,7 @@
 #include "Controller.hpp"
 #include "DataProcessorManager.hpp"
 #include "StateManager.hpp"
+#include "PlayerIntentManager.hpp"
 #include <spdlog/async.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h> 
@@ -23,7 +24,12 @@ Client::Client()
 	dataProcessorManager = std::make_unique<DataProcessorManager>(world->getStateManager());
 	netManager = std::make_unique<NetManager>(*clientContext, *dataProcessorManager);
 	inputManager = std::make_unique<InputManager>(isRunningFlag);
-	controller = std::make_unique<Controller>(*inputManager, *world);
+	controller = std::make_unique<Controller>(*inputManager, world->OnSetPlayerEntity);
+	playerIntentManager = std::make_unique<PlayerIntentManager>(
+		controller->onNewAction,
+		controller->onSetMovementDirection,
+		world->OnSetPlayerEntity
+	);
 
 	netManager->OnAccept.addFunction([this]() {this->whenClientAccepted(); });
 	entityFactory->initialize();
@@ -104,5 +110,5 @@ void Client::initLogging() {
 
 void Client::tick(float dt) {
 	world->update(dt);
-	controller->tick(dt);
+	playerIntentManager->tick(dt);
 }

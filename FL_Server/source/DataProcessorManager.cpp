@@ -1,18 +1,18 @@
 #include "pch.hpp"
 #include "DataProcessorManager.hpp"
 #include "PacketDataTypes.hpp"
-#include "InputStatePacket.hpp"
+#include "PlayerIntentionsPacket.hpp"
 #include "PlayerManager.hpp"
 
 DataProcessorManager::DataProcessorManager(PlayerManager& playerManager): playerManager(playerManager)
 {
 	logger = spdlog::get("network");
 
-	registerHandler<sl::net::InputStatePacket>(sl::net::InputStatePacket::type(),
-    [this](const uint32_t& token, const sl::net::InputStatePacket& p){
+	registerHandler<sl::net::PlayerIntentionsPacket>(sl::net::PlayerIntentionsPacket::type(),
+    [this](const uint32_t& token, const sl::net::PlayerIntentionsPacket& p){
         const auto& data = p.getData();
 
-		this->playerManager.updatePlayerInputState(token, data.movementDirectionIntentions, data.inputState, data.inputAction);
+		this->playerManager.updatePlayerInputState(token, data.intentions);
     });
 }
 

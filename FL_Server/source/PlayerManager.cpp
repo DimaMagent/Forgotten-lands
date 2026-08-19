@@ -12,7 +12,7 @@ PlayerManager::PlayerManager(World& world):
 	initPlayerActions();
 }
 
-void PlayerManager::updatePlayerInputState(uint32_t playerToken, sf::Vector2i movementDirectionIntentions, uint8_t inputState, uint8_t inputAction)
+void PlayerManager::updatePlayerInputState(uint32_t playerToken, sl::Intentions intentions)
 {
 
 	auto entity = world.getPlayerEntityByToken(playerToken).lock();
@@ -21,7 +21,7 @@ void PlayerManager::updatePlayerInputState(uint32_t playerToken, sf::Vector2i mo
 	sl::MovementComponent* movComp = entity->getComponent<sl::MovementComponent>();
 	if (!movComp) { return; }
 
-	movComp->setVelocityDirection(sl::inBounds(movementDirectionIntentions, sf::Vector2i(-1, -1), sf::Vector2i(1, 1)));
+	movComp->setVelocityDirection(sl::inBounds(intentions.movementDirectionIntentions, sf::Vector2i(-1, -1), sf::Vector2i(1, 1)));
 }
 
 void PlayerManager::initPlayerActions()
