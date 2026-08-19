@@ -35,9 +35,11 @@ void PlayerIntentManager::tick(float dt)
 	while (timeSinceLastUpdate >= updateTime) {
 		timeSinceLastUpdate -= updateTime;
 		if (!isIntentsChanged) { continue; }
-
+		
 		if (!setMovingDirection()) {
+			#ifdef DEBUG
 			game_logger->warn("PlayerIntentManager::tick movingDirection cannot change: playerEntity or movementComponent is not valid");
+			#endif
 		}
 
 		for (auto action: currentIntentions.actions) {

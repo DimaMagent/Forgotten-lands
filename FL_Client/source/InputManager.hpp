@@ -14,6 +14,4 @@ private:
 	std::shared_ptr<spdlog::logger> game_logger;
 
 	bool& isRunningFlag;
-
-	void mousePosChecker(const sf::Event::MouseMoved& event);
 };

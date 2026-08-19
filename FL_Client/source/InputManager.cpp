@@ -17,20 +17,9 @@ void InputManager::handleEvent(const sf::Event& event){
 		if (keyEvent->code == sf::Keyboard::Key::Escape) {
 			isRunningFlag = false;
 			game_logger->info("Escape key pressed. Exiting application.");
-		}
-		onEvent.broadcast(event);
-		return;
+			return;
+		}	
 	}
-	if (event.is<sf::Event::KeyReleased>()) {
-		onEvent.broadcast(event);
-		return;
-	}
-	// if (const auto* mouseMoved = event.getIf<sf::Event::MouseMoved>()) {
-	//     mousePosChecker(*mouseMoved);
-	// }}
-}
-
-void InputManager::mousePosChecker(const sf::Event::MouseMoved& event) {
-	std::cout << "Mouse position: (" << event.position.x << ", " << event.position.y << ")" << std::endl;
+	onEvent.broadcast(event);
 }
 

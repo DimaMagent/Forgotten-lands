@@ -31,8 +31,6 @@ private:
 
 	sf::Vector2i lastMovementDirectionIntent;
 
-	int reverseInputMultiplier = -1;
-
 	void onEvent(const sf::Event& event);
 
 	void onPlayerEntitySet(std::weak_ptr<sl::Entity> playerEntity);
@@ -40,6 +38,8 @@ private:
 	void initKeyBindings();
 
 	void updateMovementDirection();
+
+	void resetAllKeyStates();
 
 
 };

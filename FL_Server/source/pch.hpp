@@ -2,6 +2,7 @@
 
 
 #define ASIO_STANDALONE
+#define DEBUG
 
 #include <asio.hpp>
 

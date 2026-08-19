@@ -1,6 +1,8 @@
 #pragma once
 
 #define ASIO_STANDALONE
+#define DEBUG
+
 #include <asio.hpp>
 #include <asio/ssl.hpp>
 
