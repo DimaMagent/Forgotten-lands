@@ -1,5 +1,8 @@
 #pragma once
 #include <SFML/System/Vector2.hpp>
+#include <vector>
+#include <set>
+
 namespace sl {
 	class Entity;
 	struct AABB;
@@ -13,6 +16,8 @@ namespace sl {
 
 	private:
 		std::vector<uint32_t> reusableEntityIdsBuffer;
+
+		std::set<uint32_t> temporaryIgnoreList;
 
 		[[nodiscard]] bool isAABBinAttackCone(
 			sf::Vector2f attackerPos,

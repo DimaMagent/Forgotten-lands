@@ -17,6 +17,7 @@
 sl::AttackSystem::AttackSystem()
 {
     reusableEntityIdsBuffer = std::vector<uint32_t>();
+    temporaryIgnoreList = std::set<uint32_t>();
 }
 
 bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBase& world) {
@@ -43,8 +44,6 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
 	sf::Vector2f entityPos = transComp->getPosition();
 	sf::Vector2i entityRotation = transComp->getRotation();
 
-    reusableEntityIdsBuffer.clear();
-
     bool isSuccess = collisionCellMap.value().get().getNearestEntityIdsToEntity(
         aabb,
         entityPos,
@@ -60,6 +59,10 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
         if (!entityOpt.has_value()) { continue; }
 
         if (id == attackingEntity.getGlobalId()) { continue; }
+
+        auto it = temporaryIgnoreList.find(id);
+
+        if (it != temporaryIgnoreList.end()) { continue; }
 
         sl::CollisionComponent* anotherColisComp = entityOpt.value().get().getComponent<sl::CollisionComponent>();
         if (!anotherColisComp) { continue; }
@@ -81,9 +84,13 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
         );
 
         if (isAttackSuccess) {
+            temporaryIgnoreList.emplace(id);
             std::cout << "Entity with id: " << attackingEntity.getGlobalId() << " attacked entity with id " << id << "\n";
         }
     }
+    temporaryIgnoreList.clear();
+    reusableEntityIdsBuffer.clear();
+
     return true;
 }
 
