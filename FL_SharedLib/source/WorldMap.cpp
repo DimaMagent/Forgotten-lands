@@ -19,3 +19,9 @@ void sl::WorldMap::onEntityRemoved(const sl::Entity& en)
 {
 	collisionMap->removeEntityFromCollisionMap(en);
 }
+
+const std::optional<std::reference_wrapper<sl::CollisionCellMap>> sl::WorldMap::getCollisionMap() const {
+	if (!collisionMap) { return {}; }
+
+	return *collisionMap;
+}

@@ -4,6 +4,7 @@
 #include "Packer.hpp"
 #include "PlayerIntentionsPacket.hpp"
 #include "Entity.hpp"
+#include "AttackSystem.hpp"
 
 PlayerIntentManager::PlayerIntentManager(
 	sl::LockFreeDelegate<sl::net::Action>& onNewAction,
@@ -11,6 +12,8 @@ PlayerIntentManager::PlayerIntentManager(
 	sl::LockFreeDelegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntity)
 {
 	game_logger = spdlog::get("game");
+
+	attackSystem = std::make_unique<sl::AttackSystem>();
 
 	onNewAction.addFunction([this](sl::net::Action action) 
 		{
@@ -29,7 +32,7 @@ PlayerIntentManager::PlayerIntentManager(
 
 PlayerIntentManager::~PlayerIntentManager() = default;
 
-void PlayerIntentManager::tick(float dt)
+void PlayerIntentManager::tick(float dt, const sl::WorldBase& world)
 {
 	timeSinceLastUpdate += std::min(sf::seconds(dt), sf::seconds(0.1f));
 	while (timeSinceLastUpdate >= updateTime) {
@@ -43,7 +46,7 @@ void PlayerIntentManager::tick(float dt)
 		}
 
 		for (auto action: currentIntentions.actions) {
-			actionCheck(action);
+			actionCheck(action, world);
 		}
 
 		Packer::send<sl::net::PlayerIntentionsPacket>(currentIntentions);
@@ -79,11 +82,34 @@ bool PlayerIntentManager::setMovingDirection()
 	return true;
 }
 
-void PlayerIntentManager::actionCheck(sl::net::Action action)
+void PlayerIntentManager::actionCheck(sl::net::Action action, const sl::WorldBase& world)
 {
 	if (action == sl::net::Action::None) { return; }
 
 	if (action == sl::net::Action::Attack) {
-		std::cout << "attack\n";
+		if (!attackSystem) {
+			#ifdef DEBUG
+			game_logger->error("PlayerIntentManager::actionCheck cannot call tryMeleeAttack: attackSystem is not valid");
+			#endif
+			return; 
+		}
+
+		auto playerEn = playerEntity.lock();
+
+		if (!playerEn)
+		{
+			#ifdef DEBUG
+			game_logger->warn("PlayerIntentManager::actionCheck cannot call tryMeleeAttack: playerEntity is not valid");
+			#endif
+			return; 
+		}
+
+		bool isSucess = attackSystem->tryMeleeAttack(*playerEn, world);
+
+		if (!isSucess) {
+			#ifdef DEBUG
+			game_logger->warn("PlayerIntentManager::actionCheck tryMeleeAttack was unsuccessful");
+			#endif
+		}
 	}
 }

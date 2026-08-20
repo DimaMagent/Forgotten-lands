@@ -10,16 +10,16 @@
 #include "Entity.hpp"
 #include "CollisionCellMap.hpp"
 #include "WorldBase.hpp"
+#include "WorldMap.hpp"
 
 
 
-sl::AttackSystem::AttackSystem(const sl::CollisionCellMap& collisionCellMap, const WorldBase& world):
-    collisionCellMap(collisionCellMap), world(world)
+sl::AttackSystem::AttackSystem()
 {
     reusableEntityIdsBuffer = std::vector<uint32_t>();
 }
 
-bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity) {
+bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBase& world) {
 	sl::WeaponComponent* weaponComp = attackingEntity.getComponent<sl::WeaponComponent>();
 	if (!weaponComp) { return false; }
 
@@ -29,6 +29,14 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity) {
     sl::CollisionComponent* colisComp = attackingEntity.getComponent<sl::CollisionComponent>();
     if (!colisComp) { return false; }
 
+    const auto WorldMap = world.getWorldMap();
+
+    if (!WorldMap.has_value()) { return false; }
+
+    const auto collisionCellMap = WorldMap.value().get().getCollisionMap();
+
+    if (!collisionCellMap.has_value()) { return false; }
+
     AABB aabb = colisComp->getAABB();
 	float attackDistance = weaponComp->getAttackDistance();
     float attackDegrees = weaponComp->getAttackDegrees();
@@ -37,7 +45,7 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity) {
 
     reusableEntityIdsBuffer.clear();
 
-    bool isSuccess = collisionCellMap.getNearestEntityIdsToEntity(
+    bool isSuccess = collisionCellMap.value().get().getNearestEntityIdsToEntity(
         aabb,
         entityPos,
         reusableEntityIdsBuffer,

@@ -8,13 +8,10 @@ namespace sl {
 
 	class AttackSystem {
 	public:
-		AttackSystem(const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
-		[[nodiscard]] bool tryMeleeAttack(sl::Entity& attackingEntity);
+		AttackSystem();
+		[[nodiscard]] bool tryMeleeAttack(sl::Entity& attackingEntity, const WorldBase& world);
 
 	private:
-		const sl::CollisionCellMap& collisionCellMap;
-		const WorldBase& world;
-
 		std::vector<uint32_t> reusableEntityIdsBuffer;
 
 		[[nodiscard]] bool isAABBinAttackCone(

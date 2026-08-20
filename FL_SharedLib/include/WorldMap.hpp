@@ -11,7 +11,7 @@ namespace sl {
 	public:
 		WorldMap(const WorldBase& world, cellIndex mapSizeX = 10, cellIndex mapSizeY = 10);
 		~WorldMap();
-		const sl::CollisionCellMap& getCollisionMap() const { return *collisionMap; }
+		const std::optional<std::reference_wrapper<sl::CollisionCellMap>> getCollisionMap() const;
 		void onEntityAdded(const sl::Entity& en);
 		void onEntityRemoved(const sl::Entity& en);
 	protected:

@@ -6,6 +6,8 @@
 
 namespace sl {
 	class Entity;
+	class AttackSystem;
+	class WorldBase;
 }
 
 class PlayerIntentManager {
@@ -18,13 +20,15 @@ public:
 
 	~PlayerIntentManager();
 
-	void tick(float dt);
+	void tick(float dt, const sl::WorldBase& world);
 private:
 	std::shared_ptr<spdlog::logger> game_logger;
 
 	sl::Intentions currentIntentions;
 
 	std::weak_ptr<sl::Entity> playerEntity;
+
+	std::unique_ptr<sl::AttackSystem> attackSystem;
 
 	const sf::Time updateTime = sf::seconds(1.f / 30.f);
 
@@ -37,5 +41,5 @@ private:
 	//returns true if direction changed successfully
 	[[nodiscard]] bool setMovingDirection();
 
-	void actionCheck(sl::net::Action action);
+	void actionCheck(sl::net::Action action, const sl::WorldBase& world);
 };

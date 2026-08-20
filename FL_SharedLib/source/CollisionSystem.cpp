@@ -11,13 +11,12 @@
 #include "WorldBase.hpp"
 #include <optional>
 
-sl::CollisionSystem::CollisionSystem(const sl::CollisionCellMap& collisionCellMap, const WorldBase& world)
-	: collisionCellMap(collisionCellMap), world(world)
+sl::CollisionSystem::CollisionSystem()
 {
 	reusableEntityIdsBuffer = std::vector<uint32_t>();
 }
 
-void sl::CollisionSystem::onUpdate(float updateTime) {
+void sl::CollisionSystem::onUpdate(float updateTime, const sl::CollisionCellMap& collisionCellMap, const WorldBase& world) {
 	currentTime += updateTime;
 	if (currentTime >= updateRate) {
 		currentTime -= updateRate;

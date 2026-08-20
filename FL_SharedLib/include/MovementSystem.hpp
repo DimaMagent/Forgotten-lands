@@ -8,14 +8,11 @@ namespace sl {
 
 	class MovementSystem {
 	public:
-		MovementSystem(const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
+		MovementSystem();
 
-		void onUpdate(sl::Entity& entity, float updateTime);
+		void onUpdate(float updateTime, sl::Entity& entity, const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
 
 	private:
-		const sl::CollisionCellMap& collisionCellMap;
-
-		const WorldBase& world;
 
 		const float MAX_STEP_SIZE = 10.f;
 
@@ -25,12 +22,16 @@ namespace sl {
 
 		std::vector<uint32_t> reusableEntityIdsBuffer;
 
-		bool isBlockedOnPosition(sl::Entity& entity, const sf::Vector2f& testPos);
+		bool isBlockedOnPosition(sl::Entity& entity, const sf::Vector2f& testPos,
+			const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
 
-		void movingWithCollisionCheck(sl::Entity& entity, float updateTime);
+		void movingWithCollisionCheck(float updateTime, sl::Entity& entity,
+			const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
 
-		void standartPositionCalculate(sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos);
+		void standartPositionCalculate(sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos,
+			const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
 
-		void subSteppingPositionCalculate(sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos);
+		void subSteppingPositionCalculate(sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos,
+			const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
 	};
 }

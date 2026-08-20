@@ -110,5 +110,7 @@ void Client::initLogging() {
 
 void Client::tick(float dt) {
 	world->update(dt);
-	playerIntentManager->tick(dt);
+	if (world) {
+		playerIntentManager->tick(dt, *world);
+	}
 }

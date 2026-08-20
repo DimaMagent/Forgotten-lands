@@ -10,8 +10,10 @@
 sl::WorldBase::WorldBase()
 {
 	worldMap = std::make_unique<sl::WorldMap>(*this);
-	collisionSystem = std::make_unique<sl::CollisionSystem>(worldMap->getCollisionMap(), *this);
-	movementSystem = std::make_unique<MovementSystem>(worldMap->getCollisionMap(), *this);
+
+	collisionSystem = std::make_unique<sl::CollisionSystem>();
+	movementSystem = std::make_unique<MovementSystem>();
+	
 }
 
 sl::WorldBase::~WorldBase() = default;
@@ -23,15 +25,20 @@ void sl::WorldBase::update(float deltaTime) {
 
 		float updateTimeCount = updateTime.asSeconds();
 
-		collisionSystem->onUpdate(updateTimeCount);
+		auto ColisMap = worldMap->getCollisionMap();
 
+		if (ColisMap.has_value()) {
+			collisionSystem->onUpdate(updateTimeCount, ColisMap.value().get(), *this);
+		}
 		onUpdate(updateTimeCount);
 
 		for (auto& en : entities.getEntities()) {
 
 			if (!en) { continue; }
 
-			movementSystem->onUpdate(*en, updateTimeCount);
+			if (ColisMap.has_value()) {
+				movementSystem->onUpdate(updateTimeCount, *en, ColisMap.value().get(), *this);
+			}
 
 			onUpdateEntities(*en, updateTimeCount);
 		}
@@ -63,5 +70,11 @@ std::optional<std::reference_wrapper<sl::Entity>> sl::WorldBase::getEntityById(u
 	if (!entityPtr) { return {}; }
 
 	return *entityPtr;
+}
+
+const std::optional<std::reference_wrapper<sl::WorldMap>> sl::WorldBase::getWorldMap() const {
+	if (!worldMap) { return {}; }
+
+	return *worldMap;
 }
 

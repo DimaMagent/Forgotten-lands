@@ -23,6 +23,8 @@ namespace sl {
 		virtual bool removeEntityById(uint32_t id);
 		virtual std::optional<std::reference_wrapper<sl::Entity>> getEntityById(uint32_t id) const;
 		virtual const std::vector<std::shared_ptr<sl::Entity>>& getEntities() const { return entities.getEntities(); }
+		const std::optional<std::reference_wrapper<sl::WorldMap>> getWorldMap() const;
+
 	protected:
 		sl::EntityStorage entities;
 		const sf::Time updateTime = sf::seconds(1.f / 60.f);

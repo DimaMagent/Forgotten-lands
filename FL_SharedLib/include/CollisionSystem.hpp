@@ -12,8 +12,8 @@ namespace sl {
 
 	class CollisionSystem {
 	public:
-		CollisionSystem(const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
-		void onUpdate(float updateTime);
+		CollisionSystem();
+		void onUpdate(float updateTime, const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
 
 		sl::LockFreeDelegate<sl::Entity&, sl::Entity&, sl::CollisionType> onCollisionDetected;
 	private:
@@ -23,8 +23,5 @@ namespace sl {
 		const uint8_t SEARCH_DEPTH = 1;
 
 		std::vector<uint32_t> reusableEntityIdsBuffer;
-
-		const sl::CollisionCellMap& collisionCellMap;
-		const WorldBase& world;
 	};
 }
