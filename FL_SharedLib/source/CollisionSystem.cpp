@@ -22,7 +22,7 @@ void sl::CollisionSystem::onUpdate(float updateTime) {
 	if (currentTime >= updateRate) {
 		currentTime -= updateRate;
 
-		for (auto& entity : world.getEntityStorage().getEntities()) {
+		for (auto& entity : world.getEntities()) {
 			
 			if (!entity) { continue; }
 

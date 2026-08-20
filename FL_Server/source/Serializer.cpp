@@ -18,17 +18,17 @@ void Serializer::serializeObjects() const
 {
 	std::vector<uint8_t> localBuf;
 
-	const sl::EntityStorage& entitiesStorage = world.getEntityStorage();
+	const std::vector<std::shared_ptr<sl::Entity>>& entities = world.getEntities();
 
-	for (size_t i = 0; i < entitiesStorage.getEntities().size(); ++i) {
+	for (size_t i = 0; i < entities.size(); ++i) {
 
-		std::vector<uint8_t> entityLocalBuf = serializeEntity(*entitiesStorage.getEntities()[i]);
+		std::vector<uint8_t> entityLocalBuf = serializeEntity(*entities[i]);
 
 		localBuf.insert(localBuf.end(), entityLocalBuf.begin(), entityLocalBuf.end());
 	}
 
-	for (size_t i = 0; i < entitiesStorage.getEntities().size(); ++i) {
-		if (auto tokenOpt = world.getTokenById(entitiesStorage.getEntities()[i]->getGlobalId()); tokenOpt.has_value()) {
+	for (size_t i = 0; i < entities.size(); ++i) {
+		if (auto tokenOpt = world.getTokenById(entities[i]->getGlobalId()); tokenOpt.has_value()) {
 			Packer::send<sl::net::StatusPacket>(tokenOpt.value(), localBuf);
 		}
 	}

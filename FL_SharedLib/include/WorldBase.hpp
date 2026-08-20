@@ -22,7 +22,7 @@ namespace sl {
 		virtual void addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id);
 		virtual bool removeEntityById(uint32_t id);
 		virtual std::optional<std::reference_wrapper<sl::Entity>> getEntityById(uint32_t id) const;
-		virtual const EntityStorage& getEntityStorage() const { return entities; }
+		virtual const std::vector<std::shared_ptr<sl::Entity>>& getEntities() const { return entities.getEntities(); }
 	protected:
 		sl::EntityStorage entities;
 		const sf::Time updateTime = sf::seconds(1.f / 60.f);
