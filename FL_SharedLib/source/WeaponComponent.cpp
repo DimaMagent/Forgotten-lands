@@ -6,12 +6,14 @@ sl::WeaponComponent::WeaponComponent()
 {
 	this->attackDistance = 0.0f;
 	this->attackDegrees = 0.0f;
+	this->attackDamage = 0.0f;
 }
 
-sl::WeaponComponent::WeaponComponent(float attackDistance, float attackDegrees)
+sl::WeaponComponent::WeaponComponent(float attackDistance, float attackDegrees, float attackDamage)
 {
 	this->attackDistance = attackDistance;
 	this->attackDegrees = attackDegrees;
+	this->attackDamage = attackDamage;
 }
 
 void sl::WeaponComponent::serialize(std::vector<uint8_t>& out) const
@@ -20,6 +22,7 @@ void sl::WeaponComponent::serialize(std::vector<uint8_t>& out) const
 	sl::net::write_uint32_t(out, getDeserializeDataSize());
 	sl::net::write_float(out, attackDistance);
 	sl::net::write_float(out, attackDegrees);
+	sl::net::write_float(out, attackDamage);
 }
 
 bool sl::WeaponComponent::deserialize(const std::vector<uint8_t>& out, size_t& offset)
@@ -27,13 +30,14 @@ bool sl::WeaponComponent::deserialize(const std::vector<uint8_t>& out, size_t& o
 	if (offset + getDeserializeDataSize() > out.size()) { return false; }
 	attackDistance = sl::net::read_float(out, offset);
 	attackDegrees = sl::net::read_float(out, offset);
+	attackDamage = sl::net::read_float(out, offset);
 
 	return true;
 }
 
 uint32_t sl::WeaponComponent::getSerializeDataSize() const
 {
-	return sizeof(attackDistance) + sizeof(attackDegrees) + sizeof(TypeId) + sizeof(uint32_t);
+	return sizeof(attackDistance) + sizeof(attackDegrees) + sizeof(attackDamage) + sizeof(TypeId) + sizeof(uint32_t);
 }
 
 uint32_t sl::WeaponComponent::getDeserializeDataSize() const

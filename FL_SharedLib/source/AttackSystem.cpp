@@ -6,6 +6,7 @@
 #include "WeaponComponent.hpp"
 #include "TransformComponent.hpp"
 #include "CollisionComponent.hpp"
+#include "HealthComponent.hpp"
 #include "Aabb.hpp"
 #include "Entity.hpp"
 #include "CollisionCellMap.hpp"
@@ -70,6 +71,9 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
         sl::TransformComponent* anotherTransComp = entityOpt.value().get().getComponent<sl::TransformComponent>();
         if (!anotherTransComp) { continue; }
 
+        sl::HealthComponent* anotherHealthComp = entityOpt.value().get().getComponent<sl::HealthComponent>();
+        if (!anotherHealthComp) { continue; }
+
         AABB otherAABB = anotherColisComp->getAABB();
 
         sf::Vector2f otherPosition = anotherTransComp->getPosition();
@@ -85,7 +89,9 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
 
         if (isAttackSuccess) {
             temporaryIgnoreList.emplace(id);
-            std::cout << "Entity with id: " << attackingEntity.getGlobalId() << " attacked entity with id " << id << "\n";
+            anotherHealthComp->takeDamage(weaponComp->getAttackDamage());
+            std::cout << "Entity with id: " << attackingEntity.getGlobalId() << " attacked entity with id " << id
+                << "currentHealth " << anotherHealthComp->getCurrentHealth() << "\n";
         }
     }
     temporaryIgnoreList.clear();
