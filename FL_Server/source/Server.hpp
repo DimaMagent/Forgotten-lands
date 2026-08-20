@@ -24,6 +24,7 @@ public:
 private:
 	//loggers
 	std::shared_ptr<spdlog::logger> net_logger;
+	std::shared_ptr<spdlog::logger> system_logger;
 
 	std::unique_ptr<asio::io_context> serverContext;
 
@@ -35,9 +36,9 @@ private:
 	std::unique_ptr<ServerEntityFactory> entityFactory;
 	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;
 
-
-
 	void onClientAccept(uint32_t token);
 	
 	void initLogging();
+
+	void tick(float dt);
 };

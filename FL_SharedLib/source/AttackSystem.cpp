@@ -81,7 +81,7 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
         );
 
         if (isAttackSuccess) {
-            std::cout << "Entity with id: " << attackingEntity.getGlobalId() << "attacked entity with id" << id << "\n";
+            std::cout << "Entity with id: " << attackingEntity.getGlobalId() << " attacked entity with id " << id << "\n";
         }
     }
     return true;

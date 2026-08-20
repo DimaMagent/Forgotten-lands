@@ -5,6 +5,7 @@
 #include "StateComponent.hpp"
 #include "HealthComponent.hpp"
 #include "CollisionComponent.hpp"
+#include "WeaponComponent.hpp"
 
 NetworkComponentRegistry::NetworkComponentRegistry() {
 	registerComponents();
@@ -27,4 +28,5 @@ void NetworkComponentRegistry::registerComponents()
 	registerComponent<sl::StateComponent>();
 	registerComponent<sl::CollisionComponent>();
 	registerComponent<sl::HealthComponent>();
+	registerComponent<sl::WeaponComponent>();
 }

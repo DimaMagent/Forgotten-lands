@@ -27,7 +27,7 @@ Server::Server(short port)
 	serverContext = std::make_unique<asio::io_context>();
 	connectionEvents = std::make_unique<ConnectionEvents>();
 	world = std::make_unique<World>(*connectionEvents);
-	playerManager = std::make_unique<PlayerManager>(*world);
+	playerManager = std::make_unique<PlayerManager>();
 	dataProcessorManager = std::make_unique<DataProcessorManager>(*playerManager);
 	netManager = std::make_unique<NetManager>(*serverContext, port, *dataProcessorManager, *connectionEvents);
 	entityFactory = std::make_unique<ServerEntityFactory>();
@@ -52,7 +52,7 @@ void Server::start() {
 		timer->expires_at(timer->expiry() + std::chrono::seconds(1/60));
 		timer->async_wait([&, timer](const asio::error_code& ec) {
 			if (ec) return;
-			world->update(clock.restart().asSeconds());
+			tick(clock.restart().asSeconds());
 			scheduleUpdate();
 			});
 		};
@@ -103,8 +103,25 @@ void Server::initLogging()
 		"network", sinks.begin(), sinks.end(),
 		spdlog::thread_pool(), spdlog::async_overflow_policy::block);
 
+	system_logger = std::make_shared<spdlog::async_logger>(
+		"system", sinks.begin(), sinks.end(),
+		spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+
 	spdlog::register_logger(net_logger);
+	spdlog::register_logger(system_logger);
 
 	spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%n] %v");
 	spdlog::flush_every(std::chrono::seconds(3));
+}
+
+void Server::tick(float dt) {
+	if (world) {
+		world->update(dt);
+		playerManager->tick(dt, *world);
+	}
+	else {
+	#ifdef DEBUG
+		system_logger->error("Server::tick: world is not valid, world's update and playerManager's tick cannot calls");
+	#endif // DEBUG
+	}
 }

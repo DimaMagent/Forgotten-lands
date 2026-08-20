@@ -78,39 +78,54 @@ void Client::start()
 void Client::whenClientAccepted(){}
 
 void Client::initLogging() {
-	spdlog::init_thread_pool(8192, 1);
+	try {
+		spdlog::init_thread_pool(8192, 1);
 
-	auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-	auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-		"logs/client/client.log", 1024 * 1024 * 10, 5);
+		auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+		auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+			"logs/client/client.log", 1024 * 1024 * 10, 5);
 
-	console_sink->set_level(spdlog::level::warn);
-	file_sink->set_level(spdlog::level::trace);
-	std::vector<spdlog::sink_ptr> sinks{ console_sink, file_sink };
+		console_sink->set_level(spdlog::level::warn);
+		file_sink->set_level(spdlog::level::trace);
+		std::vector<spdlog::sink_ptr> sinks{ console_sink, file_sink };
 
-	net_logger = std::make_shared<spdlog::async_logger>(
-		"network", sinks.begin(), sinks.end(),
-		spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+		net_logger = std::make_shared<spdlog::async_logger>(
+			"network", sinks.begin(), sinks.end(),
+			spdlog::thread_pool(), spdlog::async_overflow_policy::block);
 
-	game_logger = std::make_shared<spdlog::async_logger>(
-		"game", sinks.begin(), sinks.end(),
-		spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+		game_logger = std::make_shared<spdlog::async_logger>(
+			"game", sinks.begin(), sinks.end(),
+			spdlog::thread_pool(), spdlog::async_overflow_policy::block);
 
-	load_logger = std::make_shared<spdlog::async_logger>(
-		"load", sinks.begin(), sinks.end(),
-		spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+		system_logger = std::make_shared<spdlog::async_logger>(
+			"system", sinks.begin(), sinks.end(),
+			spdlog::thread_pool(), spdlog::async_overflow_policy::block);
 
-	spdlog::register_logger(net_logger);
-	spdlog::register_logger(game_logger);
-	spdlog::register_logger(load_logger);
+		load_logger = std::make_shared<spdlog::async_logger>(
+			"load", sinks.begin(), sinks.end(),
+			spdlog::thread_pool(), spdlog::async_overflow_policy::block);
 
-	spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%n] %v");
-	spdlog::flush_every(std::chrono::seconds(3));
+		spdlog::register_logger(net_logger);
+		spdlog::register_logger(game_logger);
+		spdlog::register_logger(load_logger);
+		spdlog::register_logger(system_logger);
+
+		spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%n] %v");
+		spdlog::flush_every(std::chrono::seconds(3));
+	}
+	catch (std::exception& e) {
+		spdlog::error("Client::initLogging threw the exception: {}", e.what());
+	}
 }
 
 void Client::tick(float dt) {
-	world->update(dt);
 	if (world) {
+		world->update(dt);
 		playerIntentManager->tick(dt, *world);
+	}
+	else {
+		#ifdef DEBUG
+			system_logger->error("Client::tick: world is not valid, world's update and playerIntentManager's tick cannot calls");
+		#endif // DEBUG
 	}
 }

@@ -28,6 +28,7 @@ private:
 	std::shared_ptr<spdlog::logger> net_logger;
 	std::shared_ptr<spdlog::logger> game_logger;
 	std::shared_ptr<spdlog::logger> load_logger;
+	std::shared_ptr<spdlog::logger> system_logger;
 
 	std::unique_ptr<asio::io_context> clientContext;
 	std::unique_ptr<sf::RenderWindow> window;
