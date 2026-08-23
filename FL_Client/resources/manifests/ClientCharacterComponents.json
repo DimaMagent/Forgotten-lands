@@ -111,12 +111,103 @@
             "assets/unarmed_character/walk/walk se0007.png",
             "assets/unarmed_character/walk/walk se0008.png"
           ]
+        },
+        "Attack": {
+          "Forward": [
+            "assets/unarmed_character/attack/attack n0000.png",
+            "assets/unarmed_character/attack/attack n0001.png",
+            "assets/unarmed_character/attack/attack n0002.png",
+            "assets/unarmed_character/attack/attack n0003.png",
+            "assets/unarmed_character/attack/attack n0004.png",
+            "assets/unarmed_character/attack/attack n0005.png",
+            "assets/unarmed_character/attack/attack n0006.png",
+            "assets/unarmed_character/attack/attack n0007.png",
+            "assets/unarmed_character/attack/attack n0008.png"
+          ],
+          "ForwardLeft": [
+            "assets/unarmed_character/attack/attack nw0000.png",
+            "assets/unarmed_character/attack/attack nw0001.png",
+            "assets/unarmed_character/attack/attack nw0002.png",
+            "assets/unarmed_character/attack/attack nw0003.png",
+            "assets/unarmed_character/attack/attack nw0004.png",
+            "assets/unarmed_character/attack/attack nw0005.png",
+            "assets/unarmed_character/attack/attack nw0006.png",
+            "assets/unarmed_character/attack/attack nw0007.png",
+            "assets/unarmed_character/attack/attack nw0008.png"
+          ],
+          "ForwardRight": [
+            "assets/unarmed_character/attack/attack ne0000.png",
+            "assets/unarmed_character/attack/attack ne0001.png",
+            "assets/unarmed_character/attack/attack ne0002.png",
+            "assets/unarmed_character/attack/attack ne0003.png",
+            "assets/unarmed_character/attack/attack ne0004.png",
+            "assets/unarmed_character/attack/attack ne0005.png",
+            "assets/unarmed_character/attack/attack ne0006.png",
+            "assets/unarmed_character/attack/attack ne0007.png",
+            "assets/unarmed_character/attack/attack ne0008.png"
+          ],
+          "Left": [
+            "assets/unarmed_character/attack/attack w0000.png",
+            "assets/unarmed_character/attack/attack w0001.png",
+            "assets/unarmed_character/attack/attack w0002.png",
+            "assets/unarmed_character/attack/attack w0003.png",
+            "assets/unarmed_character/attack/attack w0004.png",
+            "assets/unarmed_character/attack/attack w0005.png",
+            "assets/unarmed_character/attack/attack w0006.png",
+            "assets/unarmed_character/attack/attack w0007.png",
+            "assets/unarmed_character/attack/attack w0008.png"
+          ],
+          "Right": [
+            "assets/unarmed_character/attack/attack e0000.png",
+            "assets/unarmed_character/attack/attack e0001.png",
+            "assets/unarmed_character/attack/attack e0002.png",
+            "assets/unarmed_character/attack/attack e0003.png",
+            "assets/unarmed_character/attack/attack e0004.png",
+            "assets/unarmed_character/attack/attack e0005.png",
+            "assets/unarmed_character/attack/attack e0006.png",
+            "assets/unarmed_character/attack/attack e0007.png",
+            "assets/unarmed_character/attack/attack e0008.png"
+          ],
+          "Backward": [
+            "assets/unarmed_character/attack/attack s0000.png",
+            "assets/unarmed_character/attack/attack s0001.png",
+            "assets/unarmed_character/attack/attack s0002.png",
+            "assets/unarmed_character/attack/attack s0003.png",
+            "assets/unarmed_character/attack/attack s0004.png",
+            "assets/unarmed_character/attack/attack s0005.png",
+            "assets/unarmed_character/attack/attack s0006.png",
+            "assets/unarmed_character/attack/attack s0007.png",
+            "assets/unarmed_character/attack/attack s0008.png"
+          ],
+          "BackwardLeft": [
+            "assets/unarmed_character/attack/attack sw0000.png",
+            "assets/unarmed_character/attack/attack sw0001.png",
+            "assets/unarmed_character/attack/attack sw0002.png",
+            "assets/unarmed_character/attack/attack sw0003.png",
+            "assets/unarmed_character/attack/attack sw0004.png",
+            "assets/unarmed_character/attack/attack sw0005.png",
+            "assets/unarmed_character/attack/attack sw0006.png",
+            "assets/unarmed_character/attack/attack sw0007.png",
+            "assets/unarmed_character/attack/attack sw0008.png"
+          ],
+          "BackwardRight": [
+            "assets/unarmed_character/attack/attack se0000.png",
+            "assets/unarmed_character/attack/attack se0001.png",
+            "assets/unarmed_character/attack/attack se0002.png",
+            "assets/unarmed_character/attack/attack se0003.png",
+            "assets/unarmed_character/attack/attack se0004.png",
+            "assets/unarmed_character/attack/attack se0005.png",
+            "assets/unarmed_character/attack/attack se0006.png",
+            "assets/unarmed_character/attack/attack se0007.png",
+            "assets/unarmed_character/attack/attack se0008.png"
+          ]
         }
       },
 
       "AllowedAnimation": {
         "Idle": 0.1,
-        "Walk": 0.083
+        "Walk": 0.083,
+        "Attack": 0.083
       }
 
     }

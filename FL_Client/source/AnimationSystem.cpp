@@ -41,7 +41,10 @@ void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
 
 	AnimationType currentAnimationType = selectAnimationType(*stateComp);
 
-	animComp->addTimeSinceLastUpdate(currentAnimationType, updateTime);
+	if (!animComp->addTimeSinceLastUpdate(currentAnimationType, updateTime)) {
+		std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
+		game_logger->warn("AnimationSystem::updateAnimations addTimeSinceLastUpdate failed");
+	}
 
 	float timeSinceLastUpdate;
 	if (!animComp->getTimeSinceLastUpdate(currentAnimationType, timeSinceLastUpdate)) { return; }
@@ -50,7 +53,11 @@ void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
 	if (!animComp->getCurrentFrequencyOfAnimationIfExist(currentAnimationType, currentFrequencyOfAnimation)) { return; }
 
 	if (timeSinceLastUpdate >= currentFrequencyOfAnimation) {
-		animComp->addTimeSinceLastUpdate(currentAnimationType, -currentFrequencyOfAnimation);
+
+		if (!animComp->addTimeSinceLastUpdate(currentAnimationType, -currentFrequencyOfAnimation)) {
+			std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
+			game_logger->warn("AnimationSystem::updateAnimations addTimeSinceLastUpdate failed");
+		}
 
 		sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
 		RenderComponent* rendComp = entity.getComponent<RenderComponent>();
@@ -62,7 +69,7 @@ void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
 
 		if (!texture) {
 			std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
-			game_logger->warn("AnimationSystem::onUpdate animation set failed");
+			game_logger->warn("AnimationSystem::updateAnimations animation set failed");
 			return;
 		}
 

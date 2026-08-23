@@ -7,6 +7,7 @@
 #include "TransformComponent.hpp"
 #include "CollisionComponent.hpp"
 #include "HealthComponent.hpp"
+#include "StateComponent.hpp"
 #include "Aabb.hpp"
 #include "Entity.hpp"
 #include "CollisionCellMap.hpp"
@@ -53,6 +54,13 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
     );
 
     if (!isSuccess) { return false; }
+
+    sl::StateComponent* stateComp = attackingEntity.getComponent<sl::StateComponent>();
+
+    if (stateComp)
+    {
+        stateComp->setCurrentActionState(sl::ActionState::MeleeAttack);
+    }
 
     for (uint32_t id : reusableEntityIdsBuffer) {
 
