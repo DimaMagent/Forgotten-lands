@@ -17,21 +17,20 @@ public:
 	// frequency should be as x/60
 	void addAllowedAnimationFrequency(AnimationType animationType, float frequency);
 
-	bool getCurrentFrequencyOfAnimationIfExist(AnimationType animationType, float& outFrequency) const;
+	[[nodiscard]] bool getCurrentFrequencyOfAnimationIfExist(AnimationType animationType, float& outFrequency) const;
 
 	// frequency should be as x/60
-	bool setCurrentFrequencyOfAnimationIfExist(AnimationType animationType, float newFrequency);
+	[[nodiscard]] bool setCurrentFrequencyOfAnimationIfExist(AnimationType animationType, float newFrequency);
 
-	bool addTimeSinceLastUpdate(AnimationType animationType, float dt);
+	[[nodiscard]] bool addTimeSinceLastUpdate(AnimationType animationType, float dt);
 
-	bool getTimeSinceLastUpdate(AnimationType animationType, float& outTime);
+	[[nodiscard]] bool getTimeSinceLastUpdate(AnimationType animationType, float& outTime);
 
-	bool resetCurrentFrequencyOfAnimationIfExist(AnimationType resetAnimationType);
+	[[nodiscard]] bool resetCurrentFrequencyOfAnimationIfExist(AnimationType resetAnimationType);
 
 	void resetAllAnimationFrequency();
 
 	const std::shared_ptr<sf::Texture> getCurrentAnimationFrame(AnimationType type, const sf::Vector2i& direction);
-
 
 	COMPONENT_TYPE(AnimationComponent);
 private:
@@ -42,6 +41,8 @@ private:
 	sf::Vector2i currentDirection;
 
 	size_t currentIndex = 0;
+	
+	bool isAnimationPlaying = false;
 
 	// frequency stored as x/60
 	std::unordered_map<AnimationType, float> baseFrequencyOfAllowedAnimations;

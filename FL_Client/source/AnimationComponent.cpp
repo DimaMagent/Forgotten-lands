@@ -76,7 +76,8 @@ void AnimationComponent::resetAllAnimationFrequency()
 
 const std::shared_ptr<sf::Texture> AnimationComponent::getCurrentAnimationFrame(AnimationType type, const sf::Vector2i& direction){
 	if (currentAnimationType == type && currentDirection == direction) {
-		++currentIndex;
+		size_t frameCount = animationsStorage->getFramesCount(type, direction);
+		currentIndex = ++currentIndex % frameCount;
 	}
 	else {
 		currentAnimationType = type;
