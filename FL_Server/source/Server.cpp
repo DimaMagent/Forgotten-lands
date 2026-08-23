@@ -89,29 +89,40 @@ void Server::onClientAccept(uint32_t token)
 
 void Server::initLogging()
 {
-	spdlog::init_thread_pool(8192, 1);
+	try {
+		std::filesystem::create_directories("logs/server");
 
-	auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-	auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
-		"logs/server/server.log", 1024 * 1024 * 10, 5);
+		spdlog::drop("network");
+		spdlog::drop("system");
 
-	console_sink->set_level(spdlog::level::warn);
-	file_sink->set_level(spdlog::level::trace);
-	std::vector<spdlog::sink_ptr> sinks{ console_sink, file_sink };
+		spdlog::init_thread_pool(8192, 1);
 
-	net_logger = std::make_shared<spdlog::async_logger>(
-		"network", sinks.begin(), sinks.end(),
-		spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+		auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+		auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+			"logs/server/server.log", 1024 * 1024 * 10, 5);
 
-	system_logger = std::make_shared<spdlog::async_logger>(
-		"system", sinks.begin(), sinks.end(),
-		spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+		console_sink->set_level(spdlog::level::warn);
+		file_sink->set_level(spdlog::level::trace);
 
-	spdlog::register_logger(net_logger);
-	spdlog::register_logger(system_logger);
+		std::vector<spdlog::sink_ptr> sinks{ console_sink, file_sink };
 
-	spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%n] %v");
-	spdlog::flush_every(std::chrono::seconds(3));
+		net_logger = std::make_shared<spdlog::async_logger>(
+			"network", sinks.begin(), sinks.end(),
+			spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+
+		system_logger = std::make_shared<spdlog::async_logger>(
+			"system", sinks.begin(), sinks.end(),
+			spdlog::thread_pool(), spdlog::async_overflow_policy::block);
+
+		spdlog::register_logger(net_logger);
+		spdlog::register_logger(system_logger);
+
+		spdlog::set_pattern("[%Y-%m-%d %H:%M:%S.%e] [%^%l%$] [%n] %v");
+		spdlog::flush_every(std::chrono::seconds(3));
+	}
+	catch (std::exception & e) {
+		std::cerr << "Server::initLogging threw the exception: " << e.what() << "\n";
+	}
 }
 
 void Server::tick(float dt) {

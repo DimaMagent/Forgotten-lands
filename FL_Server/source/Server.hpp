@@ -3,6 +3,7 @@
 #include <asio/ssl.hpp>
 #include <vector>
 #include <memory>
+#include <spdlog/logger.h>
 #include "TimerHandle.hpp"
 
 class DataProcessorManager;

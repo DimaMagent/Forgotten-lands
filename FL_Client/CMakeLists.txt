@@ -13,6 +13,7 @@ target_precompile_headers(FL_Client PRIVATE source/pch.hpp)
 set_target_properties(FL_Client PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin/${TARGET_ARCH}/Debug"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin/${TARGET_ARCH}/Release"
+    VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:FL_Client>"
 )
 
 target_link_libraries(FL_Client PRIVATE
@@ -24,14 +25,7 @@ target_link_libraries(FL_Client PRIVATE
     asio::asio
     OpenSSL::SSL
     OpenSSL::Crypto
-    spdlog::spdlog
-)
-
-add_custom_command(TARGET FL_Client POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_if_different
-        $<TARGET_RUNTIME_DLLS:FL_Client>
-        $<TARGET_FILE_DIR:FL_Client>
-    COMMAND_EXPAND_LISTS
+    spdlog::spdlog_header_only
 )
 
 add_custom_command(
@@ -40,9 +34,9 @@ add_custom_command(
             "${CMAKE_SOURCE_DIR}/FL_Client/resources"
             "$<TARGET_FILE_DIR:FL_Client>"
 )
-add_custom_command(
-    TARGET FL_Client POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-            "${CMAKE_SOURCE_DIR}/sharedData/resources"
-            "$<TARGET_FILE_DIR:FL_Client>"
+add_custom_command(TARGET FL_Client POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+        $<TARGET_RUNTIME_DLLS:FL_Client>
+        $<TARGET_FILE_DIR:FL_Client>
+    COMMAND_EXPAND_LISTS
 )

@@ -79,6 +79,12 @@ void Client::whenClientAccepted(){}
 
 void Client::initLogging() {
 	try {
+
+		spdlog::drop("network");
+		spdlog::drop("system");
+		spdlog::drop("game");
+		spdlog::drop("load");
+
 		spdlog::init_thread_pool(8192, 1);
 
 		auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
@@ -114,7 +120,7 @@ void Client::initLogging() {
 		spdlog::flush_every(std::chrono::seconds(3));
 	}
 	catch (std::exception& e) {
-		spdlog::error("Client::initLogging threw the exception: {}", e.what());
+		std::cerr << "Client::initLogging threw the exception: " << e.what() << "\n";
 	}
 }
 

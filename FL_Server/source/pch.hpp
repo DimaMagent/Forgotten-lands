@@ -3,6 +3,7 @@
 
 #define ASIO_STANDALONE
 #define DEBUG
+#define SPDLOG_HEADER_ONLY
 
 #include <asio.hpp>
 
