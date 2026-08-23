@@ -39,6 +39,7 @@ if(WIN32)
         COMMAND ${CMAKE_COMMAND} -E copy_if_different
             $<$<BOOL:$<TARGET_RUNTIME_DLLS:FL_Server>>:$<TARGET_RUNTIME_DLLS:FL_Server>>
             "$<TARGET_FILE_DIR:FL_Server>"
+        
         COMMAND_EXPAND_LISTS
     )
 endif()

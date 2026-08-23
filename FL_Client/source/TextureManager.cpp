@@ -27,7 +27,8 @@ std::shared_ptr<sf::Texture> TextureManager::getTexture(const std::string & path
 		textures.try_emplace(path, texturePtr);
 		return textures[path];
 	}
-	catch (std::exception e){
+	catch (std::exception& e){
 		load_logger->error("TextureManager::getTexture exception: {}", e.what());
+		return nullptr;
 	}
 }

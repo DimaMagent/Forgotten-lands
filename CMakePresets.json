@@ -10,12 +10,11 @@
         "value": "x64",
         "strategy": "external"
       },
-      "toolchainFile": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
         "VCPKG_APPLOCAL_DEPS": "ON",
-        "VCPKG_OVERLAY_TRIPLETS": "C:/vcpkg/custom-triplets",
         "VCPKG_TARGET_TRIPLET": "x64-windows",
         "TARGET_ARCH": "x64"
       }
@@ -29,12 +28,11 @@
         "value": "x64",
         "strategy": "external"
       },
-      "toolchainFile": "C:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+      "toolchainFile": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release",
         "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
         "VCPKG_APPLOCAL_DEPS": "ON",
-        "VCPKG_OVERLAY_TRIPLETS": "C:/vcpkg/custom-triplets",
         "VCPKG_TARGET_TRIPLET": "x64-windows",
         "TARGET_ARCH": "x64"
       }
