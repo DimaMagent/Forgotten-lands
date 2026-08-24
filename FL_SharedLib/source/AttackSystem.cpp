@@ -64,8 +64,11 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
 
     if (!isSuccess) { return false; }
 
+    if (stateComp->getCurrentActionState() != sl::ActionState::MeleeAttack) {
+        stunComp->addWithinStun(sl::StunState::Immobilized);
+    }
     stateComp->setCurrentActionState(sl::ActionState::MeleeAttack);
-    stunComp->addWithinStun(sl::StunState::Immobilized);
+
 
     for (uint32_t id : reusableEntityIdsBuffer) {
 
