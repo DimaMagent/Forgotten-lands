@@ -21,5 +21,6 @@
 #include <unordered_map>
 #include <algorithm>
 #include <optional>
+#include <type_traits>
 
 #endif //PCH_H

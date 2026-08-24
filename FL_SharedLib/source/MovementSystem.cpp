@@ -36,6 +36,8 @@ void sl::MovementSystem::movingWithCollisionCheck(float updateTime, sl::Entity& 
         return;
     }
 
+    if (stateComp->stunStateCheck(StunState::Immobilized)) { return; }
+
     sf::Vector2f delta = movComp->calculateDelta(updateTime);
     sf::Vector2f currentPos = trComp->getPosition();
 

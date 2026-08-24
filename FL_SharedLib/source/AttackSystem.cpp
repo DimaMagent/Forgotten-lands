@@ -32,6 +32,11 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
     sl::CollisionComponent* colisComp = attackingEntity.getComponent<sl::CollisionComponent>();
     if (!colisComp) { return false; }
 
+    sl::StateComponent* stateComp = attackingEntity.getComponent<sl::StateComponent>();
+    if (!stateComp) { return false; }
+
+    if (stateComp->stunStateCheck(StunState::Disarmed)) { return true; }
+
     const auto WorldMap = world.getWorldMap();
 
     if (!WorldMap.has_value()) { return false; }
@@ -55,12 +60,8 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
 
     if (!isSuccess) { return false; }
 
-    sl::StateComponent* stateComp = attackingEntity.getComponent<sl::StateComponent>();
-
-    if (stateComp)
-    {
-        stateComp->setCurrentActionState(sl::ActionState::MeleeAttack);
-    }
+    stateComp->setCurrentActionState(sl::ActionState::MeleeAttack);
+    stateComp->addStunState(sl::StunState::Immobilized);
 
     for (uint32_t id : reusableEntityIdsBuffer) {
 
@@ -151,5 +152,6 @@ void sl::AttackSystem::attackEnd(sl::Entity& attackingEntity) {
     if (stateComp)
     {
         stateComp->setCurrentActionState(sl::ActionState::None);
+        stateComp->removeStunState(sl::StunState::Immobilized);
     }
 }

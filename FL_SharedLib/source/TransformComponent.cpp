@@ -69,7 +69,7 @@ bool sl::TransformComponent::deserialize(const std::vector<uint8_t>& out, size_t
 
 uint32_t sl::TransformComponent::getSerializeDataSize() const
 {
-	return sizeof(sf::Vector2f) + sizeof(sf::Vector2i) + sizeof(TypeId) + sizeof(uint32_t);
+	return sizeof(position.x) + sizeof(position.y) + sizeof(rotation.x) + sizeof(rotation.y) + sizeof(TypeId) + sizeof(uint32_t);
 }
 
 uint32_t sl::TransformComponent::getDeserializeDataSize() const

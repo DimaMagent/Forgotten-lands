@@ -7,6 +7,7 @@ sl::StateComponent::StateComponent()
 	actionState = ActionState::None;
 	movementState = MovementState::None;
 	lifeState = LifeState::Alive;
+	stunState = StunState::None;
 }
 
 void sl::StateComponent::setCurrentActionState(ActionState newState)

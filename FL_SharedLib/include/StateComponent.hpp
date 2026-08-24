@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.hpp"
 #include "Serializable.hpp"
+#include <type_traits>
 
 namespace sl {
 	enum class ActionState: uint8_t {
@@ -22,6 +23,8 @@ namespace sl {
 		TakingDamage,
 		Death
 	};
+
+	
 
 
 	class StateComponent : public Component, public sl::Serializable {
