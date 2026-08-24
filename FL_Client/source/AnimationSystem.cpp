@@ -9,7 +9,6 @@
 AnimationSystem::AnimationSystem(sl::EntityStorage& entities):
 	entities(entities)
 {
-	currentAnimationType = AnimationType::Idle;
 }
 
 void AnimationSystem::onUpdate(float updateTime) {
@@ -45,16 +44,16 @@ void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
 	sl::StateComponent* stateComp = entity.getComponent<sl::StateComponent>();
 	if (!stateComp) { return; }
 
-	AnimationType instantAnimtionType = selectInstantAnimationType(*stateComp);
+	AnimationType instantAnimationType = selectInstantAnimationType(*stateComp);
 
-	if (instantAnimtionType != AnimationType::Idle && instantAnimtionType != currentAnimationType) {
-		isAnimationPlaying = true;
-		currentAnimationType = instantAnimtionType;
-	}
+	AnimationType currentAnimationType = animComp->getCurrentAnimationType();
 
-	if (!isAnimationPlaying) {
+	if (instantAnimationType != AnimationType::Idle && instantAnimationType != animComp->getCurrentAnimationType()) {
+		currentAnimationType = instantAnimationType;
+	} else if (!animComp->isAnimationPlaying()) {
 		currentAnimationType = selectAnimationType(*stateComp);
 	}
+
 
 	if (!animComp->addTimeSinceLastUpdate(currentAnimationType, updateTime)) {
 		std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
@@ -77,7 +76,6 @@ void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
 		sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
 		RenderComponent* rendComp = entity.getComponent<RenderComponent>();
 
-
 		if (!rendComp || !trComp) { return; }
 
 		std::shared_ptr<sf::Texture> texture;
@@ -91,11 +89,16 @@ void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
 				rendComp->setCurrentTexture(texture);
 				return;
 			}
+			else if (selectInstantAnimationType(*stateComp) == AnimationType::Attack) {
 
-			currentAnimationType = AnimationType::Idle;
-			isAnimationPlaying = false;
+				texture = animComp->getCurrentAnimationFramePlayingAnimation(currentAnimationType, trComp->getRotation(), true);
+				rendComp->setCurrentTexture(texture);
+				return;
+			}
+
+			currentAnimationType = selectInstantAnimationType(*stateComp);
 		}
-
+		
 		texture = animComp->getCurrentAnimationFrame(currentAnimationType, trComp->getRotation());
 
 		if (!texture) {

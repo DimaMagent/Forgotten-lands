@@ -28,14 +28,24 @@ public:
 
 	[[nodiscard]] bool resetCurrentFrequencyOfAnimationIfExist(AnimationType resetAnimationType);
 
-	void resetAllAnimationFrequency();
+	bool isAnimationPlaying() const { return animationPlaying; }
+
+	AnimationType getCurrentAnimationType() const { return currentAnimationType; }
 
 	const std::shared_ptr<sf::Texture> getCurrentAnimationFrame(AnimationType type, const sf::Vector2i& direction);
 
-	const std::shared_ptr<sf::Texture> getCurrentAnimationFramePlayingAnimation(AnimationType type, const sf::Vector2i& direction);
+	const std::shared_ptr<sf::Texture> getCurrentAnimationFramePlayingAnimation(AnimationType type, const sf::Vector2i& direction, bool isReset = false);
 
 	COMPONENT_TYPE(AnimationComponent);
 private:
+
+	struct AnimationFrequency {
+		AnimationFrequency(float baseFrequencyOfAllowedAnimations, float currentFrequencyOfAllowedAnimations, float timeSinceLastUpdateOfAllowedAnimations);
+		float baseFrequencyOfAllowedAnimations;
+		float currentFrequencyOfAllowedAnimations;
+		float timeSinceLastUpdateOfAllowedAnimations;
+	};
+
 	std::shared_ptr<const AnimationsStorage> animationsStorage;
 
 	AnimationType currentAnimationType;
@@ -44,12 +54,8 @@ private:
 
 	size_t currentIndex = 0;
 	
-	bool isAnimationPlaying = false;
+	bool animationPlaying = false;
 
 	// frequency stored as x/60
-	std::unordered_map<AnimationType, float> baseFrequencyOfAllowedAnimations;
-	// frequency stored as x/60
-	std::unordered_map<AnimationType, float> currentFrequencyOfAllowedAnimations;
-
-	std::unordered_map<AnimationType, float> timeSinceLastUpdateOfAllowedAnimations;
+	std::unordered_map<AnimationType, AnimationFrequency> frequencyOfAllowedAnimations;
 };

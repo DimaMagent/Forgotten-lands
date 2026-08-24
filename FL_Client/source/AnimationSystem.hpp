@@ -15,8 +15,6 @@ public:
 
 private:
 	sl::EntityStorage& entities;
-	AnimationType currentAnimationType;
-	bool isAnimationPlaying = false;
 
 	AnimationType selectAnimationType(const sl::StateComponent& stateComp);
 	AnimationType selectInstantAnimationType(const sl::StateComponent& stateComp);

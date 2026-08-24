@@ -13,65 +13,59 @@ AnimationComponent::AnimationComponent(std::shared_ptr<const AnimationsStorage> 
 
 void AnimationComponent::addAllowedAnimationFrequency(AnimationType animationType, float frequency)
 {
-	baseFrequencyOfAllowedAnimations.try_emplace(animationType, frequency);
-	currentFrequencyOfAllowedAnimations.try_emplace(animationType, frequency);
-	timeSinceLastUpdateOfAllowedAnimations.try_emplace(animationType, 0);
+	AnimationFrequency aniumationFrequency(frequency, frequency, 0);
+
+	frequencyOfAllowedAnimations.try_emplace(animationType, aniumationFrequency);
 }
 
 bool AnimationComponent::getCurrentFrequencyOfAnimationIfExist(AnimationType animationType, float& frequencyOut) const
 {
-	auto it = currentFrequencyOfAllowedAnimations.find(animationType);
-	if (it == currentFrequencyOfAllowedAnimations.end()) {
+	auto it = frequencyOfAllowedAnimations.find(animationType);
+	if (it == frequencyOfAllowedAnimations.end()) {
 		return false;
 	}
-	frequencyOut = it->second;
+	frequencyOut = it->second.currentFrequencyOfAllowedAnimations;
 	return true;
 }
 
 bool AnimationComponent::setCurrentFrequencyOfAnimationIfExist(AnimationType animationType, float newFrequency)
 {
-	auto it = currentFrequencyOfAllowedAnimations.find(animationType);
-	if (it == currentFrequencyOfAllowedAnimations.end()) {
+	auto it = frequencyOfAllowedAnimations.find(animationType);
+	if (it == frequencyOfAllowedAnimations.end()) {
 		return false;
 	}
-	it->second = newFrequency;
+	it->second.currentFrequencyOfAllowedAnimations = newFrequency;
 	return true;
 }
 
 bool AnimationComponent::addTimeSinceLastUpdate(AnimationType animationType, float dt)
 {
-	auto it = timeSinceLastUpdateOfAllowedAnimations.find(animationType);
-	if (it == timeSinceLastUpdateOfAllowedAnimations.end()) {
+	auto it = frequencyOfAllowedAnimations.find(animationType);
+	if (it == frequencyOfAllowedAnimations.end()) {
 		return false;
 	}
-	it->second += dt;
+	it->second.timeSinceLastUpdateOfAllowedAnimations += dt;
 	return true;
 }
 
 bool AnimationComponent::getTimeSinceLastUpdate(AnimationType animationType, float& outTime)
 {
-	auto it = timeSinceLastUpdateOfAllowedAnimations.find(animationType);
-	if (it == timeSinceLastUpdateOfAllowedAnimations.end()) {
+	auto it = frequencyOfAllowedAnimations.find(animationType);
+	if (it == frequencyOfAllowedAnimations.end()) {
 		return false;
 	}
-	outTime = it->second;
+	outTime = it->second.timeSinceLastUpdateOfAllowedAnimations;
 	return true;
 }
 
 bool AnimationComponent::resetCurrentFrequencyOfAnimationIfExist(AnimationType resetAnimationType)
 {
-	auto it1 = currentFrequencyOfAllowedAnimations.find(resetAnimationType);
-	auto it2 = baseFrequencyOfAllowedAnimations.find(resetAnimationType);
-	if (it1 == currentFrequencyOfAllowedAnimations.end() || it2 == baseFrequencyOfAllowedAnimations.end()) {
+	auto it1 = frequencyOfAllowedAnimations.find(resetAnimationType);
+	if (it1 == frequencyOfAllowedAnimations.end()) {
 		return false;
 	}
-	it1->second = it2->second;
+	it1->second.currentFrequencyOfAllowedAnimations = it1->second.baseFrequencyOfAllowedAnimations;
 	return true;
-}
-
-void AnimationComponent::resetAllAnimationFrequency()
-{
-	currentFrequencyOfAllowedAnimations = baseFrequencyOfAllowedAnimations;
 }
 
 const std::shared_ptr<sf::Texture> AnimationComponent::getCurrentAnimationFrame(AnimationType type, const sf::Vector2i& direction){
@@ -88,16 +82,27 @@ const std::shared_ptr<sf::Texture> AnimationComponent::getCurrentAnimationFrame(
 	return animationsStorage->getAnimationFrame(currentAnimationType, currentDirection, currentIndex);
 }
 
-const std::shared_ptr<sf::Texture> AnimationComponent::getCurrentAnimationFramePlayingAnimation(AnimationType type, const sf::Vector2i& direction)
+const std::shared_ptr<sf::Texture> AnimationComponent::getCurrentAnimationFramePlayingAnimation(AnimationType type, const sf::Vector2i& direction, bool isReset)
 {
+	if (isReset) {
+		currentAnimationType = type;
+		currentDirection = direction;
+		currentIndex = 0;
+	}
+
 	if (currentAnimationType == type) {
+
 		if (currentDirection != direction) {
 			currentDirection = direction;
 		}
+
 		size_t frameCount = animationsStorage->getFramesCount(type, direction);
+
 		if (++currentIndex >= frameCount) {
+			animationPlaying = false;
 			return nullptr;
 		}
+
 	}
 	else {
 		currentAnimationType = type;
@@ -105,5 +110,13 @@ const std::shared_ptr<sf::Texture> AnimationComponent::getCurrentAnimationFrameP
 		currentIndex = 0;
 	}
 
+	animationPlaying = true;
 	return animationsStorage->getAnimationFrame(currentAnimationType, currentDirection, currentIndex);
+}
+
+AnimationComponent::AnimationFrequency::AnimationFrequency(float baseFrequencyOfAllowedAnimations, float currentFrequencyOfAllowedAnimations, float timeSinceLastUpdateOfAllowedAnimations)
+{
+	this->baseFrequencyOfAllowedAnimations = baseFrequencyOfAllowedAnimations;
+	this->currentFrequencyOfAllowedAnimations = currentFrequencyOfAllowedAnimations;
+	this->timeSinceLastUpdateOfAllowedAnimations = timeSinceLastUpdateOfAllowedAnimations;
 }
