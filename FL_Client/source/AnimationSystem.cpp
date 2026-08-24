@@ -36,6 +36,12 @@ AnimationType AnimationSystem::selectInstantAnimationType(const sl::StateCompone
 	return AnimationType::Idle;
 }
 
+bool AnimationSystem::isInstantAnimation(AnimationType type)
+{
+	if (type == AnimationType::Death || type == AnimationType::Attack) { return true; }
+	return false;
+}
+
 void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
 {
 	AnimationComponent* animComp = entity.getComponent<AnimationComponent>();
@@ -44,31 +50,38 @@ void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
 	sl::StateComponent* stateComp = entity.getComponent<sl::StateComponent>();
 	if (!stateComp) { return; }
 
-	AnimationType instantAnimationType = selectInstantAnimationType(*stateComp);
+	AnimationType instantAnim = selectInstantAnimationType(*stateComp);
+	AnimationType targetAnim = AnimationType::Idle;
+	bool isReset = false;
 
-	AnimationType currentAnimationType = animComp->getCurrentAnimationType();
-
-	if (instantAnimationType != AnimationType::Idle && instantAnimationType != animComp->getCurrentAnimationType()) {
-		currentAnimationType = instantAnimationType;
-	} else if (!animComp->isAnimationPlaying()) {
-		currentAnimationType = selectAnimationType(*stateComp);
+	if (animComp->isAnimationPlaying()) {
+		targetAnim = animComp->getCurrentAnimationType();
+	}
+	else if (instantAnim != AnimationType::Idle) {
+		targetAnim = instantAnim;
+		isReset = true;
+	}
+	else {
+		targetAnim = selectAnimationType(*stateComp);
 	}
 
 
-	if (!animComp->addTimeSinceLastUpdate(currentAnimationType, updateTime)) {
+	if (!animComp->addTimeSinceLastUpdate(targetAnim, updateTime)) {
+		#ifdef DEBUG
 		std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
 		game_logger->warn("AnimationSystem::updateAnimations addTimeSinceLastUpdate failed");
+		#endif // DEBUG
 	}
 
 	float timeSinceLastUpdate;
-	if (!animComp->getTimeSinceLastUpdate(currentAnimationType, timeSinceLastUpdate)) { return; }
+	if (!animComp->getTimeSinceLastUpdate(targetAnim, timeSinceLastUpdate)) { return; }
 
 	float currentFrequencyOfAnimation;
-	if (!animComp->getCurrentFrequencyOfAnimationIfExist(currentAnimationType, currentFrequencyOfAnimation)) { return; }
+	if (!animComp->getCurrentFrequencyOfAnimationIfExist(targetAnim, currentFrequencyOfAnimation)) { return; }
 
 	if (timeSinceLastUpdate >= currentFrequencyOfAnimation) {
 
-		if (!animComp->addTimeSinceLastUpdate(currentAnimationType, -currentFrequencyOfAnimation)) {
+		if (!animComp->addTimeSinceLastUpdate(targetAnim, -currentFrequencyOfAnimation)) {
 			std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
 			game_logger->warn("AnimationSystem::updateAnimations addTimeSinceLastUpdate failed");
 		}
@@ -80,33 +93,15 @@ void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
 
 		std::shared_ptr<sf::Texture> texture;
 
-		if (currentAnimationType == AnimationType::Attack)
-		{
-			
-			texture = animComp->getCurrentAnimationFramePlayingAnimation(currentAnimationType, trComp->getRotation());
-			if (texture)
-			{
-				rendComp->setCurrentTexture(texture);
-				return;
-			}
-			else if (selectInstantAnimationType(*stateComp) == AnimationType::Attack) {
-
-				texture = animComp->getCurrentAnimationFramePlayingAnimation(currentAnimationType, trComp->getRotation(), true);
-				rendComp->setCurrentTexture(texture);
-				return;
-			}
-
-			currentAnimationType = selectInstantAnimationType(*stateComp);
+		if (isInstantAnimation(targetAnim)) {
+			texture = animComp->getCurrentAnimationFramePlayingAnimation(targetAnim, trComp->getRotation(), isReset);
 		}
-		
-		texture = animComp->getCurrentAnimationFrame(currentAnimationType, trComp->getRotation());
-
-		if (!texture) {
-			std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
-			game_logger->warn("AnimationSystem::updateAnimations animation set failed");
-			return;
+		else {
+			texture = animComp->getCurrentAnimationFrame(targetAnim, trComp->getRotation());
 		}
 
-		rendComp->setCurrentTexture(texture);
+		if (texture) {
+			rendComp->setCurrentTexture(texture);
+		}
 	}
 }

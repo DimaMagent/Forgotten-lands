@@ -84,33 +84,24 @@ const std::shared_ptr<sf::Texture> AnimationComponent::getCurrentAnimationFrame(
 
 const std::shared_ptr<sf::Texture> AnimationComponent::getCurrentAnimationFramePlayingAnimation(AnimationType type, const sf::Vector2i& direction, bool isReset)
 {
-	if (isReset) {
+	if (currentAnimationType != type || isReset) {
 		currentAnimationType = type;
 		currentDirection = direction;
 		currentIndex = 0;
+		animationPlaying = true;
 	}
-
-	if (currentAnimationType == type) {
-
+	else {
 		if (currentDirection != direction) {
 			currentDirection = direction;
 		}
 
 		size_t frameCount = animationsStorage->getFramesCount(type, direction);
-
-		if (++currentIndex >= frameCount) {
+		++currentIndex;
+		if (currentIndex >= frameCount) {
 			animationPlaying = false;
 			return nullptr;
 		}
-
 	}
-	else {
-		currentAnimationType = type;
-		currentDirection = direction;
-		currentIndex = 0;
-	}
-
-	animationPlaying = true;
 	return animationsStorage->getAnimationFrame(currentAnimationType, currentDirection, currentIndex);
 }
 

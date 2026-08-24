@@ -18,5 +18,6 @@ private:
 
 	AnimationType selectAnimationType(const sl::StateComponent& stateComp);
 	AnimationType selectInstantAnimationType(const sl::StateComponent& stateComp);
+	bool isInstantAnimation(AnimationType type);
 	void updateAnimations(sl::Entity& entity, float updateTime);
 };
