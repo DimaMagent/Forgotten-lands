@@ -144,3 +144,12 @@ bool sl::AttackSystem::isAABBinAttackCone(
 
     return dot >= minDotCos;
 }
+
+void sl::AttackSystem::attackEnd(sl::Entity& attackingEntity) {
+    sl::StateComponent* stateComp = attackingEntity.getComponent<sl::StateComponent>();
+
+    if (stateComp)
+    {
+        stateComp->setCurrentActionState(sl::ActionState::None);
+    }
+}

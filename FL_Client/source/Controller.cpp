@@ -43,6 +43,9 @@ void Controller::onEvent(const sf::Event& event) {
 		case sf::Keyboard::Key::A: keyStates.at(sf::Keyboard::Key::A) = false; updateMovementDirection(); break;
 		case sf::Keyboard::Key::S: keyStates.at(sf::Keyboard::Key::S) = false; updateMovementDirection(); break;
 		case sf::Keyboard::Key::D: keyStates.at(sf::Keyboard::Key::D) = false; updateMovementDirection(); break;
+		case sf::Keyboard::Key::Q:
+			onNewAction.broadcast(sl::net::Action::None);
+			break;
 		default: break;
 		}
 	}

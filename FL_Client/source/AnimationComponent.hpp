@@ -32,6 +32,8 @@ public:
 
 	const std::shared_ptr<sf::Texture> getCurrentAnimationFrame(AnimationType type, const sf::Vector2i& direction);
 
+	const std::shared_ptr<sf::Texture> getCurrentAnimationFramePlayingAnimation(AnimationType type, const sf::Vector2i& direction);
+
 	COMPONENT_TYPE(AnimationComponent);
 private:
 	std::shared_ptr<const AnimationsStorage> animationsStorage;

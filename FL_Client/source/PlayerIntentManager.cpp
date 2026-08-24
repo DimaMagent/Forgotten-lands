@@ -84,25 +84,31 @@ bool PlayerIntentManager::setMovingDirection()
 
 void PlayerIntentManager::actionCheck(sl::net::Action action, const sl::WorldBase& world)
 {
-	if (action == sl::net::Action::None) { return; }
+	if (!attackSystem) {
+		#ifdef DEBUG
+		game_logger->error("PlayerIntentManager::actionCheck cannot call tryMeleeAttack: attackSystem is not valid");
+		#endif
+		return;
+	}
+
+	auto playerEn = playerEntity.lock();
+
+	if (!playerEn)
+	{
+		#ifdef DEBUG
+		game_logger->warn("PlayerIntentManager::actionCheck cannot call tryMeleeAttack: playerEntity is not valid");
+		#endif
+		return;
+	}
+
+	if (action == sl::net::Action::None) 
+	{ 
+		attackSystem->attackEnd(*playerEn);
+		return; 
+	}
 
 	if (action == sl::net::Action::Attack) {
-		if (!attackSystem) {
-			#ifdef DEBUG
-			game_logger->error("PlayerIntentManager::actionCheck cannot call tryMeleeAttack: attackSystem is not valid");
-			#endif
-			return; 
-		}
 
-		auto playerEn = playerEntity.lock();
-
-		if (!playerEn)
-		{
-			#ifdef DEBUG
-			game_logger->warn("PlayerIntentManager::actionCheck cannot call tryMeleeAttack: playerEntity is not valid");
-			#endif
-			return; 
-		}
 
 		bool isSucess = attackSystem->tryMeleeAttack(*playerEn, world);
 

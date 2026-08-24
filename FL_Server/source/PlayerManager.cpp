@@ -43,9 +43,17 @@ void PlayerManager::intentionCheck(sl::Entity& entity, sl::Intentions intentions
 	#endif // DEBUG
 
 	for (auto& action : intentions.actions) {
-		if (action == sl::net::Action::None) { continue; }
+		if (action == sl::net::Action::None) { 
+			if (!attackSystem) { continue; }
+
+			attackSystem->attackEnd(entity);
+
+			continue; 
+		}
 		if (action == sl::net::Action::Attack)
 		{
+			if (!attackSystem) { continue; }
+
 			isSuccess = attackSystem->tryMeleeAttack(entity, world);
 
 			#ifdef DEBUG

@@ -9,6 +9,7 @@
 AnimationSystem::AnimationSystem(sl::EntityStorage& entities):
 	entities(entities)
 {
+	currentAnimationType = AnimationType::Idle;
 }
 
 void AnimationSystem::onUpdate(float updateTime) {
@@ -22,12 +23,17 @@ void AnimationSystem::onUpdate(float updateTime) {
 
 AnimationType AnimationSystem::selectAnimationType(const sl::StateComponent& stateComp)
 {
-	if (stateComp.getCurrentLifeState() == sl::LifeState::Death) { return AnimationType::Death; }
-	if (stateComp.getCurrentActionState() == sl::ActionState::MeleeAttack) { return AnimationType::Attack; }
 	if (stateComp.getCurrentMovementState() == sl::MovementState::Run) { return AnimationType::Run; }
 	if (stateComp.getCurrentMovementState() == sl::MovementState::Walk) { return AnimationType::Walk; }
 	if (stateComp.getCurrentActionState() == sl::ActionState::Talk) { return AnimationType::Talk; }
 	if (stateComp.getCurrentActionState() == sl::ActionState::Rest) { return AnimationType::Rest; }
+	return AnimationType::Idle;
+}
+
+AnimationType AnimationSystem::selectInstantAnimationType(const sl::StateComponent& stateComp)
+{
+	if (stateComp.getCurrentLifeState() == sl::LifeState::Death) { return AnimationType::Death; }
+	if (stateComp.getCurrentActionState() == sl::ActionState::MeleeAttack) { return AnimationType::Attack; }
 	return AnimationType::Idle;
 }
 
@@ -39,7 +45,16 @@ void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
 	sl::StateComponent* stateComp = entity.getComponent<sl::StateComponent>();
 	if (!stateComp) { return; }
 
-	AnimationType currentAnimationType = selectAnimationType(*stateComp);
+	AnimationType instantAnimtionType = selectInstantAnimationType(*stateComp);
+
+	if (instantAnimtionType != AnimationType::Idle && instantAnimtionType != currentAnimationType) {
+		isAnimationPlaying = true;
+		currentAnimationType = instantAnimtionType;
+	}
+
+	if (!isAnimationPlaying) {
+		currentAnimationType = selectAnimationType(*stateComp);
+	}
 
 	if (!animComp->addTimeSinceLastUpdate(currentAnimationType, updateTime)) {
 		std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
@@ -65,7 +80,23 @@ void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
 
 		if (!rendComp || !trComp) { return; }
 
-		const std::shared_ptr<sf::Texture> texture = animComp->getCurrentAnimationFrame(currentAnimationType, trComp->getRotation());
+		std::shared_ptr<sf::Texture> texture;
+
+		if (currentAnimationType == AnimationType::Attack)
+		{
+			
+			texture = animComp->getCurrentAnimationFramePlayingAnimation(currentAnimationType, trComp->getRotation());
+			if (texture)
+			{
+				rendComp->setCurrentTexture(texture);
+				return;
+			}
+
+			currentAnimationType = AnimationType::Idle;
+			isAnimationPlaying = false;
+		}
+
+		texture = animComp->getCurrentAnimationFrame(currentAnimationType, trComp->getRotation());
 
 		if (!texture) {
 			std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
