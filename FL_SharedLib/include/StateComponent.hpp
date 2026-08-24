@@ -24,9 +24,6 @@ namespace sl {
 		Death
 	};
 
-	
-
-
 	class StateComponent : public Component, public sl::Serializable {
 	public:
 		StateComponent();

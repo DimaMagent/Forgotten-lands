@@ -8,6 +8,7 @@
 #include "CollisionComponent.hpp"
 #include "HealthComponent.hpp"
 #include "StateComponent.hpp"
+#include "StunComponent.hpp"
 #include "Aabb.hpp"
 #include "Entity.hpp"
 #include "CollisionCellMap.hpp"
@@ -35,7 +36,10 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
     sl::StateComponent* stateComp = attackingEntity.getComponent<sl::StateComponent>();
     if (!stateComp) { return false; }
 
-    if (stateComp->stunStateCheck(StunState::Disarmed)) { return true; }
+    sl::StunComponent* stunComp = attackingEntity.getComponent<sl::StunComponent>();
+    if (!stunComp) { return false; }
+
+    if (stunComp->hasStun(StunState::Disarmed)) { return true; }
 
     const auto WorldMap = world.getWorldMap();
 
@@ -61,7 +65,7 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
     if (!isSuccess) { return false; }
 
     stateComp->setCurrentActionState(sl::ActionState::MeleeAttack);
-    stateComp->addStunState(sl::StunState::Immobilized);
+    stunComp->addWithinStun(sl::StunState::Immobilized);
 
     for (uint32_t id : reusableEntityIdsBuffer) {
 
@@ -148,10 +152,12 @@ bool sl::AttackSystem::isAABBinAttackCone(
 
 void sl::AttackSystem::attackEnd(sl::Entity& attackingEntity) {
     sl::StateComponent* stateComp = attackingEntity.getComponent<sl::StateComponent>();
+    if (!stateComp) { return; }
 
-    if (stateComp)
-    {
-        stateComp->setCurrentActionState(sl::ActionState::None);
-        stateComp->removeStunState(sl::StunState::Immobilized);
-    }
+    sl::StunComponent* stunComp = attackingEntity.getComponent<sl::StunComponent>();
+    if (!stunComp) { return; }
+
+    stateComp->setCurrentActionState(sl::ActionState::None);
+    stunComp->removeWithinStun(sl::StunState::Immobilized);
+
 }

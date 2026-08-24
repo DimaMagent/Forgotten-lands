@@ -1,15 +1,15 @@
 #include "pch.h"
 #include "StunComponent.hpp"
+#include <type_traits>
 
 sl::StunComponent::StunComponent()
 {
-	currentStans = StunState::None;
-	flagCounterContainer = FlagCounterContainer<std::underlying_type_t<StunState>, 2>();
+	currentStuns = StunState::None;
 }
 
 void sl::StunComponent::addWithinStun(StunState state)
 {
-	flagCounterContainer.AddFlag(static_cast<std::underlying_type_t<StunState>>(state));
+	flagCounterContainer.AddFlag(state);
 	calculateCurrentStuns();
 }
 
@@ -21,7 +21,7 @@ void sl::StunComponent::addExternalStun(StunState state, uint32_t stunningEnityI
 
 void sl::StunComponent::removeWithinStun(StunState state)
 {
-	flagCounterContainer.RemoveFlag(static_cast<std::underlying_type_t<StunState>>(state));
+	flagCounterContainer.RemoveFlag(state);
 
 	calculateCurrentStuns();
 }

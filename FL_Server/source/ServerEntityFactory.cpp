@@ -4,6 +4,7 @@
 #include "MovementComponent.hpp"
 #include "StateComponent.hpp"
 #include "HealthComponent.hpp"
+#include "StunComponent.hpp"
 #include "CollisionComponent.hpp"
 #include "WeaponComponent.hpp"
 #include "Entity.hpp"
@@ -48,6 +49,11 @@ void ServerEntityFactory::registrationComponents()
 				js.value("attackDamage", 0.0f)
 			);
 			});
+
+		registry.try_emplace(sl::StunComponent::ComponentName, [](sl::Entity& entity, const json& js) {
+			entity.addComponent<sl::StunComponent>();
+			});
+
 	}
 	catch(std::exception& e){
 		std::shared_ptr<spdlog::logger> system_logger = spdlog::get("system");

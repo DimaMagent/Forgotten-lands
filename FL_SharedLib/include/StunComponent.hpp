@@ -2,7 +2,6 @@
 #include "Component.hpp"
 #include "Serializable.hpp"
 #include "FlagCounterConteiner.hpp"
-#include <type_traits>
 #include <unordered_map>
 
 namespace sl {
@@ -66,7 +65,7 @@ namespace sl {
 		StunState currentStuns;
 
 		//stores the stuns effects received from within
-		FlagCounterContainer<std::underlying_type_t<StunState>, 2> flagCounterContainer;
+		FlagCounterContainer<StunState, 2> flagCounterContainer;
 
 		//stores id of the stuns entity and stunning they inflicted
 		std::unordered_map<uint32_t, StunState> activeEffects;

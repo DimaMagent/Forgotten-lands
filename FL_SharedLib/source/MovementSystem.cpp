@@ -3,6 +3,7 @@
 #include "MovementSystem.hpp"
 #include "MovementComponent.hpp"
 #include "TransformComponent.hpp"
+#include "StunComponent.hpp"
 #include "CollisionComponent.hpp"
 #include "StateComponent.hpp"
 #include "CollisionCellMap.hpp"
@@ -24,8 +25,9 @@ void sl::MovementSystem::movingWithCollisionCheck(float updateTime, sl::Entity& 
     sl::MovementComponent* movComp = entity.getComponent<sl::MovementComponent>();
     sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
     sl::StateComponent* stateComp = entity.getComponent<sl::StateComponent>();
+    sl::StunComponent* stunComp = entity.getComponent<sl::StunComponent>();
 
-    if (!movComp || !trComp || !stateComp) return;
+    if (!movComp || !trComp || !stateComp || !stunComp) return;
 
     if (!movComp->isMoving()) {
         movComp->braking(updateTime);
@@ -36,7 +38,7 @@ void sl::MovementSystem::movingWithCollisionCheck(float updateTime, sl::Entity& 
         return;
     }
 
-    if (stateComp->stunStateCheck(StunState::Immobilized)) { return; }
+    if (stunComp->hasStun(StunState::Immobilized)) { return; }
 
     sf::Vector2f delta = movComp->calculateDelta(updateTime);
     sf::Vector2f currentPos = trComp->getPosition();
