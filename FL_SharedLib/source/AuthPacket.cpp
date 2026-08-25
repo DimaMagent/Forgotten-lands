@@ -6,9 +6,9 @@ namespace sl::net {
     bool AuthData::write(std::vector<uint8_t>& out) const
     {
         header.write(out);
-        net::write_uint32_t(out, playerEntityID);
+        net::write<uint32_t>(out, playerEntityID);
         for (uint8_t d : statData) {
-            net::write_uint8_t(out, d);
+            net::write<uint8_t>(out, d);
         }
         return true;
     }
@@ -17,7 +17,7 @@ namespace sl::net {
     {
         if (offset + sl::net::Header::HEADER_SIZE + sizeof(playerEntityID) <= in.size()) {
             header.read(in, offset);
-            playerEntityID = net::read_uint32_t(in, offset);
+            playerEntityID = net::read<uint32_t>(in, offset);
             if (offset + statData.size() < in.size()) {
                 statData.reserve(in.size());
                 statData.insert(statData.end(), in.begin() + offset, in.end());

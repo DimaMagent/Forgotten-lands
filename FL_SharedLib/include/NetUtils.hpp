@@ -8,28 +8,16 @@
 
 namespace sl::net
 {
-	// write functions return the size of the written data
-	uint32_t write_uint8_t(std::vector<uint8_t>& out, uint8_t value);
-	uint32_t write_uint16_t(std::vector<uint8_t>& out, uint16_t value);
-	uint32_t write_uint32_t(std::vector<uint8_t>& out, uint32_t value);
-	uint8_t read_uint8_t(const std::vector<uint8_t>& in, size_t& offset);
-	uint16_t read_uint16_t(const std::vector<uint8_t>& in, size_t& offset);
-	uint32_t read_uint32_t(const std::vector<uint8_t>& in, size_t& offset);
-
-	uint32_t write_float(std::vector<uint8_t>& out, float value);
-	float read_float(const std::vector<uint8_t>& in, size_t& offset);
-
 	template<typename T>
-	using uint_equivalent_t = std::make_unsigned_t<
+	using uint_equivalent_t = 
 		std::conditional_t<sizeof(T) == 1, uint8_t,
 		std::conditional_t<sizeof(T) == 2, uint16_t,
-		std::conditional_t<sizeof(T) == 4, uint32_t, uint64_t>>>
-		>;
+		std::conditional_t<sizeof(T) == 4, uint32_t, uint64_t>>>;
 
 	template<typename T>
 	concept Serializable = std::is_trivially_copyable_v<T> && !std::is_pointer_v<T>;
 
-	//Big-endian recording
+	//platform-independent recording
 	template<Serializable T>
 	size_t write(std::vector<uint8_t>& out, T value) {
 		using UIntType = uint_equivalent_t<T>;
@@ -42,7 +30,7 @@ namespace sl::net
 		return sizeof(T);
 	}
 
-	// reading in big-endian format
+	//platform-independent reading
 	template<Serializable T>
 	T read(const std::vector<uint8_t>& in, size_t& offset) {
 		if (offset + sizeof(T) > in.size()) {

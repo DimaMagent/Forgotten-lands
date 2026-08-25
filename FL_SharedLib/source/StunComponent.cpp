@@ -68,22 +68,22 @@ void sl::StunComponent::calculateCurrentStuns()
 
 void sl::StunComponent::serialize(std::vector<uint8_t>& out) const
 {
-	sl::net::write_uint32_t(out, TypeId);
-	sl::net::write_uint32_t(out, getDeserializeDataSize());
-	sl::net::write_uint8_t(out, static_cast<uint8_t>(currentStuns));
+	sl::net::write<uint32_t>(out, TypeId);
+	sl::net::write<uint32_t>(out, getDeserializeDataSize());
+	sl::net::write<std::underlying_type_t<StunState>>(out, static_cast<std::underlying_type_t<StunState>>(currentStuns));
 }
 
 bool sl::StunComponent::deserialize(const std::vector<uint8_t>& out, size_t& offset)
 {
 	if (offset + getDeserializeDataSize() > out.size()) { return false; }
-	currentStuns = static_cast<StunState>(sl::net::read_uint8_t(out, offset));
+	currentStuns = static_cast<StunState>(sl::net::read<std::underlying_type_t<StunState>>(out, offset));
 
 	return true;
 }
 
 uint32_t sl::StunComponent::getSerializeDataSize() const
 {
-	return sizeof(uint8_t) + sizeof(TypeId) + sizeof(uint32_t);
+	return sizeof(StunState) + sizeof(TypeId) + sizeof(uint32_t);
 }
 
 uint32_t sl::StunComponent::getDeserializeDataSize() const

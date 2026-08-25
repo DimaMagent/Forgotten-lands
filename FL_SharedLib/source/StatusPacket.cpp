@@ -26,7 +26,7 @@ namespace sl::net {
 	{
 		header.write(out);
 		for (uint8_t d : data) {
-			write_uint8_t(out, d);
+			sl::net::write<uint8_t>(out, d);
 		}
 		return true;
 	}

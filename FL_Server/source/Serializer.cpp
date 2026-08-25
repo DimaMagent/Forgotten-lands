@@ -49,10 +49,10 @@ std::vector<uint8_t> Serializer::serializeEntity(const sl::Entity& en) const
 	std::vector<uint8_t> localBuf;
 
 	uint32_t entityId = en.getId();
-	sl::net::write_uint32_t(localBuf, entityId);
+	sl::net::write<uint32_t>(localBuf, entityId);
 
 	uint32_t entityType = static_cast<uint32_t>(en.getEntityType());
-	sl::net::write_uint32_t(localBuf, entityType);
+	sl::net::write<uint32_t>(localBuf, entityType);
 
 	std::vector<uint8_t> entityLocalBuf;
 	uint32_t entityDataSize = 0;
@@ -62,7 +62,7 @@ std::vector<uint8_t> Serializer::serializeEntity(const sl::Entity& en) const
 		s.serialize(entityLocalBuf);
 		});
 
-	sl::net::write_uint32_t(localBuf, entityDataSize);
+	sl::net::write<uint32_t>(localBuf, entityDataSize);
 
 	localBuf.insert(localBuf.end(), entityLocalBuf.begin(), entityLocalBuf.end());
 

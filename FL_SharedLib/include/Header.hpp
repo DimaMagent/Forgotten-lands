@@ -1,6 +1,7 @@
 #pragma once
 #include <cstdint>
 #include <vector>
+#include <type_traits>
 #include "NetUtils.hpp"
 #include "PacketDataTypes.hpp"
 
@@ -9,7 +10,7 @@ namespace sl::net {
 	struct HeaderData {
 		uint32_t size = 0;
 		uint16_t sequenceNumber = 0;
-		uint8_t type = 0;
+		std::underlying_type_t<PacketType> type = 0;
 		uint32_t token = 0;
 	};
 

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "StateComponent.hpp"
 #include "NetUtils.hpp"
+#include <type_traits>
 
 sl::StateComponent::StateComponent()
 {
@@ -26,11 +27,11 @@ void sl::StateComponent::setCurrentLifeState(LifeState newState)
 
 void sl::StateComponent::serialize(std::vector<uint8_t>& out) const
 {
-	sl::net::write_uint32_t(out, TypeId);
-	sl::net::write_uint32_t(out, getDeserializeDataSize());
-	sl::net::write_uint8_t(out, static_cast<uint8_t>(actionState));
-	sl::net::write_uint8_t(out, static_cast<uint8_t>(movementState));
-	sl::net::write_uint8_t(out, static_cast<uint8_t>(lifeState));
+	sl::net::write<uint32_t>(out, TypeId);
+	sl::net::write<uint32_t>(out, getDeserializeDataSize());
+	sl::net::write<std::underlying_type_t<ActionState>>(out, static_cast<std::underlying_type_t<ActionState>>(actionState));
+	sl::net::write<std::underlying_type_t<MovementState>>(out, static_cast<std::underlying_type_t<MovementState>>(movementState));
+	sl::net::write<std::underlying_type_t<LifeState>>(out, static_cast<std::underlying_type_t<LifeState>>(lifeState));
 
 }
 
@@ -38,9 +39,9 @@ bool sl::StateComponent::deserialize(const std::vector<uint8_t>& out, size_t& of
 {
 	if (offset + getDeserializeDataSize() > out.size()) { return false; }
 
-	actionState = static_cast<ActionState>(sl::net::read_uint8_t(out, offset));
-	movementState = static_cast<MovementState>(sl::net::read_uint8_t(out, offset));
-	lifeState = static_cast<LifeState>(sl::net::read_uint8_t(out, offset));
+	actionState = static_cast<ActionState>(sl::net::read<std::underlying_type_t<ActionState>>(out, offset));
+	movementState = static_cast<MovementState>(sl::net::read<std::underlying_type_t<MovementState>>(out, offset));
+	lifeState = static_cast<LifeState>(sl::net::read<std::underlying_type_t<LifeState>>(out, offset));
 
 	return true;
 }

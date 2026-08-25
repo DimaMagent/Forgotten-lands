@@ -18,19 +18,19 @@ sl::WeaponComponent::WeaponComponent(float attackDistance, float attackDegrees, 
 
 void sl::WeaponComponent::serialize(std::vector<uint8_t>& out) const
 {
-	sl::net::write_uint32_t(out, TypeId);
-	sl::net::write_uint32_t(out, getDeserializeDataSize());
-	sl::net::write_float(out, attackDistance);
-	sl::net::write_float(out, attackDegrees);
-	sl::net::write_float(out, attackDamage);
+	sl::net::write<uint32_t>(out, TypeId);
+	sl::net::write<uint32_t>(out, getDeserializeDataSize());
+	sl::net::write<float>(out, attackDistance);
+	sl::net::write<float>(out, attackDegrees);
+	sl::net::write<float>(out, attackDamage);
 }
 
 bool sl::WeaponComponent::deserialize(const std::vector<uint8_t>& out, size_t& offset)
 {
 	if (offset + getDeserializeDataSize() > out.size()) { return false; }
-	attackDistance = sl::net::read_float(out, offset);
-	attackDegrees = sl::net::read_float(out, offset);
-	attackDamage = sl::net::read_float(out, offset);
+	attackDistance = sl::net::read<float>(out, offset);
+	attackDegrees = sl::net::read<float>(out, offset);
+	attackDamage = sl::net::read<float>(out, offset);
 
 	return true;
 }

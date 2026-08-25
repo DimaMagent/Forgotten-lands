@@ -59,17 +59,17 @@ void sl::MovementComponent::setVelocityDirection(const sf::Vector2i& direction)
 
 void sl::MovementComponent::serialize(std::vector<uint8_t>& out) const
 {
-	sl::net::write_uint32_t(out, TypeId);
-	sl::net::write_uint32_t(out, getDeserializeDataSize());
-	sl::net::write_float(out, currentSpeed);
-	sl::net::write_float(out, maxSpeed);
+	sl::net::write<uint32_t>(out, TypeId);
+	sl::net::write<uint32_t>(out, getDeserializeDataSize());
+	sl::net::write<float>(out, currentSpeed);
+	sl::net::write<float>(out, maxSpeed);
 }
 
 bool sl::MovementComponent::deserialize(const std::vector<uint8_t>& out, size_t& offset)
 {
 	if (offset + getDeserializeDataSize() > out.size()) { return false; }
-	currentSpeed = sl::net::read_float(out, offset);
-	maxSpeed = sl::net::read_float(out, offset);
+	currentSpeed = sl::net::read<float>(out, offset);
+	maxSpeed = sl::net::read<float>(out, offset);
 	return true;
 }
 

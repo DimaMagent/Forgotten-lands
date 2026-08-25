@@ -22,17 +22,17 @@ void sl::HealthComponent::takeDamage(float damage)
 
 void sl::HealthComponent::serialize(std::vector<uint8_t>& out) const
 {
-	sl::net::write_uint32_t(out, TypeId);
-	sl::net::write_uint32_t(out, getDeserializeDataSize());
-	sl::net::write_float(out, maxHealth);
-	sl::net::write_float(out, currentHealth);
+	sl::net::write<uint32_t>(out, TypeId);
+	sl::net::write<uint32_t>(out, getDeserializeDataSize());
+	sl::net::write<float>(out, maxHealth);
+	sl::net::write<float>(out, currentHealth);
 }
 
 bool sl::HealthComponent::deserialize(const std::vector<uint8_t>& out, size_t& offset)
 {
 	if (offset + getDeserializeDataSize() > out.size()) { return false; }
-	maxHealth = sl::net::read_float(out, offset);
-	currentHealth = sl::net::read_float(out, offset);
+	maxHealth = sl::net::read<float>(out, offset);
+	currentHealth = sl::net::read<float>(out, offset);
 
 	return true;
 }

@@ -26,11 +26,11 @@ sl::CollisionType sl::CollisionComponent::isRelativeCollisionWith(float posX, fl
 
 void sl::CollisionComponent::serialize(std::vector<uint8_t>& out) const
 {
-	sl::net::write_uint32_t(out, TypeId);
-	sl::net::write_uint32_t(out, getDeserializeDataSize());
+	sl::net::write<uint32_t>(out, TypeId);
+	sl::net::write<uint32_t>(out, getDeserializeDataSize());
 	writeAABB(out, aabb);
-	sl::net::write_uint8_t(out, static_cast<uint8_t>(collisionType));
-	sl::net::write_uint8_t(out, staticCollisioner);
+	sl::net::write<std::underlying_type_t<CollisionType>>(out, static_cast<std::underlying_type_t<CollisionType>>(collisionType));
+	sl::net::write<uint8_t>(out, staticCollisioner);
 
 }
 
@@ -38,8 +38,8 @@ bool sl::CollisionComponent::deserialize(const std::vector<uint8_t>& out, size_t
 {
 	if (offset + getDeserializeDataSize() > out.size()) { return false; }
 	aabb = readAABB(out, offset);
-	collisionType = static_cast<CollisionType>(sl::net::read_uint8_t(out, offset));
-	staticCollisioner = sl::net::read_uint8_t(out, offset);
+	collisionType = static_cast<CollisionType>(sl::net::read<std::underlying_type_t<CollisionType>>(out, offset));
+	staticCollisioner = sl::net::read<uint8_t>(out, offset);
 
 	return true;
 }
@@ -64,20 +64,20 @@ sl::AABB sl::CollisionComponent::getRelativeAABB(const AABB& aabb, float posX, f
 
 void sl::CollisionComponent::writeAABB(std::vector<uint8_t>& out, const AABB& aabb) const
 {
-	sl::net::write_float(out, aabb.minX);
-	sl::net::write_float(out, aabb.minY);
-	sl::net::write_float(out, aabb.maxX);
-	sl::net::write_float(out, aabb.maxY);
+	sl::net::write<float>(out, aabb.minX);
+	sl::net::write<float>(out, aabb.minY);
+	sl::net::write<float>(out, aabb.maxX);
+	sl::net::write<float>(out, aabb.maxY);
 }
 
 sl::AABB sl::CollisionComponent::readAABB(const std::vector<uint8_t>& in, size_t& offset)
 {
 	sl::AABB aabb;
 
-	aabb.minX = sl::net::read_float(in, offset);
-	aabb.minY = sl::net::read_float(in, offset);
-	aabb.maxX = sl::net::read_float(in, offset);
-	aabb.maxY = sl::net::read_float(in, offset);
+	aabb.minX = sl::net::read<float>(in, offset);
+	aabb.minY = sl::net::read<float>(in, offset);
+	aabb.maxX = sl::net::read<float>(in, offset);
+	aabb.maxY = sl::net::read<float>(in, offset);
 
 	return aabb;
 }

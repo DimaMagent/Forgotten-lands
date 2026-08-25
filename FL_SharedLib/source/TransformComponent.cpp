@@ -53,8 +53,8 @@ void sl::TransformComponent::setRotation(const sf::Vector2i& rotation)
 
 void sl::TransformComponent::serialize(std::vector<uint8_t>& out) const
 {
-	sl::net::write_uint32_t(out, TypeId);
-	sl::net::write_uint32_t(out, getDeserializeDataSize());
+	sl::net::write<uint32_t>(out, TypeId);
+	sl::net::write<uint32_t>(out, getDeserializeDataSize());
 	serializeVector2f(out, position);
 	serializeVector2i(out, rotation);
 }
