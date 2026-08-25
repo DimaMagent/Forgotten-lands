@@ -12,6 +12,7 @@
 #include <spdlog/async.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h> 
+#include "DefferedFunctionStorage.hpp"
 
 Client::Client() 
 {
@@ -30,7 +31,9 @@ Client::Client()
 		controller->onSetMovementDirection,
 		world->OnSetPlayerEntity
 	);
+	tickTimer = std::make_shared<asio::steady_timer>(*clientContext);
 
+	sl::DefferedFunctionStorage::init(*clientContext);
 	netManager->OnAccept.addFunction([this]() {this->whenClientAccepted(); });
 	entityFactory->initialize();
 	window->setVerticalSyncEnabled(true);
@@ -47,7 +50,7 @@ void Client::start()
 		isRunningFlag = true;
 		netManager->doConnect();
 		std::thread ClientThread([this]() {clientContext->run(); });
-		sf::Clock timer;
+		clock.restart();
 		for (;;) {
 			while (const std::optional<sf::Event> event = window->pollEvent()) {
 				inputManager->handleEvent(event.value());
@@ -59,7 +62,7 @@ void Client::start()
 			if (!window->isOpen()) {
 				break;
 			}
-			tick(timer.restart().asSeconds());
+			sheduleTick();
 			window->clear(sf::Color::Black);
 			world->render();
 			window->display();
@@ -134,4 +137,13 @@ void Client::tick(float dt) {
 			system_logger->error("Client::tick: world is not valid, world's update and playerIntentManager's tick cannot calls");
 		#endif // DEBUG
 	}
+}
+
+void Client::sheduleTick() {
+	tickTimer->expires_at(tickTimer->expiry() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(1.0 / 60.0)));
+	tickTimer->async_wait([this](const asio::error_code& ec) {
+		if (ec) return;
+		tick(clock.restart().asSeconds());
+		sheduleTick();
+		});
 }

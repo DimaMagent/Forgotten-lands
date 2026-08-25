@@ -14,6 +14,7 @@
 #include "CollisionCellMap.hpp"
 #include "WorldBase.hpp"
 #include "WorldMap.hpp"
+#include "DefferedFunctionStorage.hpp"
 
 
 
@@ -69,7 +70,6 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
     }
     stateComp->setCurrentActionState(sl::ActionState::MeleeAttack);
 
-
     for (uint32_t id : reusableEntityIdsBuffer) {
 
         auto entityOpt = world.getEntityById(id);
@@ -112,6 +112,7 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
     }
     temporaryIgnoreList.clear();
     reusableEntityIdsBuffer.clear();
+    //DefferedFunctionStorage::addDefferedCall([](){std::cout << "call\n"; }, std::chrono::milliseconds(3000));
 
     return true;
 }

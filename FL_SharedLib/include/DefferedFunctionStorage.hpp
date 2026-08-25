@@ -5,77 +5,81 @@
 #include <asio\steady_timer.hpp>
 #include <cstdint>
 
-template<typename T>
-concept PODOrPrimitive =
-	!std::is_pointer_v<T> &&
-	!std::is_reference_v<T> &&
-	(std::is_fundamental_v<T> || std::is_enum_v<T>);
+namespace sl {
 
-template<typename... Args>
-concept SafeTimerArgs = (PODOrPrimitive<Args> && ...);
+	template<typename T>
+	concept PODOrPrimitive =
+		!std::is_pointer_v<T> &&
+		!std::is_reference_v<T> &&
+		(std::is_fundamental_v<T> || std::is_enum_v<T>);
 
-class DefferedFunctionStorage {
-public:
-	DefferedFunctionStorage() = delete;
+	template<typename... Args>
+	concept SafeTimerArgs = (PODOrPrimitive<Args> && ...);
 
-	static void init(asio::io_context& io_ctx) {
-		io = &io_ctx;
-	}
+	template<typename F, typename... Args>
+	concept CallableWith = std::invocable<F, Args...>;
 
-	static void addDefferedCall(std::function<void()> func, std::chrono::milliseconds time) {
-		if (!io) return;
+	struct LoopOptions {
+		LoopOptions(bool isEndless, uint8_t loopCount);
 
-		auto timer = std::make_shared<asio::steady_timer>(*io, time);
-		timer->async_wait([timer, callback = std::move(func)](const asio::error_code& ec) {
-			if (!ec && callback) {
-				callback();
-			}
-			});
-	}
+		bool isEndless = true;
+		uint8_t loopCount = 2;
+	};
 
-	template<SafeTimerArgs... Args>
-	static void addDefferedCall(std::function<void(Args...)> func, std::chrono::milliseconds time, Args... args) {
-		if (!io) return;
+	class DefferedFunctionStorage {
+	public:
+		static void init(asio::io_context& io_ctx) {
+			io = &io_ctx;
+		}
 
-		auto boundTask = [cb = std::move(func), ...boundArgs = args]() mutable {
-			cb(boundArgs...);
-			};
+		static void addDefferedCall(std::function<void()>&& func, std::chrono::milliseconds time);
 
-		addDefferedCall(std::move(boundTask), time);
-	}
+		template<SafeTimerArgs... Args, CallableWith<Args...> Func>
+		static void addDefferedCall(Func&& func, std::chrono::milliseconds time, Args... args) {
+			if (!io) return;
 
-	template<SafeTimerArgs... Args>
-	static void addLoopedDefferedCall(std::function<void(Args...)> func,
-		std::chrono::milliseconds firstTimeCall,
-		std::chrono::milliseconds delay,
-		bool isEndless = true,
-		uint8_t loopCount = 2,
-		Args... args)
-	{
-		if (!io) return;
+			auto boundTask = [cb = std::forward<Func>(func), ...boundArgs = args]() mutable {
+				cb(boundArgs...);
+				};
 
-		auto boundTask = [cb = std::move(func), ...boundArgs = args]() mutable {
-			cb(boundArgs...);
-			};
+			addDefferedCall(std::function<void()>(std::move(boundTask)), time);
+		}
 
-		auto timer = std::make_shared<asio::steady_timer>(*io, firstTimeCall);
-		auto self = std::make_shared<std::function<void(const asio::error_code&)>>();
-		auto counter = std::make_shared<uint8_t>(0);
+		template<SafeTimerArgs... Args, CallableWith<Args...> Func>
+		static void addLoopedDefferedCall(Func&& func,
+			std::chrono::milliseconds firstTimeCall,
+			std::chrono::milliseconds delay,
+			bool isEndless,
+			uint8_t loopCount,
+			Args... args)
+		{
+			if (!io) return;
 
-		*self = [timer, task = std::move(boundTask), delay, isEndless, loopCount, counter, self](const asio::error_code& ec) mutable {
-			if (ec) return;
+			auto boundTask = [cb = std::forward<Func>(func), ...boundArgs = args]() mutable {
+				cb(boundArgs...);
+				};
 
-			task();
+			auto timer = std::make_shared<asio::steady_timer>(*io, firstTimeCall);
+			auto self = std::make_shared<std::function<void(const asio::error_code&)>>();
+			auto counter = std::make_shared<uint8_t>(0);
 
-			if (isEndless || (++(*counter) < loopCount)) {
-				timer->expires_at(timer->expiry() + delay);
-				timer->async_wait(*self);
-			}
-			};
+			*self = [timer, task = std::function<void()>(std::move(boundTask)), delay, isEndless, loopCount, counter, self](const asio::error_code& ec) mutable {
+				if (ec) return;
 
-		timer->async_wait(*self);
-	}
+				task();
 
-private:
-	inline static asio::io_context* io = nullptr;
-};
+				if (isEndless || (++(*counter) < loopCount)) {
+					timer->expires_at(timer->expiry() + delay);
+					timer->async_wait(*self);
+				}
+				};
+
+			timer->async_wait(*self);
+		}
+
+	private:
+		DefferedFunctionStorage() = delete;
+
+		inline static asio::io_context* io = nullptr;
+	};
+}

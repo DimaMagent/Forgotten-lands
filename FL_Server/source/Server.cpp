@@ -18,6 +18,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h> 
 #include "connectionEvents.hpp"
+#include "DefferedFunctionStorage.hpp"
 
 
 Server::Server(short port)
@@ -35,6 +36,7 @@ Server::Server(short port)
 	entityFactory = std::make_unique<ServerEntityFactory>();
 	tickTimer = std::make_shared<asio::steady_timer>(*serverContext);
 
+	sl::DefferedFunctionStorage::init(*serverContext);
 	entityFactory->initialize();
 	netManager->OnAccept.addFunction([this](uint32_t token) {onClientAccept(token); });
 }

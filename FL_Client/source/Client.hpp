@@ -40,6 +40,9 @@ private:
 	std::unique_ptr<Controller> controller;
 	std::unique_ptr<PlayerIntentManager> playerIntentManager;
 
+	std::shared_ptr<asio::steady_timer> tickTimer;
+	sf::Clock clock;
+
 	bool isRunningFlag = false;
 
 	void whenClientAccepted();
@@ -47,4 +50,6 @@ private:
 	void initLogging();
 
 	void tick(float dt);
+
+	void sheduleTick();
 };
