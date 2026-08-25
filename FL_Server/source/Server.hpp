@@ -4,6 +4,7 @@
 #include <vector>
 #include <memory>
 #include <spdlog/logger.h>
+#include <SFML/System/Clock.hpp>
 #include "TimerHandle.hpp"
 
 class DataProcessorManager;
@@ -16,7 +17,6 @@ class ServerEntityFactory;
 namespace asio {
 	class io_context;
 }
-
 class Server {
 public:
 	Server(short port);
@@ -37,9 +37,16 @@ private:
 	std::unique_ptr<ServerEntityFactory> entityFactory;
 	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;
 
+	std::shared_ptr<asio::steady_timer> tickTimer;
+	sf::Clock clock;
+
+	short port;
+
 	void onClientAccept(uint32_t token);
 	
 	void initLogging();
 
 	void tick(float dt);
+
+	void sheduleTick();
 };

@@ -24,6 +24,8 @@ Server::Server(short port)
 {
 	initLogging();
 
+	this->port = port;
+
 	serverContext = std::make_unique<asio::io_context>();
 	connectionEvents = std::make_unique<ConnectionEvents>();
 	world = std::make_unique<World>(*connectionEvents);
@@ -31,6 +33,7 @@ Server::Server(short port)
 	dataProcessorManager = std::make_unique<DataProcessorManager>(*playerManager);
 	netManager = std::make_unique<NetManager>(*serverContext, port, *dataProcessorManager, *connectionEvents);
 	entityFactory = std::make_unique<ServerEntityFactory>();
+	tickTimer = std::make_shared<asio::steady_timer>(*serverContext);
 
 	entityFactory->initialize();
 	netManager->OnAccept.addFunction([this](uint32_t token) {onClientAccept(token); });
@@ -43,20 +46,11 @@ Server::~Server() {
 
 void Server::start() {
 
-	spdlog::info("Server started on port 2001");
+	spdlog::info("Server started on port {}", port);
 
 	netManager->doAccept();
-	auto timer = std::make_shared<asio::steady_timer>(*serverContext);
-	sf::Clock clock;
-	std::function<void()> scheduleUpdate = [&, timer]() {
-		timer->expires_at(timer->expiry() + std::chrono::seconds(1/60));
-		timer->async_wait([&, timer](const asio::error_code& ec) {
-			if (ec) return;
-			tick(clock.restart().asSeconds());
-			scheduleUpdate();
-			});
-		};
-	scheduleUpdate();
+	clock.restart();
+	sheduleTick();
 	serverContext->run();
 	////std::thread ServerThread([this]() {serverContext->run(); });
 	//sf::Clock timer;
@@ -135,4 +129,14 @@ void Server::tick(float dt) {
 		system_logger->error("Server::tick: world is not valid, world's update and playerManager's tick cannot calls");
 	#endif // DEBUG
 	}
+}
+
+void Server::sheduleTick()
+{
+	tickTimer->expires_at(tickTimer->expiry() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(1.0 / 60.0)));
+	tickTimer->async_wait([this](const asio::error_code& ec) {
+		if (ec) return;
+		tick(clock.restart().asSeconds());
+		sheduleTick();
+		});
 }
