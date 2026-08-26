@@ -45,7 +45,9 @@ namespace sl {
 		static void addDefferedCall(std::function<void()>&& func, Duration time) {
 			if (!io) return;
 
-			auto timer = std::make_shared<asio::steady_timer>(*io, time);
+			auto steady_d = std::chrono::duration_cast<asio::steady_timer::duration>(time);
+			auto timer = std::make_shared<asio::steady_timer>(*io, steady_d);
+
 			timer->async_wait([timer, callback = std::move(func)](const asio::error_code& ec) {
 				if (!ec && callback) {
 					callback();
@@ -61,7 +63,8 @@ namespace sl {
 				cb(boundArgs...);
 				};
 
-			addDefferedCall(std::function<void()>(std::move(boundTask)), time);
+			auto steady_d = std::chrono::duration_cast<asio::steady_timer::duration>(time);
+			addDefferedCall(std::function<void()>(std::move(boundTask)), steady_d);
 		}
 
 		template<SafeTimerArgs... Args, CallableWith<Args...> Func, Time Duration>
@@ -78,17 +81,19 @@ namespace sl {
 				cb(boundArgs...);
 				};
 
-			auto timer = std::make_shared<asio::steady_timer>(*io, firstTimeCall);
+			auto steady_first = std::chrono::duration_cast<asio::steady_timer::duration>(firstTimeCall);
+			auto steady_delay = std::chrono::duration_cast<asio::steady_timer::duration>(delay);
+			auto timer = std::make_shared<asio::steady_timer>(*io, steady_first);
 			auto self = std::make_shared<std::function<void(const asio::error_code&)>>();
 			auto counter = std::make_shared<uint8_t>(0);
 
-			*self = [timer, task = std::function<void()>(std::move(boundTask)), delay, isEndless, loopCount, counter, self](const asio::error_code& ec) mutable {
+			*self = [timer, task = std::function<void()>(std::move(boundTask)), steady_delay, isEndless, loopCount, counter, self](const asio::error_code& ec) mutable {
 				if (ec) return;
 
 				task();
 
 				if (isEndless || (++(*counter) < loopCount)) {
-					timer->expires_at(timer->expiry() + delay);
+					timer->expires_at(timer->expiry() + steady_delay);
 					timer->async_wait(*self);
 				}
 				};

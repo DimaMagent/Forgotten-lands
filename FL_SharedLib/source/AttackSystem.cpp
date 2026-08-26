@@ -67,7 +67,9 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
 
     if (stateComp->getCurrentActionState() != sl::ActionState::MeleeAttack) {
         stunComp->addWithinStun(sl::StunState::Immobilized);
+        stunComp->addWithinStun(sl::StunState::Disarmed);
     }
+
     stateComp->setCurrentActionState(sl::ActionState::MeleeAttack);
 
     for (uint32_t id : reusableEntityIdsBuffer) {
@@ -112,7 +114,8 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
     }
     temporaryIgnoreList.clear();
     reusableEntityIdsBuffer.clear();
-    //DefferedFunctionStorage::addDefferedCall([](){std::cout << "call\n"; }, std::chrono::milliseconds(3000));
+
+    DefferedFunctionStorage::addDefferedCall([this, &world](uint32_t attackingEntityId) { attackEnd(attackingEntityId, world); }, weaponComp->getAttackCooldown(), attackingEntity.getGlobalId());
 
     return true;
 }
@@ -154,14 +157,19 @@ bool sl::AttackSystem::isAABBinAttackCone(
     return dot >= minDotCos;
 }
 
-void sl::AttackSystem::attackEnd(sl::Entity& attackingEntity) {
-    sl::StateComponent* stateComp = attackingEntity.getComponent<sl::StateComponent>();
+void sl::AttackSystem::attackEnd(uint32_t attackingEntityId, const sl::WorldBase& world) {
+    auto attackingEntity = world.getEntityById(attackingEntityId);
+
+    if (!attackingEntity.has_value()) { return; }
+
+    sl::StateComponent* stateComp = attackingEntity.value().get().getComponent<sl::StateComponent>();
     if (!stateComp) { return; }
 
-    sl::StunComponent* stunComp = attackingEntity.getComponent<sl::StunComponent>();
+    sl::StunComponent* stunComp = attackingEntity.value().get().getComponent<sl::StunComponent>();
     if (!stunComp) { return; }
 
     stateComp->setCurrentActionState(sl::ActionState::None);
     stunComp->removeWithinStun(sl::StunState::Immobilized);
+    stunComp->removeWithinStun(sl::StunState::Disarmed);
 
 }

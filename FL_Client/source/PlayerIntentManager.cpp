@@ -101,11 +101,7 @@ void PlayerIntentManager::actionCheck(sl::net::Action action, const sl::WorldBas
 		return;
 	}
 
-	if (action == sl::net::Action::None) 
-	{ 
-		attackSystem->attackEnd(*playerEn);
-		return; 
-	}
+	if (action == sl::net::Action::None) { return; }
 
 	if (action == sl::net::Action::Attack) {
 

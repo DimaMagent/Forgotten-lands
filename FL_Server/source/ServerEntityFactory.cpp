@@ -46,7 +46,8 @@ void ServerEntityFactory::registrationComponents()
 			entity.addComponent<sl::WeaponComponent>(
 				js.value("attackDistance", 0.0f),
 				js.value("attackDegrees", 0.0f),
-				js.value("attackDamage", 0.0f)
+				js.value("attackDamage", 0.0f),
+				js.value("attackCooldown", 3.0f)
 			);
 			});
 

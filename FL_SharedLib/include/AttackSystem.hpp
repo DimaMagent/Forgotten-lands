@@ -13,7 +13,7 @@ namespace sl {
 	public:
 		AttackSystem();
 		[[nodiscard]] bool tryMeleeAttack(sl::Entity& attackingEntity, const WorldBase& world);
-		void attackEnd(sl::Entity& attackingEntity);
+		void attackEnd(uint32_t attackingEntityId, const sl::WorldBase& world);
 
 	private:
 		std::vector<uint32_t> reusableEntityIdsBuffer;
