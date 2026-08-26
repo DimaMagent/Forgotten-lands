@@ -23,7 +23,7 @@
       "attackDistance": 100.0,
       "attackDegrees": 45.0,
       "attackDamage": 10.0,
-      "attackCooldown": 1.0
+      "attackCooldown": 3.0
     },
     "StunComponent": {}
   }

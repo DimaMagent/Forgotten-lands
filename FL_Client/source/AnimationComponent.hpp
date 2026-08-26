@@ -36,6 +36,8 @@ public:
 
 	const std::shared_ptr<sf::Texture> getCurrentAnimationFramePlayingAnimation(AnimationType type, const sf::Vector2i& direction, bool isReset = false);
 
+	size_t getFramesCountForCurrentAnimation(AnimationType type, const sf::Vector2i& direction) const;
+
 	COMPONENT_TYPE(AnimationComponent);
 private:
 

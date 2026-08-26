@@ -207,7 +207,7 @@
       "AllowedAnimation": {
         "Idle": 0.1,
         "Walk": 0.083,
-        "Attack": 0.083
+        "Attack": 0.0
       }
 
     }

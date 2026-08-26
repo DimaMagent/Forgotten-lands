@@ -3,6 +3,7 @@
 #include "Entity.hpp"
 #include "TransformComponent.hpp"
 #include "RenderComponent.hpp"
+#include "WeaponComponent.hpp"
 #include "StateComponent.hpp"
 #include "AnimationComponent.hpp"
 
@@ -22,6 +23,7 @@ void AnimationSystem::onUpdate(float updateTime) {
 
 AnimationType AnimationSystem::selectAnimationType(const sl::StateComponent& stateComp)
 {
+	if (stateComp.getCurrentActionState() == sl::ActionState::MeleeAttack) { return AnimationType::Attack; }
 	if (stateComp.getCurrentMovementState() == sl::MovementState::Run) { return AnimationType::Run; }
 	if (stateComp.getCurrentMovementState() == sl::MovementState::Walk) { return AnimationType::Walk; }
 	if (stateComp.getCurrentActionState() == sl::ActionState::Talk) { return AnimationType::Talk; }
@@ -32,7 +34,6 @@ AnimationType AnimationSystem::selectAnimationType(const sl::StateComponent& sta
 AnimationType AnimationSystem::selectInstantAnimationType(const sl::StateComponent& stateComp)
 {
 	if (stateComp.getCurrentLifeState() == sl::LifeState::Death) { return AnimationType::Death; }
-	if (stateComp.getCurrentActionState() == sl::ActionState::MeleeAttack) { return AnimationType::Attack; }
 	return AnimationType::Idle;
 }
 
@@ -65,7 +66,6 @@ void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
 		targetAnim = selectAnimationType(*stateComp);
 	}
 
-
 	if (!animComp->addTimeSinceLastUpdate(targetAnim, updateTime)) {
 		#ifdef DEBUG
 		std::shared_ptr<spdlog::logger> game_logger = spdlog::get("game");
@@ -77,7 +77,11 @@ void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
 	if (!animComp->getTimeSinceLastUpdate(targetAnim, timeSinceLastUpdate)) { return; }
 
 	float currentFrequencyOfAnimation;
-	if (!animComp->getCurrentFrequencyOfAnimationIfExist(targetAnim, currentFrequencyOfAnimation)) { return; }
+	if (targetAnim == AnimationType::Attack) {
+		sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
+		sl::WeaponComponent* weaponComp = entity.getComponent<sl::WeaponComponent>();
+		currentFrequencyOfAnimation = weaponComp->getAttackCooldown().count() / animComp->getFramesCountForCurrentAnimation(targetAnim, trComp->getRotation());
+	} else if (!animComp->getCurrentFrequencyOfAnimationIfExist(targetAnim, currentFrequencyOfAnimation)) { return; }
 
 	if (timeSinceLastUpdate >= currentFrequencyOfAnimation) {
 

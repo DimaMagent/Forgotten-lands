@@ -105,6 +105,11 @@ const std::shared_ptr<sf::Texture> AnimationComponent::getCurrentAnimationFrameP
 	return animationsStorage->getAnimationFrame(currentAnimationType, currentDirection, currentIndex);
 }
 
+size_t AnimationComponent::getFramesCountForCurrentAnimation(AnimationType type, const sf::Vector2i& direction) const
+{
+	return animationsStorage->getFramesCount(type, direction);
+}
+
 AnimationComponent::AnimationFrequency::AnimationFrequency(float baseFrequencyOfAllowedAnimations, float currentFrequencyOfAllowedAnimations, float timeSinceLastUpdateOfAllowedAnimations)
 {
 	this->baseFrequencyOfAllowedAnimations = baseFrequencyOfAllowedAnimations;
