@@ -19,6 +19,15 @@ namespace sl {
 	template<typename F, typename... Args>
 	concept CallableWith = std::invocable<F, Args...>;
 
+	template<typename T>
+	concept Time = requires {
+		typename T::rep;
+		typename T::period;
+	}&& std::is_same_v<
+		std::remove_cvref_t<T>,
+		std::chrono::duration<typename T::rep, typename T::period>
+	>;
+
 	struct LoopOptions {
 		LoopOptions(bool isEndless, uint8_t loopCount);
 
@@ -32,10 +41,20 @@ namespace sl {
 			io = &io_ctx;
 		}
 
-		static void addDefferedCall(std::function<void()>&& func, std::chrono::milliseconds time);
+		template<Time Duration>
+		static void addDefferedCall(std::function<void()>&& func, Duration time) {
+			if (!io) return;
 
-		template<SafeTimerArgs... Args, CallableWith<Args...> Func>
-		static void addDefferedCall(Func&& func, std::chrono::milliseconds time, Args... args) {
+			auto timer = std::make_shared<asio::steady_timer>(*io, time);
+			timer->async_wait([timer, callback = std::move(func)](const asio::error_code& ec) {
+				if (!ec && callback) {
+					callback();
+				}
+				});
+		}
+
+		template<SafeTimerArgs... Args, CallableWith<Args...> Func, Time Duration>
+		static void addDefferedCall(Func&& func, Duration time, Args... args) {
 			if (!io) return;
 
 			auto boundTask = [cb = std::forward<Func>(func), ...boundArgs = args]() mutable {
@@ -45,10 +64,10 @@ namespace sl {
 			addDefferedCall(std::function<void()>(std::move(boundTask)), time);
 		}
 
-		template<SafeTimerArgs... Args, CallableWith<Args...> Func>
+		template<SafeTimerArgs... Args, CallableWith<Args...> Func, Time Duration>
 		static void addLoopedDefferedCall(Func&& func,
-			std::chrono::milliseconds firstTimeCall,
-			std::chrono::milliseconds delay,
+			Duration firstTimeCall,
+			Duration delay,
 			bool isEndless,
 			uint8_t loopCount,
 			Args... args)
