@@ -49,5 +49,9 @@ uint32_t sl::HealthComponent::getDeserializeDataSize() const
 }
 
 void sl::HealthComponent::initialize(sl::ComponentInitContext context) {
-	context.entity.addComponent<sl::HealthComponent>(context.js.value("maxHealth", 1.0f));
+	if (!context.js) {
+		context.entity.addComponent<sl::HealthComponent>();
+		return;
+	}
+	context.entity.addComponent<sl::HealthComponent>(context.js->value("maxHealth", 1.0f));
 }

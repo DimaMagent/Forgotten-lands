@@ -6,6 +6,11 @@
 #include "TextureManager.hpp"
 
 
+RenderComponent::RenderComponent()
+{
+	currentTexture = nullptr;
+}
+
 RenderComponent::RenderComponent(const std::shared_ptr<sf::Texture> texture, const sf::IntRect& rc) :
 	rectTransform(rc)
 {
@@ -35,14 +40,18 @@ void RenderComponent::setCurrentTexture(const std::shared_ptr<sf::Texture> newTe
 }
 
 void RenderComponent::initialize(sl::ComponentInitContext context) {
+	if (!context.js) {
+		context.entity.addComponent<RenderComponent>();
+		return;
+	}
 	auto* textureManager = context.getService<TextureManager>();
 	if (!textureManager) {
 		throw("ComponentInitContext does not store TextureManager");
 		return;
 	}
-	auto& rectData = context.js.at("textureRect");
+	auto& rectData = context.js->at("textureRect");
 
-	context.entity.addComponent<RenderComponent>(textureManager->getTexture(context.js.value("texture", "")),
+	context.entity.addComponent<RenderComponent>(textureManager->getTexture(context.js->value("texture", "")),
 		rectData.value("height", 0),
 		rectData.value("width", 0),
 		rectData.value("x", 0),

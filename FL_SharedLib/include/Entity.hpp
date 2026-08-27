@@ -5,6 +5,7 @@
 #include <cstdint>
 #include "Component.hpp"
 #include "EntityType.hpp"
+#include "ComponentTypes.hpp"
 
 namespace sl {
     
@@ -34,24 +35,28 @@ namespace sl {
             static_assert(std::is_base_of_v<sl::Component, T>, "T must inherit from Component.");
             static_assert(requires { T::TypeId; }, "PacketT must have static TypeId field");
             auto it = std::lower_bound(components.begin(), components.end(), T::TypeId,
-                [](const auto& pair, const uint32_t& tid) {
+                [](const auto& pair, const TypeID& tid) {
                     return pair.first < tid;
                 });
             if (it == components.end() || it->first != T::TypeId) return nullptr;
             return static_cast<T*>(it->second.get());
         }
 
+        sl::Component* getComponent(TypeID ComponentTypeId) const;
+
         template<typename T>
         bool hasComponent() const{
             static_assert(std::is_base_of_v<sl::Component, T>, "T must inherit from Component.");
             static_assert(requires { T::TypeId; }, "PacketT must have static TypeId field");
             auto it = std::lower_bound(components.begin(), components.end(), T::TypeId,
-                [](const auto& pair, const uint32_t& tid) {
+                [](const auto& pair, const TypeID& tid) {
                     return pair.first < tid;
                 });
             if (it == components.end() || it->first != T::TypeId) return false;
             return true;
         }
+
+        bool hasComponent(TypeID ComponentTypeId) const;
 
         template<typename T, typename... Args>
         T& addComponent(Args&&... args) {
@@ -61,7 +66,7 @@ namespace sl {
             T& ref = *comp;
             
             auto it = std::lower_bound(components.begin(), components.end(), T::TypeId,
-                [](const auto& pair, const uint32_t& tid) {
+                [](const auto& pair, const TypeID& tid) {
                     return pair.first < tid;
                 });
             components.emplace(it, T::TypeId, std::move(comp));
@@ -79,10 +84,10 @@ namespace sl {
         }
 
         template<typename Fn>
-        void forCurrentSerialization(uint32_t TypeId, Fn&& fn) {
+        void forCurrentSerialization(TypeID TypeId, Fn&& fn) {
             static_assert(std::is_invocable_v<Fn, const sl::Serializable&> || std::is_invocable_v<Fn, sl::Serializable&>);
             auto it = std::lower_bound(components.begin(), components.end(), TypeId,
-                [](const auto& pair, const uint32_t& tid) {
+                [](const auto& pair, const TypeID& tid) {
                     return pair.first < tid;
                 });
             if (it == components.end() || it->first != TypeId) { return; }
@@ -98,6 +103,6 @@ namespace sl {
         uint32_t id;
         uint32_t globalId = 0;
         sl::EntityType type;
-        std::vector<std::pair<uint32_t, std::unique_ptr<sl::Component>>> components;
+        std::vector<std::pair<TypeID, std::unique_ptr<sl::Component>>> components;
     };
 }

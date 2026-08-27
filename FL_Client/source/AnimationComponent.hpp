@@ -12,6 +12,8 @@ namespace sf {
 
 class AnimationComponent : public sl::Component {
 public:
+	AnimationComponent();
+
 	AnimationComponent(std::shared_ptr<const AnimationsStorage> animStorage);
 
 	// frequency should be as x/60

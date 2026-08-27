@@ -6,6 +6,7 @@
 #include <nlohmann/json.hpp>
 #include <any>
 #include "EntityType.hpp"
+#include "ComponentTypes.hpp"
 
 /*If the compilation time due to nlohmann/json.hpp header is significant,
 then PIMPL + component registration composition can be used to remove the inclusion from the .hpp file.
@@ -23,7 +24,7 @@ namespace sl {
 
 	struct ComponentInitContext {
 		sl::Entity& entity;
-		const json& js;
+		const json* js;
 		std::any serviceProvider;
 
 		template<typename T>
@@ -47,14 +48,14 @@ namespace sl {
 
 		std::unique_ptr<sl::Entity> createEntity(sl::EntityType entityType);
 
-		static void registerComponent(std::string_view componentName, sl::ComponentFactory factory);
+		static void registerComponent(sl::TypeID componentTypeId, sl::ComponentFactory factory);
 
 	protected:
 
 		virtual std::any getServiceProvider() { return {}; }
 
 		static auto& getRegistry() {
-			static std::unordered_map<std::string_view, ComponentFactory> registry;
+			static std::unordered_map<sl::TypeID, ComponentFactory> registry;
 			return registry;
 		}
 

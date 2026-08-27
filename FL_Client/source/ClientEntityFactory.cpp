@@ -3,15 +3,14 @@
 #include "Entity.hpp"
 #include "DataLoader.hpp"
 #include <nlohmann/json.hpp>
-#include "NetworkComponentRegistry.hpp"
 #include "StatusPacket.hpp"
 #include "TextureManager.hpp"
 #include "ClientDataLoader.hpp"
+#include "Serializable.hpp"
 
 ClientEntityFactory::ClientEntityFactory() : sl::EntityFactory(std::make_unique<ClientDataLoader>())
 {
 	textureManager = std::make_unique<TextureManager>();
-	networkComponentRegistry = std::make_unique<NetworkComponentRegistry>();
 }
 
 ClientEntityFactory::~ClientEntityFactory() = default;
@@ -25,20 +24,35 @@ std::unique_ptr<sl::Entity> ClientEntityFactory::entityCollection(const sl::net:
 		entity->setGlobalId(enData.entityId);
 
 		for (auto& compData : enData.componentsData) {
-			networkComponentRegistry->createAndAttach(compData.typeId, *entity);
-			entity->forCurrentSerialization(compData.typeId, [&compData](sl::Serializable& s) {
-				size_t offset = 0;
-				s.deserialize(compData.componentData, offset);
-				});
+			sl::Serializable* s = createAndAttach(compData.typeId, *entity);
+			if (!s) { continue; }
+
+			size_t offset = 0;
+			s->deserialize(compData.componentData, offset);
 		}
 		return entity;
 	}
 	catch (std::exception& e) {
 		spdlog::get("network")->error("ClientEntityFactory::entityCollection exception {}", e.what());
+		return nullptr;
 	}
 }
 
 std::any ClientEntityFactory::getServiceProvider()
 {
 	return textureManager.get();
+}
+
+sl::Serializable* ClientEntityFactory::createAndAttach(uint32_t typeId, sl::Entity& entity) {
+	auto it = getRegistry().find(typeId);
+	if (it != getRegistry().end()) {
+		sl::Component* comp = entity.getComponent(typeId);
+		if (!comp) {
+			sl::ComponentInitContext ctx{ entity, nullptr, nullptr };
+			it->second(ctx);
+		}
+		return dynamic_cast<sl::Serializable*>(comp);
+	}
+
+	return nullptr;
 }

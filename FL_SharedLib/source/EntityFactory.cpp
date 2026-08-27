@@ -3,6 +3,7 @@
 #include "Entity.hpp"
 #include "DataLoader.hpp"
 #include <optional>
+#include "Utils.hpp"
 
 sl::EntityFactory::EntityFactory(std::unique_ptr<sl::DataLoader>&& dataLoader){
 	this->dataLoader = std::move(dataLoader);
@@ -23,9 +24,10 @@ std::unique_ptr<sl::Entity> sl::EntityFactory::createEntity(sl::EntityType entit
 		std::any services = getServiceProvider();
 
 		for (auto& [key, value] : jd.value().items()) {
-			if (getRegistry().contains(key)) {
-				ComponentInitContext ctx{ *entity, value, services };
-				getRegistry()[key](ctx);
+			sl::TypeID typeId= sl::fnv1a(key.c_str());
+			if (getRegistry().contains(typeId)) {
+				ComponentInitContext ctx{ *entity, &value, services };
+				getRegistry()[typeId](ctx);
 			}
 		}
 
@@ -36,7 +38,7 @@ std::unique_ptr<sl::Entity> sl::EntityFactory::createEntity(sl::EntityType entit
 	}
 }
 
-void sl::EntityFactory::registerComponent(std::string_view componentName, sl::ComponentFactory factory)
+void sl::EntityFactory::registerComponent(sl::TypeID componentTypeId, sl::ComponentFactory factory)
 {
-	getRegistry().try_emplace(componentName, factory);
+	getRegistry().try_emplace(componentTypeId, factory);
 }

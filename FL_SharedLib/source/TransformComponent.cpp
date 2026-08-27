@@ -79,6 +79,10 @@ uint32_t sl::TransformComponent::getDeserializeDataSize() const
 }
 
 void sl::TransformComponent::initialize(sl::ComponentInitContext context) {
-	context.entity.addComponent<sl::TransformComponent>(context.js.at("position").value("x", 0.0f), context.js.at("position").value("y", 0.0f));
+	if (!context.js) {
+		context.entity.addComponent<sl::TransformComponent>();
+		return;
+	}
+	context.entity.addComponent<sl::TransformComponent>(context.js->at("position").value("x", 0.0f), context.js->at("position").value("y", 0.0f));
 }
 

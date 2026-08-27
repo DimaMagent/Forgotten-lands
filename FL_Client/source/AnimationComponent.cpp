@@ -5,6 +5,14 @@
 #include "Entity.hpp"
 #include "TextureManager.hpp"
 
+AnimationComponent::AnimationComponent()
+{
+	currentIndex = 0;
+	currentAnimationType = AnimationType::Idle;
+	currentDirection = sf::Vector2i(0, -1);
+	animationsStorage = nullptr;
+}
+
 AnimationComponent::AnimationComponent(std::shared_ptr<const AnimationsStorage> animStorage)
 {
 	currentIndex = 0;
@@ -120,15 +128,21 @@ AnimationComponent::AnimationFrequency::AnimationFrequency(float baseFrequencyOf
 }
 
 void AnimationComponent::initialize(sl::ComponentInitContext context) {
+	if (!context.js) {
+		context.entity.addComponent<AnimationComponent>();
+		return;
+	}
+
 	auto* textureManager = context.getService<TextureManager>();
 	if (!textureManager) {
 		throw("ComponentInitContext does not store TextureManager");
 		return;
 	}
+
 	std::shared_ptr<AnimationsStorage> animationStorage = std::make_shared<AnimationsStorage>();
 
-	if (context.js.contains("Animations") && context.js["Animations"].is_object()) {
-		for (auto& [animationName, animation] : context.js["Animations"].items()) {
+	if (context.js->contains("Animations") && (*context.js)["Animations"].is_object()) {
+		for (auto& [animationName, animation] : (*context.js)["Animations"].items()) {
 			std::vector<std::shared_ptr<sf::Texture>> directionFrames;
 			for (auto& [directionName, framePaths] : animation.items()) {
 				for (auto& framePath : framePaths) {
@@ -142,8 +156,8 @@ void AnimationComponent::initialize(sl::ComponentInitContext context) {
 
 	AnimationComponent& animComp = context.entity.addComponent<AnimationComponent>(animationStorage);
 
-	if (context.js.contains("AllowedAnimation") && context.js["AllowedAnimation"].is_object()) {
-		for (auto& [animationName, frequency] : context.js["AllowedAnimation"].items()) {
+	if (context.js->contains("AllowedAnimation") && (*context.js)["AllowedAnimation"].is_object()) {
+		for (auto& [animationName, frequency] : (*context.js)["AllowedAnimation"].items()) {
 			animComp.addAllowedAnimationFrequency(animationTypeFromString(animationName), frequency);
 		}
 	}

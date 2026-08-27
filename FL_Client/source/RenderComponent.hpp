@@ -14,7 +14,7 @@ class AnimationsStorage;
 
 class RenderComponent: public sl::Component {
 public:
-	RenderComponent() = default;
+	RenderComponent();
 
 	RenderComponent(const std::shared_ptr<sf::Texture> texture, const sf::IntRect& rc);
 

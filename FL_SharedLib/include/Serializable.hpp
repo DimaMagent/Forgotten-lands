@@ -2,6 +2,8 @@
 #include <vector>
 #include <SFML/System/Vector2.hpp>
 #include <string>
+#include "NetUtils.hpp"
+
 namespace sl {
 	class Serializable {
 	public:

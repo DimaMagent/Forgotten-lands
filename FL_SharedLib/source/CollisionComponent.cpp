@@ -84,11 +84,15 @@ sl::AABB sl::CollisionComponent::readAABB(const std::vector<uint8_t>& in, size_t
 }
 
 void sl::CollisionComponent::initialize(sl::ComponentInitContext context) {
+	if (!context.js) {
+		context.entity.addComponent<sl::CollisionComponent>();
+		return;
+	} 
 	context.entity.addComponent<sl::CollisionComponent>(
-		context.js.value("width", 96.0f),
-		context.js.value("height", 96.0f),
-		context.js.value("isStatic", true),
-		sl::stringToCollisionType(context.js.value("CollisionType", "None"))
+		context.js->value("width", 96.0f),
+		context.js->value("height", 96.0f),
+		context.js->value("isStatic", true),
+		sl::stringToCollisionType(context.js->value("CollisionType", "None"))
 	);
 }
 

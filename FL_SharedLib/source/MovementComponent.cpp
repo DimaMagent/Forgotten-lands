@@ -89,5 +89,9 @@ void sl::MovementComponent::addVelocity(const sf::Vector2f& velocity)
 }
 
 void sl::MovementComponent::initialize(sl::ComponentInitContext context) {
-	context.entity.addComponent<sl::MovementComponent>(context.js.value("maxVelocity", 20.0f));
+	if (!context.js) {
+		context.entity.addComponent<sl::MovementComponent>();
+		return;
+	}
+	context.entity.addComponent<sl::MovementComponent>(context.js->value("maxVelocity", 20.0f));
 }

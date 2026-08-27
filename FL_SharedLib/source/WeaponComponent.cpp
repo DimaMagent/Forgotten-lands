@@ -51,10 +51,14 @@ uint32_t sl::WeaponComponent::getDeserializeDataSize() const
 }
 
 void sl::WeaponComponent::initialize(sl::ComponentInitContext context) {
+	if (!context.js) {
+		context.entity.addComponent<sl::WeaponComponent>();
+		return;
+	}
 	context.entity.addComponent<sl::WeaponComponent>(
-		context.js.value("attackDistance", 0.0f),
-		context.js.value("attackDegrees", 0.0f),
-		context.js.value("attackDamage", 0.0f),
-		context.js.value("attackCooldown", 3.0f)
+		context.js->value("attackDistance", 0.0f),
+		context.js->value("attackDegrees", 0.0f),
+		context.js->value("attackDamage", 0.0f),
+		context.js->value("attackCooldown", 3.0f)
 	);
 }

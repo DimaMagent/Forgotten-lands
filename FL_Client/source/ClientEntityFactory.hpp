@@ -2,11 +2,11 @@
 #include "EntityFactory.hpp"
 
 class TextureManager;
-class NetworkComponentRegistry;
 namespace sl {
 	namespace net {
 		struct EntityData;
 	}
+	class Serializable;
 }
 
 class ClientEntityFactory: public sl::EntityFactory {
@@ -16,7 +16,7 @@ public:
 	std::unique_ptr<sl::Entity> entityCollection(const sl::net::EntityData& enData);
 protected:
 	std::unique_ptr<TextureManager> textureManager;
-	std::unique_ptr<NetworkComponentRegistry> networkComponentRegistry;
 
 	virtual std::any getServiceProvider() override;
+	sl::Serializable* createAndAttach(uint32_t typeId, sl::Entity& entity);
 };

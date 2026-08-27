@@ -25,4 +25,12 @@ namespace sl {
 	sf::Vector2f asNormalized(const sf::Vector2f& vector);
 	sf::Vector2i asNormalized(const sf::Vector2i& vector);
 
+	constexpr uint32_t fnv1a(const char* str) {
+		uint32_t hash = 2166136261u;
+		while (*str) {
+			hash ^= (uint8_t)*str++;
+			hash *= 16777619u;
+		}
+		return hash;
+	}
 }
