@@ -28,6 +28,8 @@ namespace sl {
 		float attackDamage;
 		//in seconds
 		float attackCooldown;
+
+		REGISTER_COMPONENT();
 	};
 
 }

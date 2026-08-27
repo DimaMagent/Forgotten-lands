@@ -53,6 +53,7 @@ namespace sl {
 		float currentSpeed = 0.f;
 		sf::Time maxAccelerationTime;
 		sf::Time currentAccelerationTime;
-
+		
+		REGISTER_COMPONENT();
 	};
 }

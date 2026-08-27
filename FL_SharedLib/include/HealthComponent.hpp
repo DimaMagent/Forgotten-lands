@@ -25,6 +25,8 @@ namespace sl {
 	private:
 		float maxHealth;
 		float currentHealth;
+
+		REGISTER_COMPONENT();
 	};
 
 }

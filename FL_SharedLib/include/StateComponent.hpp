@@ -48,5 +48,7 @@ namespace sl {
 		ActionState actionState;
 		MovementState movementState;
 		LifeState lifeState;
+
+		REGISTER_COMPONENT();
 	};
 }

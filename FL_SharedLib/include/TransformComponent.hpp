@@ -8,6 +8,8 @@
 
 namespace sl {
 
+	class Entity;
+
 	class TransformComponent: public sl::Component, public sl::Serializable {
 	public:
 		sl::LockFreeDelegate<sf::Vector2f> onCellChanged;
@@ -34,5 +36,7 @@ namespace sl {
 		sf::Vector2f position;
 		// as normal
 		sf::Vector2i rotation;
+
+		REGISTER_COMPONENT();
 	};
 }

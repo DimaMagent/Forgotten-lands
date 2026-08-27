@@ -37,7 +37,6 @@ Server::Server(short port)
 	tickTimer = std::make_shared<asio::steady_timer>(*serverContext);
 
 	sl::DefferedFunctionStorage::init(*serverContext);
-	entityFactory->initialize();
 	netManager->OnAccept.addFunction([this](uint32_t token) {onClientAccept(token); });
 }
 

@@ -4,6 +4,7 @@
 #include <functional>
 #include <string_view>
 #include <nlohmann/json.hpp>
+#include <any>
 #include "EntityType.hpp"
 
 /*If the compilation time due to nlohmann/json.hpp header is significant,
@@ -20,24 +21,43 @@ namespace sl {
 
 	class Entity;
 
-	using ComponentFactory = std::function<void(sl::Entity& entity, const json& js)>;
+	struct ComponentInitContext {
+		sl::Entity& entity;
+		const json& js;
+		std::any serviceProvider;
 
-	//before using you should use methos initialize for currect work
+		template<typename T>
+		T* getService() const {
+			if (!serviceProvider.has_value()) return nullptr;
+
+			if (auto* const* ptr = std::any_cast<T*>(&serviceProvider)) {
+				return *ptr;
+			}
+			return nullptr;
+		}
+	};
+
+	using ComponentFactory = std::function<void(ComponentInitContext context)>;
+
 	class EntityFactory {
 	public:
 		EntityFactory(std::unique_ptr<sl::DataLoader>&& dataLoader);
 		EntityFactory(EntityFactory&&) = default;
 		virtual ~EntityFactory();
 
-		void initialize();
-
 		std::unique_ptr<sl::Entity> createEntity(sl::EntityType entityType);
+
+		static void registerComponent(std::string_view componentName, sl::ComponentFactory factory);
 
 	protected:
 
-		std::unique_ptr<sl::DataLoader> dataLoader;
-		std::unordered_map<std::string_view, ComponentFactory> registry;
+		virtual std::any getServiceProvider() { return {}; }
 
-		virtual void registrationComponents() = 0;
+		static auto& getRegistry() {
+			static std::unordered_map<std::string_view, ComponentFactory> registry;
+			return registry;
+		}
+
+		std::unique_ptr<sl::DataLoader> dataLoader;
 	};
 }

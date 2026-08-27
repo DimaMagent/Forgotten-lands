@@ -2,6 +2,7 @@
 #include "StateComponent.hpp"
 #include "NetUtils.hpp"
 #include <type_traits>
+#include "Entity.hpp"
 
 sl::StateComponent::StateComponent()
 {
@@ -54,4 +55,8 @@ uint32_t sl::StateComponent::getSerializeDataSize() const
 uint32_t sl::StateComponent::getDeserializeDataSize() const
 {
 	return getSerializeDataSize() - sizeof(TypeId) - sizeof(uint32_t);
+}
+
+void sl::StateComponent::initialize(sl::ComponentInitContext context) {
+	context.entity.addComponent<sl::StateComponent>();
 }

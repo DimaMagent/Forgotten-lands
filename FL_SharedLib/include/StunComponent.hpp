@@ -70,8 +70,9 @@ namespace sl {
 		//stores id of the stuns entity and stunning they inflicted
 		std::unordered_map<uint32_t, StunState> activeEffects;
 
-
 		void calculateCurrentStuns();
+
+		REGISTER_COMPONENT();
 
 	};
 }

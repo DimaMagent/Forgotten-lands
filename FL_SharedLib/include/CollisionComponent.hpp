@@ -62,6 +62,8 @@ namespace sl {
 
 		void writeAABB(std::vector<uint8_t>& out, const AABB& aabb) const;
 		AABB readAABB(const std::vector<uint8_t>& in, size_t& offset);
+
+		REGISTER_COMPONENT();
 	};
 
 }

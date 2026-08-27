@@ -60,4 +60,6 @@ private:
 
 	// frequency stored as x/60
 	std::unordered_map<AnimationType, AnimationFrequency> frequencyOfAllowedAnimations;
+
+	REGISTER_COMPONENT();
 };

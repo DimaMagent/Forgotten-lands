@@ -35,7 +35,6 @@ Client::Client()
 
 	sl::DefferedFunctionStorage::init(*clientContext);
 	netManager->OnAccept.addFunction([this]() {this->whenClientAccepted(); });
-	entityFactory->initialize();
 	window->setVerticalSyncEnabled(true);
 }
 

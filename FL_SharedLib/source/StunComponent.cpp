@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "StunComponent.hpp"
 #include <type_traits>
+#include "Entity.hpp"
 
 sl::StunComponent::StunComponent()
 {
@@ -89,6 +90,10 @@ uint32_t sl::StunComponent::getSerializeDataSize() const
 uint32_t sl::StunComponent::getDeserializeDataSize() const
 {
 	return getSerializeDataSize() - sizeof(TypeId) - sizeof(uint32_t);
+}
+
+void sl::StunComponent::initialize(sl::ComponentInitContext context) {
+	context.entity.addComponent<sl::StunComponent>();
 }
 
 

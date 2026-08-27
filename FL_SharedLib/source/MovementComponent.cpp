@@ -3,7 +3,7 @@
 #include <cmath>
 #include "NetUtils.hpp"
 #include "Utils.hpp"
-
+#include "Entity.hpp"
 
 sl::MovementComponent::MovementComponent(float maxSpeed, sf::Time maxAccelerationTime) : maxSpeed(maxSpeed), maxAccelerationTime(maxAccelerationTime)
 {}
@@ -86,4 +86,8 @@ uint32_t sl::MovementComponent::getDeserializeDataSize() const
 void sl::MovementComponent::addVelocity(const sf::Vector2f& velocity)
 {
 	velocityVector += velocity;
+}
+
+void sl::MovementComponent::initialize(sl::ComponentInitContext context) {
+	context.entity.addComponent<sl::MovementComponent>(context.js.value("maxVelocity", 20.0f));
 }

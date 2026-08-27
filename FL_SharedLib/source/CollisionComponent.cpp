@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CollisionComponent.hpp"
+#include "Entity.hpp"
 
 sl::CollisionComponent::CollisionComponent()
 {
@@ -82,6 +83,16 @@ sl::AABB sl::CollisionComponent::readAABB(const std::vector<uint8_t>& in, size_t
 	return aabb;
 }
 
+void sl::CollisionComponent::initialize(sl::ComponentInitContext context) {
+	context.entity.addComponent<sl::CollisionComponent>(
+		context.js.value("width", 96.0f),
+		context.js.value("height", 96.0f),
+		context.js.value("isStatic", true),
+		sl::stringToCollisionType(context.js.value("CollisionType", "None"))
+	);
+}
+
+
 sl::CollisionType sl::stringToCollisionType(const std::string& str)
 {
 	if (str == "Block") return CollisionType::Block;
@@ -89,3 +100,5 @@ sl::CollisionType sl::stringToCollisionType(const std::string& str)
 	if (str == "Ignore") return CollisionType::Ignore;
 	return CollisionType::None;
 }
+
+

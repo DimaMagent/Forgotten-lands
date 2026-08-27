@@ -31,4 +31,5 @@ private:
 
 	sf::IntRect rectTransform;
 
+	REGISTER_COMPONENT();
 };

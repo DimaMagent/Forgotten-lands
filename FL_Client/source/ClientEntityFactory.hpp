@@ -18,5 +18,5 @@ protected:
 	std::unique_ptr<TextureManager> textureManager;
 	std::unique_ptr<NetworkComponentRegistry> networkComponentRegistry;
 
-	virtual void registrationComponents() override;
+	virtual std::any getServiceProvider() override;
 };

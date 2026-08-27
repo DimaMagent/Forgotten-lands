@@ -2,6 +2,7 @@
 #include "HealthComponent.hpp"
 #include "NetUtils.hpp"
 #include "Utils.hpp"
+#include "Entity.hpp"
 
 sl::HealthComponent::HealthComponent()
 {
@@ -45,4 +46,8 @@ uint32_t sl::HealthComponent::getSerializeDataSize() const
 uint32_t sl::HealthComponent::getDeserializeDataSize() const
 {
 	return getSerializeDataSize() - sizeof(TypeId) - sizeof(uint32_t);
+}
+
+void sl::HealthComponent::initialize(sl::ComponentInitContext context) {
+	context.entity.addComponent<sl::HealthComponent>(context.js.value("maxHealth", 1.0f));
 }
