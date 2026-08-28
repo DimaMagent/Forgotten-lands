@@ -25,6 +25,7 @@
       "attackDamage": 10.0,
       "attackCooldown": 1.0
     },
-    "StunComponent": {}
+    "StunComponent": {},
+    "NetworkIDComponent": {}
   }
 }

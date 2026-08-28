@@ -1,13 +1,12 @@
 #include "pch.hpp"
 #include "World.hpp"
 #include "Entity.hpp"
-#include "MovementComponent.hpp"
-#include "TransformComponent.hpp"
 #include "Serializer.hpp"
 #include "ConnectionEvents.hpp"
 #include "MovementSystem.hpp"
 #include "WorldMap.hpp"
 #include "CollisionSystem.hpp"
+#include "NetworkIDComponent.hpp"
 
 World::World(ConnectionEvents& connectionEvents) : WorldBase()
 {
@@ -37,9 +36,17 @@ std::vector<uint8_t> World::addPlayerEntity(std::unique_ptr<sl::Entity> entity, 
 
 	uint32_t entityId = entity->getGlobalId();
 
+	NetworkIDComponent* netComp = entity->getComponent<NetworkIDComponent>();
+
+	if (netComp) {
+		netComp->setSessionToken(sessionToken);
+	}
+	else {
+		throw ("World::addPlayerEntity: PLayerEntity The entity does not have a NetworkIDComponent. AddPlayerEntity failed.");
+	}
+
 	addEntity(std::move(entity), entity->getGlobalId());
 
-	entityIdToToken.try_emplace(entityId, sessionToken);
 	tokenToEntityId.try_emplace(sessionToken, entityId);
 	
 	auto enPtr = entities.getEntityToId(entityId).lock();
@@ -60,7 +67,6 @@ bool World::removePlayerEntityByToken(uint32_t sessionToken)
 	bool isSucess = entities.removeEntityById(it->second);
 
 	if (isSucess) {
-		entityIdToToken.erase(it->second);
 		tokenToEntityId.erase(sessionToken);
 	}
 
@@ -69,14 +75,18 @@ bool World::removePlayerEntityByToken(uint32_t sessionToken)
 
 bool World::removeEntityById(uint32_t id)
 {
-	auto it = entityIdToToken.find(id);
+	auto entity = getEntityById(id);
+	if (!entity.has_value()) { return false; }
+
+	NetworkIDComponent* netComp = entity.value().get().getComponent<NetworkIDComponent>();
+
+	if (!netComp) { return false; }
 
 	bool isSucess = entities.removeEntityById(id);
 
-	if (it != entityIdToToken.end() && isSucess)
+	if (isSucess)
 	{
-		entityIdToToken.erase(id);
-		tokenToEntityId.erase(it->second);
+		tokenToEntityId.erase(netComp->getSessionToken());
 	}
 
 	return isSucess;
@@ -93,8 +103,13 @@ std::weak_ptr<sl::Entity> World::getPlayerEntityByToken(uint32_t token) const
 
 std::optional<uint32_t> World::getTokenById(uint32_t id) const
 {
-	auto it = entityIdToToken.find(id);
-	if (it == entityIdToToken.end()) { return {}; }
+	auto entity = getEntityById(id);
+	if (!entity.has_value()) { return {}; }
 
-	return it->second;
+	NetworkIDComponent* netComp = entity.value().get().getComponent<NetworkIDComponent>();
+	
+	if (!netComp) { return {}; }
+
+	return netComp->getSessionToken();
+
 }

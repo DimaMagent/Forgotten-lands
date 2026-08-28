@@ -34,5 +34,4 @@ private:
 
 
 	std::unordered_map<uint32_t, uint32_t> tokenToEntityId;
-	std::unordered_map<uint32_t, uint32_t> entityIdToToken;
 };
