@@ -32,6 +32,5 @@ protected:
 private:
 	std::unique_ptr<Serializer> serializer;
 
-
 	std::unordered_map<uint32_t, uint32_t> tokenToEntityId;
 };
