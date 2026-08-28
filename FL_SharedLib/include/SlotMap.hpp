@@ -7,8 +7,8 @@
 namespace sl {
 
     struct EntityId {
-        uint16_t index : 24;
-        uint16_t generation : 8;
+        uint32_t index : 24;
+        uint32_t generation : 8;
     };
 
     template <typename T>
@@ -34,9 +34,38 @@ namespace sl {
                 uint32_t next_free;
             };
 
-            Slot() : next_free(0) {}
+            Slot() {}
             ~Slot() {
                 if (is_alive) { data.~EntityData(); }
+            }
+
+            Slot(const Slot&) = delete;
+            Slot& operator=(const Slot&) = delete;
+
+            Slot(Slot&& other) noexcept : generation(other.generation), is_alive(other.is_alive) {
+                if (is_alive) {
+                    new (&data) EntityData(std::move(other.data));
+                }
+                else {
+                    next_free = other.next_free;
+                }
+            }
+
+            Slot& operator=(Slot&& other) noexcept {
+                if (this != &other) {
+                    if (is_alive) {
+                        data.~EntityData();
+                    }
+                    generation = other.generation;
+                    is_alive = other.is_alive;
+                    if (is_alive) {
+                        new (&data) EntityData(std::move(other.data));
+                    }
+                    else {
+                        next_free = other.next_free;
+                    }
+                }
+                return *this;
             }
         };
 
@@ -60,12 +89,11 @@ namespace sl {
             else {
                 uint32_t index = static_cast<uint32_t>(slots.size());
 
-                Slot slot;
+                Slot& slot = slots.emplace_back();
                 slot.is_alive = true;
                 slot.generation = 1;
                 new (&slot.data) EntityData(std::move(new_data));
 
-                slots.push_back(std::move(slot));
                 return EntityId{ index, 1 };
             }
         }
@@ -93,6 +121,16 @@ namespace sl {
         EntityData* get(EntityId id) {
             if (id.index < slots.size()) {
                 Slot& slot = slots[id.index];
+                if (slot.is_alive && slot.generation == id.generation) {
+                    return &slot.data;
+                }
+            }
+            return nullptr;
+        }
+
+        const EntityData* get(EntityId id) const{
+            if (id.index < slots.size()) {
+                const Slot& slot = slots[id.index];
                 if (slot.is_alive && slot.generation == id.generation) {
                     return &slot.data;
                 }
