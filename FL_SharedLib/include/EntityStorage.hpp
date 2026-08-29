@@ -12,12 +12,19 @@ namespace sl {
 
 	struct EntityStorage {
 
+		EntityStorage(size_t capacity = 100);
+
+		void reserve(size_t new_capacity) { entities.reserve(new_capacity); }
+
+		size_t capacity() const { return entities.capacity(); }
+		size_t size() const { return entities.size(); }
+
 		const std::vector<sl::Entity>& getEntities() const { return entities; }
 
 		const std::span<sl::Entity>& getEntities() { return entities; }
 
 		//using ID as key for storage
-		void addEntity(std::unique_ptr<sl::Entity> entity, sl::EntityId id);
+		void addEntity(sl::Entity&& entity, sl::EntityId id);
 
 		//Remove is performed using swap&pop.
 		void removeEntityById(sl::EntityId id);

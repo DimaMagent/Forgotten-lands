@@ -15,27 +15,21 @@ ClientEntityFactory::ClientEntityFactory() : sl::EntityFactory(std::make_unique<
 
 ClientEntityFactory::~ClientEntityFactory() = default;
 
-std::unique_ptr<sl::Entity> ClientEntityFactory::entityCollection(const sl::net::EntityData& enData)
+sl::Entity ClientEntityFactory::entityCollection(const sl::net::EntityData& enData)
 {
-	try {
-		uint32_t type = enData.entityType;
+	uint32_t type = enData.entityType;
 
-		std::unique_ptr<sl::Entity> entity = createEntity(static_cast<sl::EntityType>(type));
-		entity->setGlobalId(enData.entityId);
+	sl::Entity entity = createEntity(static_cast<sl::EntityType>(type));
 
-		for (auto& compData : enData.componentsData) {
-			sl::Serializable* s = createAndAttach(compData.typeId, *entity);
-			if (!s) { continue; }
+	for (auto& compData : enData.componentsData) {
+		sl::Serializable* s = createAndAttach(compData.typeId, entity);
+		if (!s) { continue; }
 
-			size_t offset = 0;
-			s->deserialize(compData.componentData, offset);
-		}
-		return entity;
+		size_t offset = 0;
+		s->deserialize(compData.componentData, offset);
 	}
-	catch (std::exception& e) {
-		spdlog::get("network")->error("ClientEntityFactory::entityCollection exception {}", e.what());
-		return nullptr;
-	}
+	return entity;
+
 }
 
 std::any ClientEntityFactory::getServiceProvider()

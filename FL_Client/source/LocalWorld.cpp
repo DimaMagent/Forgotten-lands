@@ -11,9 +11,9 @@
 #include "StatusPacket.hpp"
 #include "WorldMap.hpp"
 
-LocalWorld::LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::RenderTarget& renderTarget) : WorldBase() ,
+LocalWorld::LocalWorld(sf::RenderTarget& renderTarget) : WorldBase() ,
 	stateManager(std::make_shared<StateManager>(entities)),
-	entityFactory(entityFactory), renderManager(std::make_unique<RenderManager>(renderTarget))
+	entityFactory(std::make_unique<ClientEntityFactory>()), renderManager(std::make_unique<RenderManager>(renderTarget))
 {
 	game_logger = spdlog::get("game");
 
@@ -26,30 +26,27 @@ LocalWorld::LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::Ren
 
 LocalWorld::~LocalWorld() = default;
 
-void LocalWorld::addPlayerEntity(std::unique_ptr<sl::Entity> entity, sl::EntityId id)
+void LocalWorld::addPlayerEntity(sl::EntityType entityType, sl::EntityId id)
 {
-	if (!entity) {
-		throw std::runtime_error("LocalWorld::addPlayerEntity: entity is nullptr, adding player entity is not possible");
-		return; 
-	}
-
-	addEntity(std::move(entity), id);
+	addEntity(entityType, id);
 
 	playerEntityId = id;
 
 	isPlayerEntityAssigned = true;
 
-	OnSetPlayerEntity.broadcast(getPlayerEntity());
+	OnSetPlayerEntity.broadcast(playerEntityId);
 	
 }
 
-void LocalWorld::addEntity(std::unique_ptr<sl::Entity> entity, sl::EntityId id)
+void LocalWorld::addEntity(sl::EntityType entityType, sl::EntityId id)
 {
-	if (!entity) {
-		throw std::runtime_error("sl::WorldBase::addEntity: entity is nullptr, adding player entity is not possible");
+	if (!entityFactory) {
+		throw std::runtime_error("LocalWorld::addEntity entityFactory is not valid. addEntity failed.");
 	}
 
-	entity->setId(id);
+	sl::Entity entity = entityFactory->createEntity(entityType);
+
+	entity.setId(id);
 
 	entities.addEntity(std::move(entity), id);
 
@@ -77,7 +74,7 @@ void LocalWorld::removeEntityById(sl::EntityId id)
 {
 	if (id == playerEntityId) {
 		isPlayerEntityAssigned = false;
-		OnSetPlayerEntity.broadcast(getPlayerEntity());
+		OnSetPlayerEntity.broadcast({});
 	}
 
 	entities.removeEntityById(id);
@@ -120,15 +117,18 @@ void LocalWorld::onUpdateEntities(sl::Entity& en, float updateTime)
 
 void LocalWorld::onAbsenceEntity(const sl::net::EntityData& enData)
 {
-	auto ef = entityFactory.lock();
-	if (!ef) 
-	{ 
-		game_logger->error("LocalWorld::onAbsenceEntity: entityFactory is no valid");
-		return;
-	}
+	try {
+		if (!entityFactory)
+		{
+			game_logger->error("LocalWorld::onAbsenceEntity: entityFactory is no valid");
+			return;
+		}
 
-	std::unique_ptr<sl::Entity> en = ef->entityCollection(enData);
-	addEntity(std::move(en), enData.entityId);
+		addEntity(std::move(entityFactory->entityCollection(enData)), enData.entityId);
+	}
+	catch(std::exception& e){
+		game_logger->error("LocalWorld::onAbsenceEntity exception: {}", e.what());
+	}
 }
 
 void LocalWorld::onAbsenceEntityOnStatusPacket(sl::EntityId id)
@@ -139,14 +139,13 @@ void LocalWorld::onAbsenceEntityOnStatusPacket(sl::EntityId id)
 void LocalWorld::onAuth(const sl::net::EntityData& enData)
 {
 	try {
-		auto ef = entityFactory.lock();
-		if (!ef) 
+		if (!entityFactory)
 		{ 
 			game_logger->error("LocalWorld::onAuth: entityFactory is no valid");
 			return;
 		}
 
-		addPlayerEntity(ef->entityCollection(enData), enData.entityId);
+		addPlayerEntity(std::move(entityFactory->entityCollection(enData)), enData.entityId);
 
 	}
 	catch (std::exception& e) {
@@ -159,4 +158,28 @@ std::optional<std::reference_wrapper<sl::Entity>> LocalWorld::getPlayerEntity()
 	if (!isPlayerEntityAssigned) { return {}; }
 
 	return *entities.getEntityToId(playerEntityId);
+}
+
+void LocalWorld::addEntity(sl::Entity&& entity, sl::EntityId id)
+{
+	entity.setId(id);
+
+	entities.addEntity(std::move(entity), id);
+
+	auto enPtr = entities.getEntityToId(id);
+
+	if (enPtr) {
+		worldMap->onEntityAdded(*enPtr);
+	}
+}
+
+void LocalWorld::addPlayerEntity(sl::Entity&& entity, sl::EntityId id)
+{
+	addEntity(std::move(entity), id);
+
+	playerEntityId = id;
+
+	isPlayerEntityAssigned = true;
+
+	OnSetPlayerEntity.broadcast(playerEntityId);
 }

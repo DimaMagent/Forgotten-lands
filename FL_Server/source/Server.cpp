@@ -7,7 +7,6 @@
 #include "Session.hpp"
 #include "IncomingDataManager.hpp"
 #include "DataProcessorManager.hpp"
-#include "ServerEntityFactory.hpp"
 #include "NetManager.hpp"
 #include "World.hpp"
 #include "Entity.hpp"
@@ -33,7 +32,6 @@ Server::Server(short port)
 	playerManager = std::make_unique<PlayerManager>();
 	dataProcessorManager = std::make_unique<DataProcessorManager>(*playerManager);
 	netManager = std::make_unique<NetManager>(*serverContext, port, *dataProcessorManager, *connectionEvents);
-	entityFactory = std::make_unique<ServerEntityFactory>();
 	tickTimer = std::make_shared<asio::steady_timer>(*serverContext);
 
 	sl::DefferedFunctionStorage::init(*serverContext);
@@ -65,14 +63,8 @@ void Server::start() {
 void Server::onClientAccept(uint32_t token)
 {
 	try {
-		std::unique_ptr<sl::Entity> playerEntity = entityFactory->createEntity(sl::EntityType::Player);
-		if (!playerEntity) { return; }
-
-		uint32_t entityGlobalId = playerEntity->getId();
-		
-		playerEntity->setGlobalId(entityGlobalId);
-
-		std::vector<uint8_t> entityData = world->addPlayerEntity(std::move(playerEntity), token);
+		std::vector<uint8_t> entityData;
+		uint32_t entityGlobalId = world->addPlayerEntity((sl::EntityType::Player), token, entityData).ID;
 
 		Packer::send<sl::net::AuthPacket>(token, entityGlobalId, entityData);
 	}

@@ -3,16 +3,19 @@
 #include "Entity.hpp"
 
 
-void sl::EntityStorage::addEntity(std::unique_ptr<sl::Entity> entity, sl::EntityId id)
-{
-	if (!entity) { return; }
+sl::EntityStorage::EntityStorage(size_t capacity) {
+	entities.reserve(capacity);
+}
 
+void sl::EntityStorage::addEntity(sl::Entity&& entity, sl::EntityId id)
+{
 	if (idToIndex.find(id) == idToIndex.end())
 	{
-		entities.emplace_back(std::move(*entity));
+		entities.emplace_back(std::move(entity));
 		idToIndex.try_emplace(id, entities.size() - 1);
 	}
 }
+
 
 void sl::EntityStorage::removeEntityById(sl::EntityId id)
 {

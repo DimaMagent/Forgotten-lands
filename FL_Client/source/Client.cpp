@@ -3,7 +3,6 @@
 #include "NetManager.hpp"
 #include "InputManager.hpp"
 #include "LocalWorld.hpp"
-#include "ClientEntityFactory.hpp"
 #include "Entity.hpp"
 #include "Controller.hpp"
 #include "DataProcessorManager.hpp"
@@ -20,7 +19,6 @@ Client::Client()
 
 	clientContext = std::make_unique<asio::io_context>();
 	window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "FL_Client.exe", sf::State::Windowed); // sf::State::Fullscreen
-	entityFactory = std::make_shared<ClientEntityFactory>();
 	world = std::make_unique<LocalWorld>(entityFactory, *window);
 	dataProcessorManager = std::make_unique<DataProcessorManager>(world->getStateManager());
 	netManager = std::make_unique<NetManager>(*clientContext, *dataProcessorManager);

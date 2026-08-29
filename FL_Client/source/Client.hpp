@@ -32,7 +32,6 @@ private:
 
 	std::unique_ptr<asio::io_context> clientContext;
 	std::unique_ptr<sf::RenderWindow> window;
-	std::shared_ptr<ClientEntityFactory> entityFactory;
 	std::unique_ptr<LocalWorld> world;
 	std::unique_ptr<DataProcessorManager> dataProcessorManager;
 	std::unique_ptr<NetManager> netManager;

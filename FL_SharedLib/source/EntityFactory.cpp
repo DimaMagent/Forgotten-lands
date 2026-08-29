@@ -11,31 +11,32 @@ sl::EntityFactory::EntityFactory(std::unique_ptr<sl::DataLoader>&& dataLoader){
 
 sl::EntityFactory::~EntityFactory() = default;
 
-std::unique_ptr<sl::Entity> sl::EntityFactory::createEntity(sl::EntityType entityType)
+sl::Entity sl::EntityFactory::createEntity(sl::EntityType entityType)
 {
-	try {
-		if (!dataLoader) { return nullptr; }
+	if (!dataLoader)
+	{
+		throw std::runtime_error("data loader is not valid. CreateEntity cannot be executed.");
+	}
 
-		std::optional<json> jd = dataLoader->getEntityData(entityType);
+	std::optional<json> jd = dataLoader->getEntityData(entityType);
 
-		if (!jd.has_value()) { return nullptr; }
+	if (!jd.has_value()) 
+	{
+		throw std::runtime_error("json file is not valid. CreateEntity cannot be executed.");
+	}
 
-		std::unique_ptr<sl::Entity> entity = std::make_unique<sl::Entity>(entityType);
-		std::any services = getServiceProvider();
+	sl::Entity entity = sl::Entity(entityType);
+	std::any services = getServiceProvider();
 
-		for (auto& [key, value] : jd.value().items()) {
-			sl::TypeID typeId= sl::fnv1a(key.c_str());
-			if (getRegistry().contains(typeId)) {
-				ComponentInitContext ctx{ *entity, &value, services };
-				getRegistry()[typeId](ctx);
-			}
+	for (auto& [key, value] : jd.value().items()) {
+		sl::TypeID typeId = sl::fnv1a(key.c_str());
+		if (getRegistry().contains(typeId)) {
+			ComponentInitContext ctx{ entity, &value, services };
+			getRegistry()[typeId](ctx);
 		}
+	}
 
-		return std::move(entity);
-	}
-	catch (std::exception& e) {
-		std::cerr << "EntityFactory::createEntity: " << e.what() << "\n";
-	}
+	return entity;
 }
 
 void sl::EntityFactory::registerComponent(sl::TypeID componentTypeId, sl::ComponentFactory factory)

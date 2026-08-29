@@ -22,13 +22,15 @@ class AnimationSystem;
 
 class LocalWorld: public sl::WorldBase {
 public:
-	sl::LockFreeDelegate<const std::optional<std::reference_wrapper<sl::Entity>>> OnSetPlayerEntity;
+	sl::LockFreeDelegate<std::optional<sl::EntityId>> OnSetPlayerEntity;
 
-	LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::RenderTarget& renderTarget);
+	LocalWorld(sf::RenderTarget& renderTarget);
 
 	virtual ~LocalWorld();
 
-	void addEntity(std::unique_ptr<sl::Entity> entity, sl::EntityId id);
+	void addEntity(sl::EntityType entityType, sl::EntityId id);
+
+	void addPlayerEntity(sl::EntityType entityType, sl::EntityId id);
 
 	void removeEntityById(sl::EntityId id) override;
 
@@ -39,8 +41,6 @@ public:
 	const std::vector<sl::Entity>& getEntities() const override;
 
 	auto getEntities();
-
-	void addPlayerEntity(std::unique_ptr<sl::Entity> entity, sl::EntityId id);
 
 	void render();
 
@@ -58,7 +58,7 @@ protected:
 
 	std::unique_ptr<RenderManager> renderManager;
 	std::shared_ptr<StateManager> stateManager;
-	std::weak_ptr<ClientEntityFactory> entityFactory;
+	std::unique_ptr<ClientEntityFactory> entityFactory;
 	std::unique_ptr<AnimationSystem> animationSystem;
 
 	virtual void onUpdate(float updateTime) override;
@@ -70,5 +70,9 @@ protected:
 	void onAbsenceEntityOnStatusPacket(sl::EntityId id);
 
 	void onAuth(const sl::net::EntityData& enData);
+
+	void addEntity(sl::Entity&& entity, sl::EntityId id);
+
+	void addPlayerEntity(sl::Entity&& entity, sl::EntityId id);
 
 };

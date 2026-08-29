@@ -34,7 +34,6 @@ private:
 	std::unique_ptr<PlayerManager> playerManager;
 	std::unique_ptr<DataProcessorManager> dataProcessorManager;
 	std::unique_ptr<NetManager> netManager;
-	std::unique_ptr<ServerEntityFactory> entityFactory;
 	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;
 
 	std::shared_ptr<asio::steady_timer> tickTimer;

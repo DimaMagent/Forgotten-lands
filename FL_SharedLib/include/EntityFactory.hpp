@@ -8,10 +8,6 @@
 #include "EntityType.hpp"
 #include "ComponentTypes.hpp"
 
-/*If the compilation time due to nlohmann/json.hpp header is significant,
-then PIMPL + component registration composition can be used to remove the inclusion from the .hpp file.
-However, such measures are currently redundant.*/
-
 
 class TextureManager;
 
@@ -46,7 +42,7 @@ namespace sl {
 		EntityFactory(EntityFactory&&) = default;
 		virtual ~EntityFactory();
 
-		std::unique_ptr<sl::Entity> createEntity(sl::EntityType entityType);
+		sl::Entity createEntity(sl::EntityType entityType);
 
 		static void registerComponent(sl::TypeID componentTypeId, sl::ComponentFactory factory);
 

@@ -7,11 +7,13 @@
 #include "WorldMap.hpp"
 #include "CollisionSystem.hpp"
 #include "NetworkIDComponent.hpp"
+#include "ServerEntityFactory.hpp"
 
 World::World(ConnectionEvents& connectionEvents) : WorldBase()
 {
 	entities = sl::SlotMap<sl::Entity>(10000);
 	serializer = std::make_unique<Serializer>(*this);
+	entityFactory = std::make_unique<ServerEntityFactory>();
 	connectionEvents.OnClientDisconnected.addFunction([this](uint32_t token) {
 		removePlayerEntityByToken(token);
 	});
@@ -29,30 +31,28 @@ void World::onUpdateEntities(sl::Entity& en, float updateTime)
 {
 }
 
-std::vector<uint8_t> World::addPlayerEntity(std::unique_ptr<sl::Entity> entity, const uint32_t& sessionToken)
+sl::EntityId World::addPlayerEntity(sl::EntityType entityType, const uint32_t& sessionToken, std::vector<uint8_t>& serializedEntityDataOut)
 {
-	if (!entity) {
-		throw std::runtime_error("World::addPlayerEntity: entity is nullptr, adding an entity is not possible");
-	}
-
-	NetworkIDComponent* netComp = entity->getComponent<NetworkIDComponent>();
-
-	if (netComp) {
-		netComp->setSessionToken(sessionToken);
-	}
-	else {
-		throw ("World::addPlayerEntity: PLayerEntity The entity does not have a NetworkIDComponent. AddPlayerEntity failed.");
-	}
-
-	sl::EntityId entityId = addEntity(std::move(entity));
+	sl::EntityId entityId = addEntity(entityType);
 
 	tokenToEntityId.try_emplace(sessionToken, entityId);
 	
 	auto enPtr = entities.get(entityId);
 
 	if (enPtr) {
+		NetworkIDComponent* netComp = enPtr->getComponent<NetworkIDComponent>();
+
+		if (netComp) {
+			netComp->setSessionToken(sessionToken);
+		}
+		else {
+			throw std::runtime_error("World::addPlayerEntity: PLayerEntity The entity does not have a NetworkIDComponent. AddPlayerEntity failed.");
+		}
+
+		enPtr->setId(entityId);
 		worldMap->onEntityAdded(*enPtr);
-		return serializer->serializeEntity(*enPtr);
+		serializedEntityDataOut = serializer->serializeEntity(*enPtr);
+		return entityId;
 	}
 
 	throw std::runtime_error("World::addPlayerEntity: PLayerEntity is missing on playerEntityStorage");
@@ -87,12 +87,16 @@ void World::removeEntityById(sl::EntityId id)
 
 }
 
-sl::EntityId World::addEntity(std::unique_ptr<sl::Entity> entity)
+sl::EntityId World::addEntity(sl::EntityType entityType)
 {
-	if (!entity) {
-		throw std::runtime_error("sl::World::addEntity: entity is nullptr, adding player entity is not possible");
+	if (!entityFactory)
+	{
+		throw std::runtime_error("World::addEntity: entityFactory is not valid. addEntity failed.");
 	}
-	sl::EntityId entityId = entities.spawn(std::move(*entity));
+
+	sl::Entity entity = entityFactory->createEntity(entityType);
+
+	sl::EntityId entityId = entities.spawn(std::move(entity));
 
 	auto entityPtr = entities.get(entityId);
 

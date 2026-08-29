@@ -19,14 +19,13 @@ public:
 
 	virtual ~World();
 
-	//returns serialized playerEntity data
-	std::vector<uint8_t> addPlayerEntity(std::unique_ptr<sl::Entity> entity, const uint32_t& sessionToken);
+	sl::EntityId addEntity(sl::EntityType entityType);
+
+	sl::EntityId addPlayerEntity(sl::EntityType entityType, const uint32_t& sessionToken, std::vector<uint8_t>& serializedEntityDataOut);
 
 	void removePlayerEntityByToken(uint32_t sessionToken);
 
 	void removeEntityById(sl::EntityId id) override;
-
-	sl::EntityId addEntity(std::unique_ptr<sl::Entity> entity);
 
 	std::optional<std::reference_wrapper<const sl::Entity>> getEntityById(sl::EntityId id) const override;
 
@@ -49,6 +48,7 @@ private:
 	sl::SlotMap<sl::Entity> entities;
 
 	std::unique_ptr<Serializer> serializer;
+	std::unique_ptr<ServerEntityFactory> entityFactory;
 
 	std::unordered_map<uint32_t, sl::EntityId> tokenToEntityId;
 };

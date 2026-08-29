@@ -13,7 +13,7 @@ class ClientEntityFactory: public sl::EntityFactory {
 public:
 	ClientEntityFactory();
 	~ClientEntityFactory();
-	std::unique_ptr<sl::Entity> entityCollection(const sl::net::EntityData& enData);
+	sl::Entity entityCollection(const sl::net::EntityData& enData);
 protected:
 	std::unique_ptr<TextureManager> textureManager;
 

@@ -20,8 +20,8 @@ namespace sl {
         Entity(const Entity&) = delete;
         Entity& operator=(const Entity&) = delete;
 
-        Entity(Entity&&) = default;
-        Entity& operator=(Entity&&) = default;
+        Entity(Entity&&) noexcept = default;
+        Entity& operator=(Entity&&) noexcept = default;
 
         EntityId getId() const { return id; }
 
