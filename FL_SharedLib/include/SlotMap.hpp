@@ -84,7 +84,7 @@ namespace sl {
         auto view() const {
             return slots
                 | std::views::filter([](const Slot& slot) { return slot.is_alive; })
-                | std::views::transform([](Slot& slot) -> EntityData& { return slot.data; });
+                | std::views::transform([](const Slot& slot) -> const EntityData& { return slot.data; });
         }
 
         auto view(){
@@ -119,13 +119,13 @@ namespace sl {
         }
 
         void destroy(EntityId id) {
-            if (id.index >= slots.size()) return;
+            if (id.getIndex() >= slots.size()) return;
 
-            Slot& slot = slots[id.index];
+            Slot& slot = slots[id.getIndex()];
 
             // A check to see whether it was an entity and whether it had already been destroyed.
             // Also, protection against double deletion or the use of an outdated ID.
-            if (!slot.is_alive || slot.generation != id.generation) {
+            if (!slot.is_alive || slot.generation != id.getGeneration()) {
                 return;
             }
 
@@ -135,7 +135,7 @@ namespace sl {
             slot.generation++;
 
             slot.next_free = free_list_head;
-            free_list_head = id.index;
+            free_list_head = id.getIndex();
         }
 
         EntityData* get(EntityId id) {
