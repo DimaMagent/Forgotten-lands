@@ -19,7 +19,7 @@ void PlayerManager::updatePlayerInputState(uint32_t playerToken, sl::Intentions 
 	playerIntents.emplace_back(PlayerIntention(intentions, playerToken));
 }
 
-bool PlayerManager::movementUpdate(sl::Entity& entity, sf::Vector2i movementDirectionIntentions)
+bool PlayerManager::movementUpdate(const sl::Entity& entity, sf::Vector2i movementDirectionIntentions)
 {
 	sl::MovementComponent* movComp = entity.getComponent<sl::MovementComponent>();
 	if (!movComp) { return false; }
@@ -29,7 +29,7 @@ bool PlayerManager::movementUpdate(sl::Entity& entity, sf::Vector2i movementDire
 	return true;
 }
 
-void PlayerManager::intentionCheck(sl::Entity& entity, sl::Intentions intentions, const World& world)
+void PlayerManager::intentionCheck(const sl::Entity& entity, sl::Intentions intentions, const World& world)
 {
 	bool isSuccess = movementUpdate(entity, intentions.movementDirectionIntentions);
 
@@ -70,10 +70,10 @@ void PlayerManager::tick(float dt, const World& world) {
 
 		for (auto& playerIntention : playerIntents) {
 
-			auto entity = world.getPlayerEntityByToken(playerIntention.playerToken).lock();
-			if (!entity) { return; }
+			auto entity = world.getPlayerEntityByToken(playerIntention.playerToken);
+			if (!entity.has_value()) { return; }
 
-			intentionCheck(*entity, playerIntention.intentions, world);
+			intentionCheck(entity.value(), playerIntention.intentions, world);
 		}
 		playerIntents.clear();
 	}

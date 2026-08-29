@@ -13,7 +13,7 @@
 
 sl::CollisionSystem::CollisionSystem()
 {
-	reusableEntityIdsBuffer = std::vector<uint32_t>();
+	reusableEntityIdsBuffer = std::vector<sl::EntityId>();
 }
 
 void sl::CollisionSystem::onUpdate(float updateTime, const sl::CollisionCellMap& collisionCellMap, const WorldBase& world) {
@@ -22,22 +22,20 @@ void sl::CollisionSystem::onUpdate(float updateTime, const sl::CollisionCellMap&
 		currentTime -= updateRate;
 
 		for (auto& entity : world.getEntities()) {
-			
-			if (!entity) { continue; }
 
-			sl::CollisionComponent* colisComp = entity->getComponent<sl::CollisionComponent>();
+			sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
 			if (!colisComp) { continue; }
 
 			if (colisComp->isStaticCollisioner()) { continue; }
 
-			sl::MovementComponent* moveComp = entity->getComponent<sl::MovementComponent>();
+			sl::MovementComponent* moveComp = entity.getComponent<sl::MovementComponent>();
 			if (moveComp) {
 				if (!moveComp->isMoving()) {
 					continue;
 				}
 			}
 
-			sl::TransformComponent* transComp = entity->getComponent<sl::TransformComponent>();
+			sl::TransformComponent* transComp = entity.getComponent<sl::TransformComponent>();
 			if (!transComp) { continue; }
 
 			sf::Vector2f position = transComp->getPosition();
@@ -50,12 +48,12 @@ void sl::CollisionSystem::onUpdate(float updateTime, const sl::CollisionCellMap&
 
 			if (!isSuccess) { continue; }
 
-			for (uint32_t id : reusableEntityIdsBuffer) {
+			for (sl::EntityId id : reusableEntityIdsBuffer) {
 
 				auto entityOpt = world.getEntityById(id);
 				if (!entityOpt.has_value()) { continue; }
 
-				if (id == entity->getGlobalId()) { continue; }
+				if (id == entity.getId()) { continue; }
 
 				sl::CollisionComponent* anotherColisComp = entityOpt.value().get().getComponent<sl::CollisionComponent>();
 				if (!anotherColisComp) { continue; }
@@ -72,9 +70,9 @@ void sl::CollisionSystem::onUpdate(float updateTime, const sl::CollisionCellMap&
 
 				if (type == sl::CollisionType::None) { continue; }
 
-				onCollisionDetected.broadcast(*entity, entityOpt.value(), type);
+				onCollisionDetected.broadcast(entity, entityOpt.value(), type);
 
-				//std::cout << "Collision detected between Entity " << entity->getGlobalId() << " and Entity " << id << " with CollisionType: " << static_cast<int>(type) << std::endl;
+				//std::cout << "Collision detected between Entity " << entity->getGlobalId().ID << " and Entity " << id << " with CollisionType: " << static_cast<int>(type) << std::endl;
 			}
 		}
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/System/Vector2.hpp>
+#include "EntityId.hpp"
 
 namespace sl {
 	class Entity;
@@ -10,7 +11,7 @@ namespace sl {
 	public:
 		MovementSystem();
 
-		void onUpdate(float updateTime, sl::Entity& entity, const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
+		void onUpdate(float updateTime, const sl::Entity& entity, const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
 
 	private:
 
@@ -20,18 +21,18 @@ namespace sl {
 
 		const int ON_POSITION_SEARCH_DEPTH = 1;
 
-		std::vector<uint32_t> reusableEntityIdsBuffer;
+		std::vector<sl::EntityId> reusableEntityIdsBuffer;
 
-		bool isBlockedOnPosition(sl::Entity& entity, const sf::Vector2f& testPos,
+		bool isBlockedOnPosition(const sl::Entity& entity, const sf::Vector2f& testPos,
 			const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
 
-		void movingWithCollisionCheck(float updateTime, sl::Entity& entity,
+		void movingWithCollisionCheck(float updateTime, const sl::Entity& entity,
 			const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
 
-		void standartPositionCalculate(sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos,
+		void standartPositionCalculate(const sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos,
 			const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
 
-		void subSteppingPositionCalculate(sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos,
+		void subSteppingPositionCalculate(const sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos,
 			const sl::CollisionCellMap& collisionCellMap, const WorldBase& world);
 	};
 }

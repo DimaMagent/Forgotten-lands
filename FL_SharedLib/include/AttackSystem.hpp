@@ -2,6 +2,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <vector>
 #include <set>
+#include "EntityId.hpp"
 
 namespace sl {
 	class Entity;
@@ -12,13 +13,13 @@ namespace sl {
 	class AttackSystem {
 	public:
 		AttackSystem();
-		[[nodiscard]] bool tryMeleeAttack(sl::Entity& attackingEntity, const WorldBase& world);
-		void attackEnd(uint32_t attackingEntityId, const sl::WorldBase& world);
+		[[nodiscard]] bool tryMeleeAttack(const sl::Entity& attackingEntity, const WorldBase& world);
+		void attackEnd(sl::EntityId attackingEntityId, const sl::WorldBase& world);
 
 	private:
-		std::vector<uint32_t> reusableEntityIdsBuffer;
+		std::vector<sl::EntityId> reusableEntityIdsBuffer;
 
-		std::set<uint32_t> temporaryIgnoreList;
+		std::set<sl::EntityId> temporaryIgnoreList;
 
 		[[nodiscard]] bool isAABBinAttackCone(
 			sf::Vector2f attackerPos,

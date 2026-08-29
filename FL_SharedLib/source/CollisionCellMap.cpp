@@ -31,11 +31,11 @@ void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
 
 	sf::Vector2f position = transComp->getPosition();
 
-	bool isSuccess = occupiedCellsAdd(entity.getGlobalId(), position);
+	bool isSuccess = occupiedCellsAdd(entity.getId(), position);
 
 	if (!isSuccess) { return; }
 
-	uint32_t entityId = entity.getGlobalId();
+	sl::EntityId entityId = entity.getId();
 
 	uint64_t token = transComp->onCellChanged.addFunction([this, entityId](sf::Vector2f pos) {
 		if (!adjustingEntityOnMap(entityId, pos)) {
@@ -44,40 +44,40 @@ void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
 		
 		});
 
-	entityIdToDelegateToken.try_emplace(entity.getGlobalId(), token);
+	entityIdToDelegateToken.try_emplace(entity.getId(), token);
 
 }
 
 void sl::CollisionCellMap::removeEntityFromCollisionMap(const sl::Entity& entity)
 {
 
-	bool isSuccess = occupiedCellsRemove(entity.getGlobalId());
+	bool isSuccess = occupiedCellsRemove(entity.getId());
 
 	if (!isSuccess) { return; }
 
 	sl::TransformComponent* transComp = entity.getComponent<sl::TransformComponent>();
 	if (!transComp) { return; }
 
-	auto tokenIt = entityIdToDelegateToken.find(entity.getGlobalId());
+	auto tokenIt = entityIdToDelegateToken.find(entity.getId());
 	if (tokenIt == entityIdToDelegateToken.end()) { return; }
 
 	transComp->onCellChanged.removeFunction(tokenIt->second);
 	entityIdToDelegateToken.erase(tokenIt);
 }
 
-std::vector<uint32_t> sl::CollisionCellMap::getEntityIdsToCollisionMap(sf::Vector2f pos) const
+std::vector<sl::EntityId> sl::CollisionCellMap::getEntityIdsToCollisionMap(sf::Vector2f pos) const
 {
-	if (pos.x < 0 || pos.y < 0) { return  std::vector<uint32_t>(); }
+	if (pos.x < 0 || pos.y < 0) { return  std::vector<sl::EntityId>(); }
 
 	Cell cell(pos.x, pos.y);
 	auto it = cellToEntityIds.find(cell);
 
-	if (it == cellToEntityIds.end()) { return  std::vector<uint32_t>(); }
+	if (it == cellToEntityIds.end()) { return  std::vector<sl::EntityId>(); }
 
 	return it->second;
 }
 
-bool sl::CollisionCellMap::getNearestEntityIdsToPosition(sf::Vector2f pos, std::vector<uint32_t>& entityIdsOut, uint8_t searchDepth) const
+bool sl::CollisionCellMap::getNearestEntityIdsToPosition(sf::Vector2f pos, std::vector<sl::EntityId>& entityIdsOut, uint8_t searchDepth) const
 {
 	if (pos.x < 0.f || pos.y < 0.f) { return false; }
 	Cell centerCell(pos.x, pos.y);
@@ -103,7 +103,7 @@ bool sl::CollisionCellMap::getNearestEntityIdsToPosition(sf::Vector2f pos, std::
 	return true;
 }
 
-bool sl::CollisionCellMap::getNearestEntityIdsToEntity(const AABB& aabb, sf::Vector2f pos, std::vector<uint32_t>& entityIdsOut, uint8_t searchDepth) const
+bool sl::CollisionCellMap::getNearestEntityIdsToEntity(const AABB& aabb, sf::Vector2f pos, std::vector<sl::EntityId>& entityIdsOut, uint8_t searchDepth) const
 {
 	if (!aabb.exists()) { return false; }
 
@@ -145,7 +145,7 @@ bool sl::CollisionCellMap::onMapBound(const AABB& aabb, sf::Vector2f pos) const
 	return true;
 }
 
-bool sl::CollisionCellMap::adjustingEntityOnMap(uint32_t entityId, sf::Vector2f pos)
+bool sl::CollisionCellMap::adjustingEntityOnMap(sl::EntityId entityId, sf::Vector2f pos)
 {
 	bool isSuccess = occupiedCellsRemove(entityId);
 
@@ -154,13 +154,13 @@ bool sl::CollisionCellMap::adjustingEntityOnMap(uint32_t entityId, sf::Vector2f 
 	return occupiedCellsAdd(entityId, pos);
 }
 
-bool sl::CollisionCellMap::occupiedCellsAdd(uint32_t entityId, sf::Vector2f pos)
+bool sl::CollisionCellMap::occupiedCellsAdd(sl::EntityId entityId, sf::Vector2f pos)
 {
 	auto entityOpt = world.getEntityById(entityId);
 
 	if (!entityOpt.has_value()) { return false; }
 
-	sl::Entity& entity = entityOpt.value().get();
+	const sl::Entity& entity = entityOpt.value().get();
 
 	sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
 	if (!colisComp) { return false; }
@@ -186,13 +186,13 @@ bool sl::CollisionCellMap::occupiedCellsAdd(uint32_t entityId, sf::Vector2f pos)
 	return true;
 }
 
-bool sl::CollisionCellMap::occupiedCellsRemove(uint32_t entityId)
+bool sl::CollisionCellMap::occupiedCellsRemove(sl::EntityId entityId)
 {
 	auto entityOpt = world.getEntityById(entityId);
 
 	if (!entityOpt.has_value()) { return false; }
 
-	sl::Entity& entity = entityOpt.value().get();
+	const sl::Entity& entity = entityOpt.value().get();
 
 	sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
 	if (!colisComp) { return false; }
@@ -203,7 +203,7 @@ bool sl::CollisionCellMap::occupiedCellsRemove(uint32_t entityId)
 		auto it = cellToEntityIds.find(cell);
 		if (it == cellToEntityIds.end()) { continue; }
 
-		auto itEntity = std::find(it->second.begin(), it->second.end(), entity.getGlobalId());
+		auto itEntity = std::find(it->second.begin(), it->second.end(), entity.getId());
 		if (itEntity == it->second.end()) { continue; }
 
 		sl::swapPopDelete(it->second, std::distance(it->second.begin(), itEntity));

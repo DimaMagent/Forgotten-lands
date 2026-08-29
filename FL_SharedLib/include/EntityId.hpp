@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <functional>
 
 namespace sl {
     struct EntityId {
@@ -21,12 +22,22 @@ namespace sl {
             return ID << 24;
         }
 
-        bool operator==(EntityId& other) {
+        bool operator==(const EntityId& other) const noexcept {
             return ID == other.ID;
         }
 
-        bool operator!=(EntityId& other) {
+        bool operator!=(const EntityId& other) const noexcept {
             return ID != other.ID;
+        }
+    };
+}
+
+namespace std {
+    template <>
+    struct hash<sl::EntityId> {
+        std::size_t operator()(const sl::EntityId& e) const noexcept {
+            std::size_t h1 = std::hash<uint32_t>{}(e.ID);
+            return h1;
         }
     };
 }

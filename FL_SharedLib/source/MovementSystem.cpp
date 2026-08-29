@@ -12,14 +12,14 @@
 
 sl::MovementSystem::MovementSystem()
 {
-    reusableEntityIdsBuffer = std::vector<uint32_t>();
+    reusableEntityIdsBuffer = std::vector<sl::EntityId>();
 }
 
-void sl::MovementSystem::onUpdate(float updateTime, sl::Entity& entity, const sl::CollisionCellMap& collisionCellMap, const WorldBase& world){
+void sl::MovementSystem::onUpdate(float updateTime, const sl::Entity& entity, const sl::CollisionCellMap& collisionCellMap, const WorldBase& world){
     movingWithCollisionCheck(updateTime, entity,collisionCellMap, world);
 }
 
-void sl::MovementSystem::movingWithCollisionCheck(float updateTime, sl::Entity& entity,
+void sl::MovementSystem::movingWithCollisionCheck(float updateTime, const sl::Entity& entity,
     const sl::CollisionCellMap& collisionCellMap, const WorldBase& world)
 {
     sl::MovementComponent* movComp = entity.getComponent<sl::MovementComponent>();
@@ -56,7 +56,7 @@ void sl::MovementSystem::movingWithCollisionCheck(float updateTime, sl::Entity& 
     movComp->isMovementAlreadyReseted = false;
 }
 
-void sl::MovementSystem::standartPositionCalculate(sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos,
+void sl::MovementSystem::standartPositionCalculate(const sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos,
     const sl::CollisionCellMap& collisionCellMap, const WorldBase& world)
 {
     if (delta.x != 0.f) {
@@ -74,7 +74,7 @@ void sl::MovementSystem::standartPositionCalculate(sl::Entity& entity, const sf:
     }
 }
 
-void sl::MovementSystem::subSteppingPositionCalculate(sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos,
+void sl::MovementSystem::subSteppingPositionCalculate(const sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos,
     const sl::CollisionCellMap& collisionCellMap, const WorldBase& world)
 {
     float maxStepSize = MAX_STEP_SIZE;
@@ -112,7 +112,7 @@ void sl::MovementSystem::subSteppingPositionCalculate(sl::Entity& entity, const 
     }
 }
 
-bool sl::MovementSystem::isBlockedOnPosition(sl::Entity& entity, const sf::Vector2f& testPos,
+bool sl::MovementSystem::isBlockedOnPosition(const sl::Entity& entity, const sf::Vector2f& testPos,
     const sl::CollisionCellMap& collisionCellMap, const WorldBase& world)
 {
     sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
@@ -125,8 +125,8 @@ bool sl::MovementSystem::isBlockedOnPosition(sl::Entity& entity, const sf::Vecto
         return false;
     }
 
-    for (uint32_t id : reusableEntityIdsBuffer) {
-        if (id == entity.getGlobalId()) continue;
+    for (sl::EntityId id : reusableEntityIdsBuffer) {
+        if (id == entity.getId()) continue;
 
         auto entityOpt = world.getEntityById(id);
         if (!entityOpt.has_value()) continue;

@@ -20,11 +20,11 @@
 
 sl::AttackSystem::AttackSystem()
 {
-    reusableEntityIdsBuffer = std::vector<uint32_t>();
-    temporaryIgnoreList = std::set<uint32_t>();
+    reusableEntityIdsBuffer = std::vector<sl::EntityId>();
+    temporaryIgnoreList = std::set<sl::EntityId>();
 }
 
-bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBase& world) {
+bool sl::AttackSystem::tryMeleeAttack(const sl::Entity& attackingEntity, const WorldBase& world) {
 	sl::WeaponComponent* weaponComp = attackingEntity.getComponent<sl::WeaponComponent>();
 	if (!weaponComp) { return false; }
 
@@ -72,12 +72,12 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
 
     stateComp->setCurrentActionState(sl::ActionState::MeleeAttack);
 
-    for (uint32_t id : reusableEntityIdsBuffer) {
+    for (sl::EntityId id : reusableEntityIdsBuffer) {
 
         auto entityOpt = world.getEntityById(id);
         if (!entityOpt.has_value()) { continue; }
 
-        if (id == attackingEntity.getGlobalId()) { continue; }
+        if (id == attackingEntity.getId()) { continue; }
 
         auto it = temporaryIgnoreList.find(id);
 
@@ -108,14 +108,14 @@ bool sl::AttackSystem::tryMeleeAttack(sl::Entity& attackingEntity, const WorldBa
         if (isAttackSuccess) {
             temporaryIgnoreList.emplace(id);
             anotherHealthComp->takeDamage(weaponComp->getAttackDamage());
-            std::cout << "Entity with id: " << attackingEntity.getGlobalId() << " attacked entity with id " << id
+            std::cout << "Entity with id: " << attackingEntity.getId().ID << " attacked entity with id " << id.ID
                 << "currentHealth " << anotherHealthComp->getCurrentHealth() << "\n";
         }
     }
     temporaryIgnoreList.clear();
     reusableEntityIdsBuffer.clear();
 
-    DefferedFunctionStorage::addDefferedCall([this, &world](uint32_t attackingEntityId) { attackEnd(attackingEntityId, world); }, weaponComp->getAttackCooldown(), attackingEntity.getGlobalId());
+    DefferedFunctionStorage::addDefferedCall([this, &world](uint32_t attackingEntityId) { attackEnd(attackingEntityId, world); }, weaponComp->getAttackCooldown(), attackingEntity.getId().ID);
 
     return true;
 }
@@ -157,7 +157,7 @@ bool sl::AttackSystem::isAABBinAttackCone(
     return dot >= minDotCos;
 }
 
-void sl::AttackSystem::attackEnd(uint32_t attackingEntityId, const sl::WorldBase& world) {
+void sl::AttackSystem::attackEnd(sl::EntityId attackingEntityId, const sl::WorldBase& world) {
     auto attackingEntity = world.getEntityById(attackingEntityId);
 
     if (!attackingEntity.has_value()) { return; }

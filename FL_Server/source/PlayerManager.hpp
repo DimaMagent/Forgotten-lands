@@ -39,7 +39,7 @@ private:
 
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 
-	[[nodiscard]] bool movementUpdate(sl::Entity& entity, sf::Vector2i movementDirectionIntentions);
+	[[nodiscard]] bool movementUpdate(const sl::Entity& entity, sf::Vector2i movementDirectionIntentions);
 
-	void intentionCheck(sl::Entity& entity, sl::Intentions intentions, const World& world);
+	void intentionCheck(const sl::Entity& entity, sl::Intentions intentions, const World& world);
 };

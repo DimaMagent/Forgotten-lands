@@ -18,17 +18,17 @@ void Serializer::serializeObjects() const
 {
 	std::vector<uint8_t> localBuf;
 
-	const std::vector<std::shared_ptr<sl::Entity>>& entities = world.getEntities();
+	const std::vector<sl::Entity>& entities = world.getEntities();
 
 	for (size_t i = 0; i < entities.size(); ++i) {
 
-		std::vector<uint8_t> entityLocalBuf = serializeEntity(*entities[i]);
+		std::vector<uint8_t> entityLocalBuf = serializeEntity(entities[i]);
 
 		localBuf.insert(localBuf.end(), entityLocalBuf.begin(), entityLocalBuf.end());
 	}
 
 	for (size_t i = 0; i < entities.size(); ++i) {
-		if (auto tokenOpt = world.getTokenById(entities[i]->getGlobalId()); tokenOpt.has_value()) {
+		if (auto tokenOpt = world.getTokenById(entities[i].getId()); tokenOpt.has_value()) {
 			Packer::send<sl::net::StatusPacket>(tokenOpt.value(), localBuf);
 		}
 	}
@@ -48,7 +48,7 @@ std::vector<uint8_t> Serializer::serializeEntity(const sl::Entity& en) const
 {
 	std::vector<uint8_t> localBuf;
 
-	uint32_t entityId = en.getId();
+	uint32_t entityId = en.getId().ID;
 	sl::net::write<uint32_t>(localBuf, entityId);
 
 	uint32_t entityType = static_cast<uint32_t>(en.getEntityType());
