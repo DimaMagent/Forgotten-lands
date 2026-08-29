@@ -9,7 +9,7 @@ RenderManager::RenderManager(sf::RenderTarget& renderTarget) :
 {
 }
 
-void RenderManager::render(sl::Entity& entity) const
+void RenderManager::render(const sl::Entity& entity) const
 {
 	RenderComponent* rendComp = entity.getComponent<RenderComponent>();
 	sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();

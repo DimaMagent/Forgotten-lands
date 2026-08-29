@@ -1,9 +1,6 @@
 #include "pch.hpp"
 #include "LocalWorld.hpp"
 #include "Entity.hpp"
-#include "MovementComponent.hpp"
-#include "TransformComponent.hpp"
-#include "StateComponent.hpp"
 #include "RenderManager.hpp"
 #include "StateManager.hpp"
 #include "LockFreeDelegate.hpp"
@@ -12,6 +9,7 @@
 #include "MovementSystem.hpp"
 #include "EntityType.hpp"
 #include "StatusPacket.hpp"
+#include "WorldMap.hpp"
 
 LocalWorld::LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::RenderTarget& renderTarget) : WorldBase() ,
 	stateManager(std::make_shared<StateManager>(entities)),
@@ -28,7 +26,7 @@ LocalWorld::LocalWorld(std::weak_ptr<ClientEntityFactory> entityFactory, sf::Ren
 
 LocalWorld::~LocalWorld() = default;
 
-void LocalWorld::addPlayerEntity(std::unique_ptr<sl::Entity> entity, uint32_t id)
+void LocalWorld::addPlayerEntity(std::unique_ptr<sl::Entity> entity, sl::EntityId id)
 {
 	if (!entity) {
 		throw std::runtime_error("LocalWorld::addPlayerEntity: entity is nullptr, adding player entity is not possible");
@@ -45,16 +43,21 @@ void LocalWorld::addPlayerEntity(std::unique_ptr<sl::Entity> entity, uint32_t id
 	
 }
 
-void LocalWorld::addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id)
+void LocalWorld::addEntity(std::unique_ptr<sl::Entity> entity, sl::EntityId id)
 {
-	if (!entity)
-	{
-		throw std::runtime_error("LocalWorld::addEntity: entity is nullptr, adding player entity is not possible");
+	if (!entity) {
+		throw std::runtime_error("sl::WorldBase::addEntity: entity is nullptr, adding player entity is not possible");
 	}
 
-	entity->setGlobalId(id);
+	entity->setId(id);
 
-	return WorldBase::addEntity(std::move(entity), id);
+	entities.addEntity(std::move(entity), id);
+
+	auto enPtr = entities.getEntityToId(id);
+
+	if (enPtr) {
+		worldMap->onEntityAdded(*enPtr);
+	}
 }
 
 void LocalWorld::render()
@@ -65,21 +68,45 @@ void LocalWorld::render()
 	}
 	if (!entities.getEntities().empty()) {
 		for (const auto& entity : entities.getEntities()) {
-			if (!entity) { continue; }
-
-			renderManager->render(*entity);
+			renderManager->render(entity);
 		}
 	}
 }
 
-bool LocalWorld::removeEntityById(uint32_t id)
+void LocalWorld::removeEntityById(sl::EntityId id)
 {
 	if (id == playerEntityId) {
 		isPlayerEntityAssigned = false;
 		OnSetPlayerEntity.broadcast(getPlayerEntity());
 	}
 
-	return entities.removeEntityById(id);
+	entities.removeEntityById(id);
+}
+
+std::optional<std::reference_wrapper<const sl::Entity>> LocalWorld::getEntityById(sl::EntityId id) const
+{
+	auto entityPtr = entities.getEntityToId(id);
+	if (!entityPtr) { return {}; }
+
+	return *entityPtr;
+}
+
+std::optional<std::reference_wrapper<sl::Entity>> LocalWorld::getEntityById(sl::EntityId id)
+{
+	auto entityPtr = entities.getEntityToId(id);
+	if (!entityPtr) { return {}; }
+
+	return *entityPtr;
+}
+
+const std::vector<sl::Entity>& LocalWorld::getEntities() const
+{
+	return entities.getEntities();
+}
+
+auto LocalWorld::getEntities()
+{
+	return entities.getEntities();
 }
 
 void LocalWorld::onUpdate(float updateTime)
@@ -104,7 +131,7 @@ void LocalWorld::onAbsenceEntity(const sl::net::EntityData& enData)
 	addEntity(std::move(en), enData.entityId);
 }
 
-void LocalWorld::onAbsenceEntityOnStatusPacket(uint32_t id)
+void LocalWorld::onAbsenceEntityOnStatusPacket(sl::EntityId id)
 {
 	removeEntityById(id);
 }
@@ -127,9 +154,9 @@ void LocalWorld::onAuth(const sl::net::EntityData& enData)
 	}
 }
 
-const std::weak_ptr<sl::Entity> LocalWorld::getPlayerEntity() const
+std::optional<std::reference_wrapper<sl::Entity>> LocalWorld::getPlayerEntity()
 {
 	if (!isPlayerEntityAssigned) { return {}; }
 
-	return entities.getEntityToId(playerEntityId);
+	return *entities.getEntityToId(playerEntityId);
 }

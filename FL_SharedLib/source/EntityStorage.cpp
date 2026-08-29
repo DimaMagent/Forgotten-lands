@@ -3,27 +3,27 @@
 #include "Entity.hpp"
 
 
-void sl::EntityStorage::addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id)
+void sl::EntityStorage::addEntity(std::unique_ptr<sl::Entity> entity, sl::EntityId id)
 {
 	if (!entity) { return; }
 
 	if (idToIndex.find(id) == idToIndex.end())
 	{
-		entities.emplace_back(std::move(entity));
+		entities.emplace_back(std::move(*entity));
 		idToIndex.try_emplace(id, entities.size() - 1);
 	}
 }
 
-bool sl::EntityStorage::removeEntityById(uint32_t id)
+void sl::EntityStorage::removeEntityById(sl::EntityId id)
 {
 	auto it = idToIndex.find(id);
-	if (it == idToIndex.end()) { return false; }
+	if (it == idToIndex.end()) { return ; }
 
 	size_t removedIdx = it->second;
 	size_t lastIdx = entities.size() - 1;
 
 	if (removedIdx != lastIdx) {
-		uint32_t movedId = entities[lastIdx]->getGlobalId();
+		sl::EntityId movedId = entities[lastIdx].getId();
 
 		entities[removedIdx] = std::move(entities[lastIdx]);
 
@@ -33,27 +33,32 @@ bool sl::EntityStorage::removeEntityById(uint32_t id)
 	idToIndex.erase(it);
 	entities.pop_back();
 
-	return true;
 }
 
-std::weak_ptr<sl::Entity> sl::EntityStorage::getEntityToId(uint32_t id) const
+sl::Entity* sl::EntityStorage::getEntityToId(sl::EntityId id)
 {
 	if (auto it = idToIndex.find(id); it != idToIndex.end()) {
-		auto& entity = entities[it->second];
-		return entity;
+		return &entities[it->second];
 	}
 	return {};
 }
 
-std::weak_ptr<sl::Entity> sl::EntityStorage::getEntityToIndex(size_t index) const
+const sl::Entity* sl::EntityStorage::getEntityToId(sl::EntityId id) const {
+	if (auto it = idToIndex.find(id); it != idToIndex.end()) {
+		return &entities[it->second];
+	}
+	return {};
+}
+
+sl::Entity* sl::EntityStorage::getEntityToIndex(size_t index)
 {
 	if (index < entities.size()) {
-		return entities[index];
+		return &entities[index];
 	}
 	return {};
 }
 
-std::optional<size_t> sl::EntityStorage::getIndexById(uint32_t id) const
+std::optional<size_t> sl::EntityStorage::getIndexById(sl::EntityId id) const
 {
 	auto it = idToIndex.find(id);
 	if (it != idToIndex.end()) {

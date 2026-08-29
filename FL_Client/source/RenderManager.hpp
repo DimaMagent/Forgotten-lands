@@ -14,7 +14,7 @@ class RenderManager {
 public:
 	RenderManager(sf::RenderTarget& renderTarget);
 
-	void render(sl::Entity& entity) const;
+	void render(const sl::Entity& entity) const;
 private:
 	sf::RenderTarget& renderTarget;
 };

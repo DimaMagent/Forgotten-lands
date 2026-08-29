@@ -2,9 +2,9 @@
 #include <vector>
 #include <memory>
 #include "SFML/System/Time.hpp"
-#include "EntityStorage.hpp"
 #include <optional>
 #include <functional>
+#include "EntityId.hpp"
 
 namespace sl {
 	class Entity;
@@ -19,14 +19,13 @@ namespace sl {
 		WorldBase();
 		virtual ~WorldBase();
 		void update(float deltaTime);
-		virtual void addEntity(std::unique_ptr<sl::Entity> entity, uint32_t id);
-		virtual bool removeEntityById(uint32_t id);
-		virtual std::optional<std::reference_wrapper<sl::Entity>> getEntityById(uint32_t id) const;
-		virtual const std::vector<std::shared_ptr<sl::Entity>>& getEntities() const { return entities.getEntities(); }
+		virtual void removeEntityById(sl::EntityId id) = 0;
+		virtual std::optional<std::reference_wrapper<const sl::Entity>> getEntityById(sl::EntityId id) const = 0;
+		virtual std::optional<std::reference_wrapper<sl::Entity>> getEntityById(sl::EntityId id) = 0;
+		virtual const std::vector<sl::Entity>& getEntities() const = 0;
 		const std::optional<std::reference_wrapper<sl::WorldMap>> getWorldMap() const;
 
 	protected:
-		sl::EntityStorage entities;
 		const sf::Time updateTime = sf::seconds(1.f / 60.f);
 		sf::Time timeSinceLastUpdate = sf::Time::Zero;
 
@@ -35,7 +34,6 @@ namespace sl {
 		std::unique_ptr<sl::CollisionSystem> collisionSystem;
 		std::unique_ptr<MovementSystem> movementSystem;
 		
-
 		virtual void onUpdate(float updateTime) = 0;
 		virtual void onUpdateEntities(sl::Entity& en, float updateTime) = 0;
 	};

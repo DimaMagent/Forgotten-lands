@@ -10,6 +10,7 @@
 
 World::World(ConnectionEvents& connectionEvents) : WorldBase()
 {
+	entities = sl::SlotMap<sl::Entity>(10000);
 	serializer = std::make_unique<Serializer>(*this);
 	connectionEvents.OnClientDisconnected.addFunction([this](uint32_t token) {
 		removePlayerEntityByToken(token);
@@ -34,8 +35,6 @@ std::vector<uint8_t> World::addPlayerEntity(std::unique_ptr<sl::Entity> entity, 
 		throw std::runtime_error("World::addPlayerEntity: entity is nullptr, adding an entity is not possible");
 	}
 
-	uint32_t entityId = entity->getGlobalId();
-
 	NetworkIDComponent* netComp = entity->getComponent<NetworkIDComponent>();
 
 	if (netComp) {
@@ -45,13 +44,14 @@ std::vector<uint8_t> World::addPlayerEntity(std::unique_ptr<sl::Entity> entity, 
 		throw ("World::addPlayerEntity: PLayerEntity The entity does not have a NetworkIDComponent. AddPlayerEntity failed.");
 	}
 
-	addEntity(std::move(entity), entity->getGlobalId());
+	sl::EntityId entityId = addEntity(std::move(entity));
 
 	tokenToEntityId.try_emplace(sessionToken, entityId);
 	
-	auto enPtr = entities.getEntityToId(entityId).lock();
+	auto enPtr = entities.get(entityId);
 
 	if (enPtr) {
+		worldMap->onEntityAdded(*enPtr);
 		return serializer->serializeEntity(*enPtr);
 	}
 
@@ -59,54 +59,95 @@ std::vector<uint8_t> World::addPlayerEntity(std::unique_ptr<sl::Entity> entity, 
 
 }
 
-bool World::removePlayerEntityByToken(uint32_t sessionToken)
+void World::removePlayerEntityByToken(uint32_t sessionToken)
 {
 	auto it = tokenToEntityId.find(sessionToken);
-	if (it == tokenToEntityId.end()) { return false; }
+	if (it == tokenToEntityId.end()) { return; }
 
-	bool isSucess = entities.removeEntityById(it->second);
+	tokenToEntityId.erase(sessionToken);
 
-	if (isSucess) {
-		tokenToEntityId.erase(sessionToken);
-	}
+	entities.destroy(it->second);
 
-	return isSucess;
 }
 
-bool World::removeEntityById(uint32_t id)
+void World::removeEntityById(sl::EntityId id)
 {
-	auto entity = getEntityById(id);
-	if (!entity.has_value()) { return false; }
+	auto entity = entities.get(id);
 
-	NetworkIDComponent* netComp = entity.value().get().getComponent<NetworkIDComponent>();
+	if (!entity) { return; }
 
-	if (!netComp) { return false; }
+	NetworkIDComponent* netComp = entity->getComponent<NetworkIDComponent>();
 
-	bool isSucess = entities.removeEntityById(id);
-
-	if (isSucess)
+	if (netComp)
 	{
 		tokenToEntityId.erase(netComp->getSessionToken());
 	}
 
-	return isSucess;
+	entities.destroy(id);
+
 }
 
-std::weak_ptr<sl::Entity> World::getPlayerEntityByToken(uint32_t token) const
+sl::EntityId World::addEntity(std::unique_ptr<sl::Entity> entity)
+{
+	if (!entity) {
+		throw std::runtime_error("sl::World::addEntity: entity is nullptr, adding player entity is not possible");
+	}
+	sl::EntityId entityId = entities.spawn(std::move(*entity));
+
+	auto entityPtr = entities.get(entityId);
+
+	if (!entityPtr) {
+		throw std::runtime_error("sl::World::addEntity: entity is missed in entities");
+	}
+
+	entityPtr->setId(entityId);
+
+	worldMap->onEntityAdded(*entityPtr);
+
+	return entityId;
+}
+
+std::optional<std::reference_wrapper<const sl::Entity>> World::getEntityById(sl::EntityId id) const
+{
+	auto enPtr = entities.get(id);
+	if (!enPtr) { return {}; }
+
+	return *enPtr;
+}
+
+std::optional<std::reference_wrapper<sl::Entity>> World::getEntityById(sl::EntityId id)
+{
+	auto enPtr = entities.get(id);
+	if (!enPtr) { return {}; }
+
+	return *enPtr;
+}
+
+const std::vector<sl::Entity>& World::getEntities() const
+{
+	return entities.view();
+}
+
+auto World::getEntities()
+{
+	return entities.view();
+}
+
+std::optional<std::reference_wrapper<sl::Entity>> World::getPlayerEntityByToken(uint32_t token)
 {
 	auto it = tokenToEntityId.find(token);
 	if (it == tokenToEntityId.end()) {
-		return std::weak_ptr<sl::Entity>();
+		return {};
 	}
-	return entities.getEntityToId(it->second);
+	return *entities.get(it->second);
 }
 
-std::optional<uint32_t> World::getTokenById(uint32_t id) const
+std::optional<uint32_t> World::getTokenById(sl::EntityId id) const
 {
-	auto entity = getEntityById(id);
-	if (!entity.has_value()) { return {}; }
+	auto entity = entities.get(id);
+	if (!entity) { return {}; }
 
-	NetworkIDComponent* netComp = entity.value().get().getComponent<NetworkIDComponent>();
+	NetworkIDComponent* netComp = entity->getComponent<NetworkIDComponent>();
 	
 	if (!netComp) { return {}; }
 

@@ -5,6 +5,7 @@
 #include <cstdint>
 #include "Component.hpp"
 #include "EntityType.hpp"
+#include "EntityId.hpp"
 #include "ComponentTypes.hpp"
 
 namespace sl {
@@ -22,13 +23,11 @@ namespace sl {
         Entity(Entity&&) = default;
         Entity& operator=(Entity&&) = default;
 
-        uint32_t getId() const { return id; }
-
-        uint32_t getGlobalId() const { return globalId; }
+        EntityId getId() const { return id; }
 
         sl::EntityType getEntityType() const { return type; }
 
-        void setGlobalId(uint32_t newId) { globalId = newId; }
+        void setId(EntityId newId) { id = newId; }
 
         template<typename T>
         T* getComponent() const{
@@ -99,9 +98,7 @@ namespace sl {
         }
 
     private:
-        static uint32_t nextId;
-        uint32_t id;
-        uint32_t globalId = 0;
+        sl::EntityId id;
         sl::EntityType type;
         std::vector<std::pair<TypeID, std::unique_ptr<sl::Component>>> components;
     };

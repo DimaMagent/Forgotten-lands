@@ -4,33 +4,51 @@
 #include <unordered_map>
 #include <cstdint>
 #include <optional>
+#include "SlotMap.hpp"
+#include "Entity.hpp"
 
 class Serializer;
 class ConnectionEvents;
-namespace sl {
-	class Entity;
-}
 
 
 class World : public sl::WorldBase {
 public:
 	sl::LockFreeDelegate<float> OnUpdate;
+
 	World(ConnectionEvents& connectionEvents);
+
 	virtual ~World();
+
 	//returns serialized playerEntity data
 	std::vector<uint8_t> addPlayerEntity(std::unique_ptr<sl::Entity> entity, const uint32_t& sessionToken);
-	bool removePlayerEntityByToken(uint32_t sessionToken);
-	bool removeEntityById(uint32_t id) override;
 
-	std::weak_ptr<sl::Entity> getPlayerEntityByToken(uint32_t token) const;
-	std::optional<uint32_t> getTokenById(uint32_t id) const;
+	void removePlayerEntityByToken(uint32_t sessionToken);
+
+	void removeEntityById(sl::EntityId id) override;
+
+	sl::EntityId addEntity(std::unique_ptr<sl::Entity> entity);
+
+	std::optional<std::reference_wrapper<const sl::Entity>> getEntityById(sl::EntityId id) const override;
+
+	std::optional<std::reference_wrapper<sl::Entity>> getEntityById(sl::EntityId id) override;
+
+	const std::vector<sl::Entity>& getEntities() const override;
+
+	auto getEntities();
+
+	std::optional<std::reference_wrapper<sl::Entity>> getPlayerEntityByToken(uint32_t token);
+
+	std::optional<uint32_t> getTokenById(sl::EntityId id) const;
 
 protected:
-	virtual void onUpdate(float updateTime) override;
-	virtual void onUpdateEntities(sl::Entity& en, float updateTime) override;
+	void onUpdate(float updateTime) override;
+
+	void onUpdateEntities(sl::Entity& en, float updateTime) override;
 
 private:
+	sl::SlotMap<sl::Entity> entities;
+
 	std::unique_ptr<Serializer> serializer;
 
-	std::unordered_map<uint32_t, uint32_t> tokenToEntityId;
+	std::unordered_map<uint32_t, sl::EntityId> tokenToEntityId;
 };

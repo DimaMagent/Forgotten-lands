@@ -3,13 +3,10 @@
 #include <cstdint>
 #include <optional>
 #include <concepts>
+#include <ranges>
+#include "EntityId.hpp"
 
 namespace sl {
-
-    struct EntityId {
-        uint32_t index : 24;
-        uint32_t generation : 8;
-    };
 
     template <typename T>
     concept ValidEntityData = (std::move_constructible<T> || std::copy_constructible<T>) &&
@@ -73,6 +70,29 @@ namespace sl {
         uint32_t free_list_head = UINT32_MAX;
 
     public:
+        SlotMap(size_t capacity = 1000) {
+            slots.reserve(capacity);
+        }
+
+        void reserve(size_t new_capacity) {
+            slots.reserve(new_capacity);
+        }
+
+        size_t capacity() const { return slots.capacity(); }
+        size_t size() const { return slots.size(); }
+
+        auto view() const {
+            return slots
+                | std::views::filter([](const Slot& slot) { return slot.is_alive; })
+                | std::views::transform([](Slot& slot) -> EntityData& { return slot.data; });
+        }
+
+        auto view(){
+            return slots
+                | std::views::filter([](const Slot& slot) { return slot.is_alive; })
+                | std::views::transform([](Slot& slot) -> EntityData& { return slot.data; });
+        }
+
         EntityId spawn(EntityData&& new_data) {
             if (free_list_head != UINT32_MAX) {
 
@@ -119,9 +139,9 @@ namespace sl {
         }
 
         EntityData* get(EntityId id) {
-            if (id.index < slots.size()) {
-                Slot& slot = slots[id.index];
-                if (slot.is_alive && slot.generation == id.generation) {
+            if (id.getIndex() < slots.size()) {
+                Slot& slot = slots[id.getIndex()];
+                if (slot.is_alive && slot.generation == id.getGeneration()) {
                     return &slot.data;
                 }
             }
@@ -129,9 +149,9 @@ namespace sl {
         }
 
         const EntityData* get(EntityId id) const{
-            if (id.index < slots.size()) {
-                const Slot& slot = slots[id.index];
-                if (slot.is_alive && slot.generation == id.generation) {
+            if (id.getIndex() < slots.size()) {
+                const Slot& slot = slots[id.getIndex()];
+                if (slot.is_alive && slot.generation == id.getGeneration()) {
                     return &slot.data;
                 }
             }
