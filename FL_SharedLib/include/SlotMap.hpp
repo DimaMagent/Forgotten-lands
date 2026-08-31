@@ -19,7 +19,7 @@ namespace sl {
     private:
 
         struct SparseSlot {
-            uint32_t generation = 1;
+            sl::generationType generation = 1;
             bool is_alive = false;
 
             // if is_alive == true: denseIndex. Else NextFree
@@ -40,6 +40,8 @@ namespace sl {
             dense.reserve(capacity);
             sparse_dense_index.reserve(capacity);
         }
+
+        ~SlotMap() = default;
 
         std::span<EntityData> view() {
            return dense;

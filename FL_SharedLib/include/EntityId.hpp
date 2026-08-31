@@ -3,6 +3,8 @@
 #include <functional>
 
 namespace sl {
+    using generationType = uint8_t;
+
     struct EntityId {
         uint32_t ID;
 
@@ -11,7 +13,7 @@ namespace sl {
         EntityId() : ID(0){}
 
         EntityId(uint32_t idx, uint32_t generation) {
-            ID = (generation << 24) | (idx & 0x00FFFFFF);
+            ID = ((generation & 0xFF) << 24) | (idx & 0x00FFFFFF);
         }
 
         uint32_t getIndex() const {
@@ -19,7 +21,7 @@ namespace sl {
         }
 
         uint32_t getGeneration() const{
-            return ID << 24;
+            return ID >> 24;
         }
 
         bool operator==(const EntityId& other) const noexcept {
