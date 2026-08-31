@@ -8,12 +8,13 @@
 #include "CollisionSystem.hpp"
 #include "NetworkIDComponent.hpp"
 #include "ServerEntityFactory.hpp"
+#include "ServerSystemUpdater.hpp"
 
-World::World(ConnectionEvents& connectionEvents) : WorldBase()
+World::World(ConnectionEvents& connectionEvents) : WorldBase(std::make_unique<SystemUpdaterClass>())
 {
 	entities = sl::SlotMap<sl::Entity>(10000);
-	serializer = std::make_unique<Serializer>(*this);
 	entityFactory = std::make_unique<ServerEntityFactory>();
+
 	connectionEvents.OnClientDisconnected.addFunction([this](uint32_t token) {
 		removePlayerEntityByToken(token);
 	});
@@ -21,15 +22,6 @@ World::World(ConnectionEvents& connectionEvents) : WorldBase()
 
 World::~World() = default;
 
-void World::onUpdate(float updateTime)
-{
-	serializer->onUpdate(updateTime);
-	OnUpdate.broadcast(updateTime);
-}
-
-void World::onUpdateEntities(sl::Entity& en, float updateTime)
-{
-}
 
 sl::EntityId World::addPlayerEntity(sl::EntityType entityType, const uint32_t& sessionToken, std::vector<uint8_t>& serializedEntityDataOut)
 {
@@ -51,6 +43,20 @@ sl::EntityId World::addPlayerEntity(sl::EntityType entityType, const uint32_t& s
 
 		enPtr->setId(entityId);
 		worldMap->onEntityAdded(*enPtr);
+
+		//temp
+		auto* sysUpdater = dynamic_cast<ServerSystemUpdater*>(systemUpdater.get());
+		if (!sysUpdater)
+		{
+			throw std::runtime_error("World::addPlayerEntity: dynamic_cast<ServerSystemUpdater*> failed. AddPlayerEntity failed.");
+		}
+
+		auto serializer = sysUpdater->getSerializer();
+
+		if (!serializer) {
+			throw std::runtime_error("World::addPlayerEntity: serializer is not valid. AddPlayerEntity failed.");
+		}
+
 		serializedEntityDataOut = serializer->serializeEntity(*enPtr);
 		return entityId;
 	}
@@ -127,14 +133,23 @@ std::optional<std::reference_wrapper<sl::Entity>> World::getEntityById(sl::Entit
 	return *enPtr;
 }
 
-const std::vector<sl::Entity>& World::getEntities() const
+std::span<const sl::Entity> World::getEntities() const
 {
 	return entities.view();
 }
 
-auto World::getEntities()
+std::span<sl::Entity> World::getEntities()
 {
 	return entities.view();
+}
+
+std::optional<std::reference_wrapper<const sl::Entity>> World::getPlayerEntityByToken(uint32_t token) const 
+{
+	auto it = tokenToEntityId.find(token);
+	if (it == tokenToEntityId.end()) {
+		return {};
+	}
+	return *entities.get(it->second);
 }
 
 std::optional<std::reference_wrapper<sl::Entity>> World::getPlayerEntityByToken(uint32_t token)

@@ -4,6 +4,8 @@
 #include "SFML/System/Time.hpp"
 #include <optional>
 #include <functional>
+#include <span>
+#include "IEntityRegistry.hpp"
 #include "EntityId.hpp"
 
 namespace sl {
@@ -11,18 +13,18 @@ namespace sl {
 	class MovementSystem;
 	class WorldMap;
 	class CollisionSystem;
+	class SystemUpdater;
 }
 
 namespace sl {
-	class WorldBase {
+	class WorldBase: public IEntityRegistry {
 	public:
-		WorldBase();
+		WorldBase(std::unique_ptr<sl::SystemUpdater> currentSystemUpdater);
 		virtual ~WorldBase();
-		void update(float deltaTime);
+		virtual void update(float deltaTime);
 		virtual void removeEntityById(sl::EntityId id) = 0;
-		virtual std::optional<std::reference_wrapper<const sl::Entity>> getEntityById(sl::EntityId id) const = 0;
-		virtual std::optional<std::reference_wrapper<sl::Entity>> getEntityById(sl::EntityId id) = 0;
-		virtual const std::vector<sl::Entity>& getEntities() const = 0;
+		virtual std::span<sl::Entity> getEntities() = 0;
+		virtual std::span<const sl::Entity> getEntities() const = 0;
 		const std::optional<std::reference_wrapper<sl::WorldMap>> getWorldMap() const;
 
 	protected:
@@ -30,11 +32,7 @@ namespace sl {
 		sf::Time timeSinceLastUpdate = sf::Time::Zero;
 
 		std::unique_ptr<sl::WorldMap> worldMap;
-
-		std::unique_ptr<sl::CollisionSystem> collisionSystem;
-		std::unique_ptr<MovementSystem> movementSystem;
-		
-		virtual void onUpdate(float updateTime) = 0;
-		virtual void onUpdateEntities(sl::Entity& en, float updateTime) = 0;
+		std::unique_ptr<sl::SystemUpdater> systemUpdater;
+	
 	};
 }

@@ -7,6 +7,7 @@
 #include "LockFreeDelegate.hpp"
 #include "PacketDataTypes.hpp"
 #include "EntityType.hpp"
+#include "EntityId.hpp"
 
 namespace sl {
 	class Entity;
@@ -23,7 +24,7 @@ namespace sl {
 class StateManager {
 public:
 	sl::LockFreeDelegate<const sl::net::EntityData&> OnAbsenceEntity;
-	sl::LockFreeDelegate<uint32_t> OnEntityAbsenceOnStatusPacket;
+	sl::LockFreeDelegate<sl::EntityId> OnEntityAbsenceOnStatusPacket;
 	sl::LockFreeDelegate<const sl::net::EntityData&> OnAuth;
 
 	StateManager(sl::EntityStorage& entities);

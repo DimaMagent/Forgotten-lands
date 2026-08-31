@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "EntityStorage.hpp"
-#include "Entity.hpp"
 
 
 sl::EntityStorage::EntityStorage(size_t capacity) {

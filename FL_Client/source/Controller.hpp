@@ -14,7 +14,7 @@ namespace sl {
 
 class Controller {
 public:
-	Controller(InputManager& im, sl::LockFreeDelegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntity);
+	Controller(InputManager& im);
 
 	~Controller();
 
@@ -32,8 +32,6 @@ private:
 	sf::Vector2i lastMovementDirectionIntent;
 
 	void onEvent(const sf::Event& event);
-
-	void onPlayerEntitySet(std::weak_ptr<sl::Entity> playerEntity);
 
 	void initKeyBindings();
 

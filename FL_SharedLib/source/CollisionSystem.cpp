@@ -13,7 +13,6 @@
 
 sl::CollisionSystem::CollisionSystem()
 {
-	reusableEntityIdsBuffer = std::vector<sl::EntityId>();
 }
 
 void sl::CollisionSystem::onUpdate(float updateTime, const sl::CollisionCellMap& collisionCellMap, const WorldBase& world) {

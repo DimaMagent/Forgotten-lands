@@ -26,7 +26,7 @@ void StateManager::recordRollback(const sl::net::StatusData& data)
 		typeIds.push_back(enData.entityId);
 		for (auto& compData : enData.componentsData) {
 
-			if (auto en = entities.getEntityToId(enData.entityId).lock(); en)
+			if (auto en = entities.getEntityToId(enData.entityId); en)
 			{
 				en->forCurrentSerialization(compData.typeId, [this, &compData](sl::Serializable& s) {
 					size_t offset = 0;
@@ -41,9 +41,9 @@ void StateManager::recordRollback(const sl::net::StatusData& data)
 		
 	}
 	for (size_t i = 0; entities.getEntities().size() > i; ++i) {
-		auto it = std::find(typeIds.begin(), typeIds.end(), entities.getEntities()[i]->getGlobalId());
+		auto it = std::find(typeIds.begin(), typeIds.end(), entities.getEntities()[i].getId());
 		if (it == typeIds.end()) {
-			OnEntityAbsenceOnStatusPacket.broadcast(entities.getEntities()[i]->getGlobalId());
+			OnEntityAbsenceOnStatusPacket.broadcast(entities.getEntities()[i].getId());
 		}
 	}
 }

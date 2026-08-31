@@ -7,7 +7,7 @@
 #include "CollisionComponent.hpp"
 #include "StateComponent.hpp"
 #include "CollisionCellMap.hpp"
-#include "WorldBase.hpp"
+#include "IEntityRegistry.hpp"
 #include <algorithm>
 
 sl::MovementSystem::MovementSystem()
@@ -15,12 +15,12 @@ sl::MovementSystem::MovementSystem()
     reusableEntityIdsBuffer = std::vector<sl::EntityId>();
 }
 
-void sl::MovementSystem::onUpdate(float updateTime, const sl::Entity& entity, const sl::CollisionCellMap& collisionCellMap, const WorldBase& world){
-    movingWithCollisionCheck(updateTime, entity,collisionCellMap, world);
+void sl::MovementSystem::onUpdate(float updateTime, const sl::Entity& entity, const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry){
+    movingWithCollisionCheck(updateTime, entity,collisionCellMap, entityRegistry);
 }
 
 void sl::MovementSystem::movingWithCollisionCheck(float updateTime, const sl::Entity& entity,
-    const sl::CollisionCellMap& collisionCellMap, const WorldBase& world)
+    const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry)
 {
     sl::MovementComponent* movComp = entity.getComponent<sl::MovementComponent>();
     sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
@@ -44,10 +44,10 @@ void sl::MovementSystem::movingWithCollisionCheck(float updateTime, const sl::En
     sf::Vector2f currentPos = trComp->getPosition();
 
     if (delta.x < MIN_SPEED_FOR_SUB_STEPPING_ALGORITHM && delta.y < MIN_SPEED_FOR_SUB_STEPPING_ALGORITHM) {
-        standartPositionCalculate(entity, delta, currentPos, collisionCellMap, world);
+        standartPositionCalculate(entity, delta, currentPos, collisionCellMap, entityRegistry);
     }
     else {
-        subSteppingPositionCalculate(entity, delta, currentPos, collisionCellMap, world);
+        subSteppingPositionCalculate(entity, delta, currentPos, collisionCellMap, entityRegistry);
     }
 
     trComp->setPosition(currentPos);
@@ -57,25 +57,25 @@ void sl::MovementSystem::movingWithCollisionCheck(float updateTime, const sl::En
 }
 
 void sl::MovementSystem::standartPositionCalculate(const sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos,
-    const sl::CollisionCellMap& collisionCellMap, const WorldBase& world)
+    const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry)
 {
     if (delta.x != 0.f) {
         sf::Vector2f targetPosX = { currentPos.x + delta.x, currentPos.y };
-        if (!isBlockedOnPosition(entity, targetPosX, collisionCellMap, world)) {
+        if (!isBlockedOnPosition(entity, targetPosX, collisionCellMap, entityRegistry)) {
             currentPos.x = targetPosX.x;
         }
     }
 
     if (delta.y != 0.f) {
         sf::Vector2f targetPosY = { currentPos.x, currentPos.y + delta.y };
-        if (!isBlockedOnPosition(entity, targetPosY, collisionCellMap, world)) {
+        if (!isBlockedOnPosition(entity, targetPosY, collisionCellMap, entityRegistry)) {
             currentPos.y = targetPosY.y;
         }
     }
 }
 
 void sl::MovementSystem::subSteppingPositionCalculate(const sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos,
-    const sl::CollisionCellMap& collisionCellMap, const WorldBase& world)
+    const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry)
 {
     float maxStepSize = MAX_STEP_SIZE;
 
@@ -88,7 +88,7 @@ void sl::MovementSystem::subSteppingPositionCalculate(const sl::Entity& entity, 
 
         if (subDelta.x != 0.f) {
             sf::Vector2f targetPosX = { currentPos.x + subDelta.x, currentPos.y };
-            if (!isBlockedOnPosition(entity, targetPosX, collisionCellMap, world)) {
+            if (!isBlockedOnPosition(entity, targetPosX, collisionCellMap, entityRegistry)) {
                 currentPos.x = targetPosX.x;
             }
             else {
@@ -98,7 +98,7 @@ void sl::MovementSystem::subSteppingPositionCalculate(const sl::Entity& entity, 
 
         if (subDelta.y != 0.f) {
             sf::Vector2f targetPosY = { currentPos.x, currentPos.y + subDelta.y };
-            if (!isBlockedOnPosition(entity, targetPosY, collisionCellMap, world)) {
+            if (!isBlockedOnPosition(entity, targetPosY, collisionCellMap, entityRegistry)) {
                 currentPos.y = targetPosY.y;
             }
             else {
@@ -113,7 +113,7 @@ void sl::MovementSystem::subSteppingPositionCalculate(const sl::Entity& entity, 
 }
 
 bool sl::MovementSystem::isBlockedOnPosition(const sl::Entity& entity, const sf::Vector2f& testPos,
-    const sl::CollisionCellMap& collisionCellMap, const WorldBase& world)
+    const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry)
 {
     sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
     if (!colisComp) { return false; }
@@ -128,7 +128,7 @@ bool sl::MovementSystem::isBlockedOnPosition(const sl::Entity& entity, const sf:
     for (sl::EntityId id : reusableEntityIdsBuffer) {
         if (id == entity.getId()) continue;
 
-        auto entityOpt = world.getEntityById(id);
+        auto entityOpt = entityRegistry.getEntityById(id);
         if (!entityOpt.has_value()) continue;
 
         sl::CollisionComponent* anotherColisComp = entityOpt.value().get().getComponent<sl::CollisionComponent>();

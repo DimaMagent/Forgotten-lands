@@ -7,18 +7,11 @@
 #include "StateComponent.hpp"
 #include "AnimationComponent.hpp"
 
-AnimationSystem::AnimationSystem(sl::EntityStorage& entities):
-	entities(entities)
-{
-}
+AnimationSystem::AnimationSystem(){}
 
-void AnimationSystem::onUpdate(float updateTime) {
+void AnimationSystem::onUpdate(float updateTime, const sl::Entity& entity) {
 
-	for (auto& en : entities.getEntities()) {
-		if (!en) { continue; }
-
-		updateAnimations(*en, updateTime);
-	}
+	updateAnimations(entity, updateTime);
 }
 
 AnimationType AnimationSystem::selectAnimationType(const sl::StateComponent& stateComp)
@@ -43,7 +36,7 @@ bool AnimationSystem::isInstantAnimation(AnimationType type)
 	return false;
 }
 
-void AnimationSystem::updateAnimations(sl::Entity& entity, float updateTime)
+void AnimationSystem::updateAnimations(const sl::Entity& entity, float updateTime)
 {
 	AnimationComponent* animComp = entity.getComponent<AnimationComponent>();
 	if (!animComp) { return; }

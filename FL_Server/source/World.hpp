@@ -1,5 +1,6 @@
 #pragma once
 #include "WorldBase.hpp"
+#include "IEntityTokenRegistry.hpp"
 #include "LockFreeDelegate.hpp"
 #include <unordered_map>
 #include <cstdint>
@@ -9,11 +10,11 @@
 
 class Serializer;
 class ConnectionEvents;
+class ServerEntityFactory;
+class ServerSystemUpdater;
 
-
-class World : public sl::WorldBase {
+class World : public sl::WorldBase, public IEntityTokenRegistry {
 public:
-	sl::LockFreeDelegate<float> OnUpdate;
 
 	World(ConnectionEvents& connectionEvents);
 
@@ -31,23 +32,21 @@ public:
 
 	std::optional<std::reference_wrapper<sl::Entity>> getEntityById(sl::EntityId id) override;
 
-	const std::vector<sl::Entity>& getEntities() const override;
+	std::span<sl::Entity> getEntities() override;
 
-	auto getEntities();
+	std::span<const sl::Entity> getEntities() const override;
 
-	std::optional<std::reference_wrapper<sl::Entity>> getPlayerEntityByToken(uint32_t token);
+	std::optional<std::reference_wrapper<const sl::Entity>> getPlayerEntityByToken(uint32_t token) const override;
 
-	std::optional<uint32_t> getTokenById(sl::EntityId id) const;
+	std::optional<std::reference_wrapper<sl::Entity>> getPlayerEntityByToken(uint32_t token) override;
 
-protected:
-	void onUpdate(float updateTime) override;
-
-	void onUpdateEntities(sl::Entity& en, float updateTime) override;
+	std::optional<uint32_t> getTokenById(sl::EntityId id) const override;
 
 private:
+	using SystemUpdaterClass = ServerSystemUpdater;
+
 	sl::SlotMap<sl::Entity> entities;
 
-	std::unique_ptr<Serializer> serializer;
 	std::unique_ptr<ServerEntityFactory> entityFactory;
 
 	std::unordered_map<uint32_t, sl::EntityId> tokenToEntityId;

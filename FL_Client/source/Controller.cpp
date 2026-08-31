@@ -4,12 +4,11 @@
 #include "Entity.hpp"
 #include "Utils.hpp"
 
-Controller::Controller(InputManager& im, sl::LockFreeDelegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntity)
+Controller::Controller(InputManager& im)
 {
 	game_logger = spdlog::get("game");
 	lastMovementDirectionIntent = sf::Vector2i(0, 0);
 	im.onEvent.addFunction([this](const sf::Event& event) { onEvent(event); });
-	onSetPlayerEntity.addFunction([this](const std::weak_ptr<sl::Entity> playerEntity) { onPlayerEntitySet(playerEntity); });
 	initKeyBindings();
 }
 
@@ -53,16 +52,6 @@ void Controller::onEvent(const sf::Event& event) {
 	if (const auto* mouseMoved = event.getIf<sf::Event::MouseMoved>()) {
 		//std::cout << "Mouse position: (" << mouseMoved->position.x << ", " << mouseMoved->position.y << ")" << std::endl;
 	}
-}
-
-void Controller::onPlayerEntitySet(std::weak_ptr<sl::Entity> playerEntity)
-{
-	if (playerEntity.expired()) {
-		game_logger->warn("Received expired player character reference.");
-		return;
-	}
-	game_logger->info("Player character set in controller.");
-	this->playerEntity = playerEntity;
 }
 
 void Controller::initKeyBindings(){

@@ -83,7 +83,7 @@ namespace sl {
         }
 
         template<typename Fn>
-        void forCurrentSerialization(TypeID TypeId, Fn&& fn) {
+        void forCurrentSerialization(TypeID TypeId, Fn&& fn) const {
             static_assert(std::is_invocable_v<Fn, const sl::Serializable&> || std::is_invocable_v<Fn, sl::Serializable&>);
             auto it = std::lower_bound(components.begin(), components.end(), TypeId,
                 [](const auto& pair, const TypeID& tid) {

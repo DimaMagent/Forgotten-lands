@@ -4,7 +4,7 @@
 #include <memory>
 #include <optional>
 #include <span>
-#include "EntityId.hpp"
+#include "Entity.hpp"
 
 namespace sl {
 	class Entity;
@@ -19,9 +19,9 @@ namespace sl {
 		size_t capacity() const { return entities.capacity(); }
 		size_t size() const { return entities.size(); }
 
-		const std::vector<sl::Entity>& getEntities() const { return entities; }
+		std::span<const sl::Entity> getEntities() const { return entities; }
 
-		const std::span<sl::Entity>& getEntities() { return entities; }
+		std::span<sl::Entity> getEntities() { return entities; }
 
 		//using ID as key for storage
 		void addEntity(sl::Entity&& entity, sl::EntityId id);

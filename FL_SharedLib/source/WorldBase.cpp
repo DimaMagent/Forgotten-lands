@@ -6,39 +6,22 @@
 #include "MovementSystem.hpp"
 #include "CollisionSystem.hpp"
 #include "WorldMap.hpp"
+#include "SystemUpdater.hpp"
 
-sl::WorldBase::WorldBase()
+sl::WorldBase::WorldBase(std::unique_ptr<sl::SystemUpdater> currentSystemUpdater)
 {
-	worldMap = std::make_unique<sl::WorldMap>(*this);
-
-	collisionSystem = std::make_unique<sl::CollisionSystem>();
-	movementSystem = std::make_unique<MovementSystem>();
-	
+	systemUpdater = std::move(currentSystemUpdater);
+	worldMap = std::make_unique<sl::WorldMap>(*this);	
 }
 
 sl::WorldBase::~WorldBase() = default;
 
 void sl::WorldBase::update(float deltaTime) {
-	timeSinceLastUpdate += std::min(sf::seconds(deltaTime), sf::seconds(0.1f));
-	while (timeSinceLastUpdate >= updateTime) {
-		timeSinceLastUpdate -= updateTime;
+	systemUpdater->update(deltaTime, *this);
+}
 
-		float updateTimeCount = updateTime.asSeconds();
+const std::optional<std::reference_wrapper<sl::WorldMap>> sl::WorldBase::getWorldMap() const {
+	if (!worldMap) { return {}; }
 
-		auto ColisMap = worldMap->getCollisionMap();
-
-		if (ColisMap.has_value()) {
-			collisionSystem->onUpdate(updateTimeCount, ColisMap.value().get(), *this);
-		}
-		onUpdate(updateTimeCount);
-
-		for (auto& en : getEntities()) {
-
-			if (ColisMap.has_value()) {
-				movementSystem->onUpdate(updateTimeCount, en, ColisMap.value().get(), *this);
-			}
-
-			onUpdateEntities(en, updateTimeCount);
-		}
-	}
+	return *worldMap;
 }

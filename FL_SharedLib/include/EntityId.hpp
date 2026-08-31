@@ -26,8 +26,12 @@ namespace sl {
             return ID == other.ID;
         }
 
-        bool operator!=(const EntityId& other) const noexcept {
-            return ID != other.ID;
+        bool operator<(const EntityId& other) const noexcept {
+            return ID < other.ID;
+        }
+
+        bool operator>(const EntityId& other) const noexcept {
+            return ID > other.ID;
         }
     };
 }

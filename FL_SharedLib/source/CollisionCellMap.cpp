@@ -16,7 +16,7 @@ sl::CollisionCellMap::CollisionCellMap(const WorldBase& world, cellIndex mapSize
 	for (cellIndex x = 0; x < mapSizeX; ++x) {
 		for (cellIndex y = 0; y < mapSizeY; ++y) {
 			Cell cell(x, y);
-			cellToEntityIds.try_emplace(cell, std::vector<uint32_t>());
+			cellToEntityIds.try_emplace(cell, std::vector<sl::EntityId>());
 		}
 	}
 }

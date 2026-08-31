@@ -19,6 +19,7 @@ class RenderManager;
 class StateManager;
 class ClientEntityFactory;
 class AnimationSystem;
+class ClientSystemUpdater;
 
 class LocalWorld: public sl::WorldBase {
 public:
@@ -38,9 +39,9 @@ public:
 
 	std::optional<std::reference_wrapper<sl::Entity>> getEntityById(sl::EntityId id) override;
 
-	const std::vector<sl::Entity>& getEntities() const override;
+	std::span<sl::Entity> getEntities() override;
 
-	auto getEntities();
+	std::span<const sl::Entity> getEntities() const override;
 
 	void render();
 
@@ -49,6 +50,8 @@ public:
 	std::optional<std::reference_wrapper<sl::Entity>> getPlayerEntity();
 
 protected:
+	using SystemUpdaterClass = ClientSystemUpdater;
+
 	std::shared_ptr<spdlog::logger> game_logger;
 
 	sl::EntityStorage entities;
@@ -59,11 +62,6 @@ protected:
 	std::unique_ptr<RenderManager> renderManager;
 	std::shared_ptr<StateManager> stateManager;
 	std::unique_ptr<ClientEntityFactory> entityFactory;
-	std::unique_ptr<AnimationSystem> animationSystem;
-
-	virtual void onUpdate(float updateTime) override;
-
-	virtual void onUpdateEntities(sl::Entity& en, float updateTime) override;
 
 	void onAbsenceEntity(const sl::net::EntityData& enData);
 

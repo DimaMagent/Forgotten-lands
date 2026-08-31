@@ -5,11 +5,13 @@
 #include "PlayerIntentionsPacket.hpp"
 #include "Entity.hpp"
 #include "AttackSystem.hpp"
+#include "IEntityRegistry.hpp"
+#include "WorldBase.hpp"
 
 PlayerIntentManager::PlayerIntentManager(
 	sl::LockFreeDelegate<sl::net::Action>& onNewAction,
 	sl::LockFreeDelegate<const sf::Vector2i& >& onSetMovementDirection,
-	sl::LockFreeDelegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntity)
+	sl::LockFreeDelegate<std::optional<sl::EntityId>>& onSetPlayerEntity)
 {
 	game_logger = spdlog::get("game");
 
@@ -27,7 +29,7 @@ PlayerIntentManager::PlayerIntentManager(
 			isIntentsChanged = true;
 		});
 
-	onSetPlayerEntity.addFunction([this](const std::weak_ptr<sl::Entity> playerEntity) { onPlayerEntitySet(playerEntity); });
+	onSetPlayerEntity.addFunction([this](std::optional<sl::EntityId> playerEntityId) { onPlayerEntitySet(playerEntityId); });
 }
 
 PlayerIntentManager::~PlayerIntentManager() = default;
@@ -39,7 +41,7 @@ void PlayerIntentManager::tick(float dt, const sl::WorldBase& world)
 		timeSinceLastUpdate -= updateTime;
 		if (!isIntentsChanged) { continue; }
 		
-		if (!setMovingDirection()) {
+		if (!setMovingDirection(world)) {
 			#ifdef DEBUG
 			game_logger->warn("PlayerIntentManager::tick movingDirection cannot change: playerEntity or movementComponent is not valid");
 			#endif
@@ -56,22 +58,23 @@ void PlayerIntentManager::tick(float dt, const sl::WorldBase& world)
 	}
 }
 
-void PlayerIntentManager::onPlayerEntitySet(std::weak_ptr<sl::Entity> playerEntity)
+void PlayerIntentManager::onPlayerEntitySet(std::optional<sl::EntityId> playerEntityId)
 {
-	if (playerEntity.expired()) {
-		game_logger->warn("Received expired player character reference.");
-		return;
+	this->playerEntityId = playerEntityId;
+
+	if (playerEntityId.has_value()) {
+		game_logger->info("Player with id: {} character set in PlayerIntentManager.", playerEntityId.value().ID);
 	}
-	game_logger->info("Player character set in PlayerIntentManager.");
-	this->playerEntity = playerEntity;
 }
 
-bool PlayerIntentManager::setMovingDirection()
+bool PlayerIntentManager::setMovingDirection(const sl::IEntityRegistry& entityRegistry) const
 {
-	auto player = playerEntity.lock();
-	if (!player) { return false; }
+	if (!playerEntityId.has_value()) { return false; }
 
-	sl::MovementComponent* movComp = player->getComponent<sl::MovementComponent>();
+	auto player = entityRegistry.getEntityById(playerEntityId.value());
+	if (!player.has_value()) { return false; }
+
+	sl::MovementComponent* movComp = player.value().get().getComponent<sl::MovementComponent>();
 
 	if (!movComp) { return false; }
 
@@ -84,19 +87,21 @@ bool PlayerIntentManager::setMovingDirection()
 
 void PlayerIntentManager::actionCheck(sl::net::Action action, const sl::WorldBase& world)
 {
-	if (!attackSystem) {
-		#ifdef DEBUG
-		game_logger->error("PlayerIntentManager::actionCheck cannot call tryMeleeAttack: attackSystem is not valid");
-		#endif
-		return;
-	}
 
-	auto playerEn = playerEntity.lock();
-
-	if (!playerEn)
+	if (!playerEntityId.has_value())
 	{
 		#ifdef DEBUG
-		game_logger->warn("PlayerIntentManager::actionCheck cannot call tryMeleeAttack: playerEntity is not valid");
+		game_logger->warn("PlayerIntentManager::actionCheck cannot call any action: playerEntity is not set");
+		#endif
+		return; 
+	}
+
+	auto playerEn = world.getEntityById(playerEntityId.value());
+
+	if (!playerEn.has_value())
+	{
+		#ifdef DEBUG
+		game_logger->warn("PlayerIntentManager::actionCheck cannot call any action: playerEntity is not valid");
 		#endif
 		return;
 	}
@@ -105,6 +110,12 @@ void PlayerIntentManager::actionCheck(sl::net::Action action, const sl::WorldBas
 
 	if (action == sl::net::Action::Attack) {
 
+		if (!attackSystem) {
+			#ifdef DEBUG
+			game_logger->error("PlayerIntentManager::actionCheck cannot call tryMeleeAttack: attackSystem is not valid");
+			#endif
+			return;
+		}
 
 		bool isSucess = attackSystem->tryMeleeAttack(*playerEn, world);
 

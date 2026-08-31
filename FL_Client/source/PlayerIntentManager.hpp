@@ -2,12 +2,14 @@
 #include <SFML/System/Time.hpp>
 #include "LockFreeDelegate.hpp"
 #include "Intentions.hpp"
+#include "EntityId.hpp"
 
 
 namespace sl {
 	class Entity;
 	class AttackSystem;
 	class WorldBase;
+	class IEntityRegistry;
 }
 
 class PlayerIntentManager {
@@ -15,7 +17,7 @@ public:
 	PlayerIntentManager(
 		sl::LockFreeDelegate<sl::net::Action>& onNewAction,
 		sl::LockFreeDelegate<const sf::Vector2i& >& onSetMovementDirection,
-		sl::LockFreeDelegate<const std::weak_ptr<sl::Entity>>& onSetPlayerEntity
+		sl::LockFreeDelegate<std::optional<sl::EntityId>>& onSetPlayerEntity
 	);
 
 	~PlayerIntentManager();
@@ -26,7 +28,7 @@ private:
 
 	sl::Intentions currentIntentions;
 
-	std::weak_ptr<sl::Entity> playerEntity;
+	std::optional<sl::EntityId> playerEntityId;
 
 	std::unique_ptr<sl::AttackSystem> attackSystem;
 
@@ -36,10 +38,10 @@ private:
 
 	bool isIntentsChanged = false;
 
-	void onPlayerEntitySet(std::weak_ptr<sl::Entity> playerEntity);
+	void onPlayerEntitySet(std::optional<sl::EntityId> playerEntityId);
 
 	//returns true if direction changed successfully
-	[[nodiscard]] bool setMovingDirection();
+	[[nodiscard]] bool setMovingDirection(const sl::IEntityRegistry& entityRegistry) const;
 
 	void actionCheck(sl::net::Action action, const sl::WorldBase& world);
 };

@@ -10,14 +10,12 @@ namespace sl {
 
 class AnimationSystem{
 public:
-	AnimationSystem(sl::EntityStorage& entities);
-	void onUpdate(float updateTime);
+	AnimationSystem();
+	void onUpdate(float updateTime, const sl::Entity& entity);
 
 private:
-	sl::EntityStorage& entities;
-
 	AnimationType selectAnimationType(const sl::StateComponent& stateComp);
 	AnimationType selectInstantAnimationType(const sl::StateComponent& stateComp);
 	bool isInstantAnimation(AnimationType type);
-	void updateAnimations(sl::Entity& entity, float updateTime);
+	void updateAnimations(const sl::Entity& entity, float updateTime);
 };

@@ -10,17 +10,16 @@
 #include "EntityType.hpp"
 #include "StatusPacket.hpp"
 #include "WorldMap.hpp"
+#include "ClientSystemUpdater.hpp"
 
-LocalWorld::LocalWorld(sf::RenderTarget& renderTarget) : WorldBase() ,
+LocalWorld::LocalWorld(sf::RenderTarget& renderTarget) : WorldBase(std::make_unique<ClientSystemUpdater>()) ,
 	stateManager(std::make_shared<StateManager>(entities)),
 	entityFactory(std::make_unique<ClientEntityFactory>()), renderManager(std::make_unique<RenderManager>(renderTarget))
 {
 	game_logger = spdlog::get("game");
 
-	animationSystem = std::make_unique<AnimationSystem>(entities);
-
 	stateManager->OnAbsenceEntity.addFunction([this](const sl::net::EntityData& enData) {this->onAbsenceEntity(enData); });
-	stateManager->OnEntityAbsenceOnStatusPacket.addFunction([this](size_t entityIndex) {this->onAbsenceEntityOnStatusPacket(entityIndex); });
+	stateManager->OnEntityAbsenceOnStatusPacket.addFunction([this](sl::EntityId entityId) {this->onAbsenceEntityOnStatusPacket(entityId); });
 	stateManager->OnAuth.addFunction([this](const sl::net::EntityData& enData) {this->onAuth(enData); });
 }
 
@@ -75,10 +74,17 @@ void LocalWorld::removeEntityById(sl::EntityId id)
 	if (id == playerEntityId) {
 		isPlayerEntityAssigned = false;
 		OnSetPlayerEntity.broadcast({});
+		#ifdef DEBUG
+		if (game_logger) {
+			game_logger->info("PlayerEntity is unseted");
+			}
+		#endif // DEBUG
+
 	}
 
 	entities.removeEntityById(id);
 }
+
 
 std::optional<std::reference_wrapper<const sl::Entity>> LocalWorld::getEntityById(sl::EntityId id) const
 {
@@ -96,23 +102,14 @@ std::optional<std::reference_wrapper<sl::Entity>> LocalWorld::getEntityById(sl::
 	return *entityPtr;
 }
 
-const std::vector<sl::Entity>& LocalWorld::getEntities() const
+std::span<const sl::Entity> LocalWorld::getEntities() const
 {
 	return entities.getEntities();
 }
 
-auto LocalWorld::getEntities()
+std::span<sl::Entity> LocalWorld::getEntities()
 {
 	return entities.getEntities();
-}
-
-void LocalWorld::onUpdate(float updateTime)
-{
-	animationSystem->onUpdate(updateTime);
-}
-
-void LocalWorld::onUpdateEntities(sl::Entity& en, float updateTime)
-{
 }
 
 void LocalWorld::onAbsenceEntity(const sl::net::EntityData& enData)

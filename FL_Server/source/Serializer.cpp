@@ -5,20 +5,16 @@
 #include "StatusPacket.hpp"
 #include "EntityStorage.hpp"
 #include "Entity.hpp"
-#include "World.hpp"
+#include "IEntityTokenRegistry.hpp"
 #include "Serializable.hpp"
 
 int Serializer::serializationFrequency = 2;
 
-Serializer::Serializer(const World& world) : world(world)
-{	
-}
+Serializer::Serializer(){}
 
-void Serializer::serializeObjects() const
+void Serializer::serializeObjects(std::span<const sl::Entity> entities, const IEntityTokenRegistry& entityRegistry) const
 {
 	std::vector<uint8_t> localBuf;
-
-	const std::vector<sl::Entity>& entities = world.getEntities();
 
 	for (size_t i = 0; i < entities.size(); ++i) {
 
@@ -28,7 +24,7 @@ void Serializer::serializeObjects() const
 	}
 
 	for (size_t i = 0; i < entities.size(); ++i) {
-		if (auto tokenOpt = world.getTokenById(entities[i].getId()); tokenOpt.has_value()) {
+		if (auto tokenOpt = entityRegistry.getTokenById(entities[i].getId()); tokenOpt.has_value()) {
 			Packer::send<sl::net::StatusPacket>(tokenOpt.value(), localBuf);
 		}
 	}
@@ -37,10 +33,10 @@ void Serializer::serializeObjects() const
 	
 }
 
-void Serializer::onUpdate(float updateTime) {
+void Serializer::onUpdate(float updateTime, std::span<const sl::Entity> entities, const IEntityTokenRegistry& entityRegistry) {
 	if (serializationFrequency <= ++serializationCounter) {
 		serializationCounter = 0;
-		serializeObjects();
+		serializeObjects(entities, entityRegistry);
 	}
 }
 
