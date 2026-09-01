@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "WorldMap.hpp"
 #include "CollisionCellMap.hpp"
+#include "WorldBase.hpp"
 
 sl::WorldMap::WorldMap(const WorldBase& world, cellIndex mapSizeX, cellIndex mapSizeY) :
 	mapBoundsX(mapSizeX), mapBoundsY(mapSizeY)

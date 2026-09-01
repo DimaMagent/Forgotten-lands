@@ -9,6 +9,7 @@ namespace sl {
 	struct AABB;
 	class CollisionCellMap;
 	class WorldBase;
+	class IEntityRegistry;
 
 	class AttackSystem {
 	public:

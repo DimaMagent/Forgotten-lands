@@ -6,6 +6,7 @@
 #include "World.hpp"
 #include "Utils.hpp"
 #include "AttackSystem.hpp"
+#include "WorldMap.hpp"
 
 PlayerManager::PlayerManager()
 {
@@ -49,7 +50,15 @@ void PlayerManager::intentionCheck(const sl::Entity& entity, sl::Intentions inte
 		{
 			if (!attackSystem) { continue; }
 
-			isSuccess = attackSystem->tryMeleeAttack(entity, world);
+			const auto WorldMap = world.getWorldMap();
+
+			if (!WorldMap.has_value()) { return; }
+
+			const auto collisionCellMap = WorldMap.value().get().getCollisionMap();
+
+			if (!collisionCellMap.has_value()) { return; }
+
+			isSuccess = attackSystem->tryMeleeAttack(entity, collisionCellMap.value(), world);
 
 			#ifdef DEBUG
 				if (!isSuccess) {
