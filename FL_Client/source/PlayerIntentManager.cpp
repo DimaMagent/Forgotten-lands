@@ -7,6 +7,7 @@
 #include "AttackSystem.hpp"
 #include "IEntityRegistry.hpp"
 #include "WorldBase.hpp"
+#include "WorldMap.hpp"
 
 PlayerIntentManager::PlayerIntentManager(
 	sl::LockFreeDelegate<sl::net::Action>& onNewAction,
@@ -117,7 +118,15 @@ void PlayerIntentManager::actionCheck(sl::net::Action action, const sl::WorldBas
 			return;
 		}
 
-		bool isSucess = attackSystem->tryMeleeAttack(*playerEn, world);
+		const auto WorldMap = world.getWorldMap();
+
+		if (!WorldMap.has_value()) { return ; }
+
+		const auto collisionCellMap = WorldMap.value().get().getCollisionMap();
+
+		if (!collisionCellMap.has_value()) { return ; }
+
+		bool isSucess = attackSystem->tryMeleeAttack(*playerEn, collisionCellMap.value(), world);
 
 		if (!isSucess) {
 			#ifdef DEBUG

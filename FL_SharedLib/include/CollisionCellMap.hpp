@@ -10,12 +10,12 @@
 namespace sl {
 	class Entity;
 	class CollisionComponent;
-	class WorldBase;
+	class IEntityRegistry;
 
 	class CollisionCellMap {
 	public:
 		
-		CollisionCellMap(const WorldBase& world, cellIndex mapSizeX, cellIndex mapSizeY);
+		CollisionCellMap(const IEntityRegistry& entityRegistry, cellIndex mapSizeX, cellIndex mapSizeY);
 		
 		void recordEntityToCollisionMap(const sl::Entity& entity);
 		
@@ -33,7 +33,7 @@ namespace sl {
 
 		std::unordered_map<sl::EntityId, uint64_t> entityIdToDelegateToken;
 
-		const WorldBase& world;
+		const IEntityRegistry& entityRegistry;
 
 		[[nodiscard]] bool onMapBound(const AABB& aabb, sf::Vector2f pos) const;
 		[[nodiscard]] bool adjustingEntityOnMap(sl::EntityId entityId, sf::Vector2f pos);

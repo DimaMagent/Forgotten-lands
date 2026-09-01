@@ -24,7 +24,7 @@ sl::AttackSystem::AttackSystem()
     temporaryIgnoreList = std::set<sl::EntityId>();
 }
 
-bool sl::AttackSystem::tryMeleeAttack(const sl::Entity& attackingEntity, const WorldBase& world) {
+bool sl::AttackSystem::tryMeleeAttack(const sl::Entity& attackingEntity, const sl::CollisionCellMap& collisionCellMap, const sl::IEntityRegistry& entityRegistry) {
 	sl::WeaponComponent* weaponComp = attackingEntity.getComponent<sl::WeaponComponent>();
 	if (!weaponComp) { return false; }
 
@@ -42,21 +42,13 @@ bool sl::AttackSystem::tryMeleeAttack(const sl::Entity& attackingEntity, const W
 
     if (stunComp->hasStun(StunState::Disarmed)) { return true; }
 
-    const auto WorldMap = world.getWorldMap();
-
-    if (!WorldMap.has_value()) { return false; }
-
-    const auto collisionCellMap = WorldMap.value().get().getCollisionMap();
-
-    if (!collisionCellMap.has_value()) { return false; }
-
     AABB aabb = colisComp->getAABB();
 	float attackDistance = weaponComp->getAttackDistance();
     float attackDegrees = weaponComp->getAttackDegrees();
 	sf::Vector2f entityPos = transComp->getPosition();
 	sf::Vector2i entityRotation = transComp->getRotation();
 
-    bool isSuccess = collisionCellMap.value().get().getNearestEntityIdsToEntity(
+    bool isSuccess = collisionCellMap.getNearestEntityIdsToEntity(
         aabb,
         entityPos,
         reusableEntityIdsBuffer,
@@ -74,7 +66,7 @@ bool sl::AttackSystem::tryMeleeAttack(const sl::Entity& attackingEntity, const W
 
     for (sl::EntityId id : reusableEntityIdsBuffer) {
 
-        auto entityOpt = world.getEntityById(id);
+        auto entityOpt = entityRegistry.getEntityById(id);
         if (!entityOpt.has_value()) { continue; }
 
         if (id == attackingEntity.getId()) { continue; }
@@ -115,7 +107,9 @@ bool sl::AttackSystem::tryMeleeAttack(const sl::Entity& attackingEntity, const W
     temporaryIgnoreList.clear();
     reusableEntityIdsBuffer.clear();
 
-    DefferedFunctionStorage::addDefferedCall([this, &world](uint32_t attackingEntityId) { attackEnd(attackingEntityId, world); }, weaponComp->getAttackCooldown(), attackingEntity.getId().ID);
+    DefferedFunctionStorage::addDefferedCall([this, &entityRegistry](uint32_t attackingEntityId) { attackEnd(attackingEntityId, entityRegistry); },
+        weaponComp->getAttackCooldown(),
+        attackingEntity.getId().ID);
 
     return true;
 }
@@ -157,8 +151,8 @@ bool sl::AttackSystem::isAABBinAttackCone(
     return dot >= minDotCos;
 }
 
-void sl::AttackSystem::attackEnd(sl::EntityId attackingEntityId, const sl::WorldBase& world) {
-    auto attackingEntity = world.getEntityById(attackingEntityId);
+void sl::AttackSystem::attackEnd(sl::EntityId attackingEntityId, const sl::IEntityRegistry& entityRegistry) {
+    auto attackingEntity = entityRegistry.getEntityById(attackingEntityId);
 
     if (!attackingEntity.has_value()) { return; }
 

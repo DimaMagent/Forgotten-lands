@@ -3,15 +3,15 @@
 #include "Entity.hpp"
 #include "CollisionComponent.hpp"
 #include "TransformComponent.hpp"
-#include "WorldBase.hpp"
+#include "IEntityRegistry.hpp"
 #include <queue>
 #include <array>
 #include <cmath>
 #include "Utils.hpp"
 
 
-sl::CollisionCellMap::CollisionCellMap(const WorldBase& world, cellIndex mapSizeX, cellIndex mapSizeY):
-	world(world)
+sl::CollisionCellMap::CollisionCellMap(const IEntityRegistry& entityRegistry, cellIndex mapSizeX, cellIndex mapSizeY):
+	entityRegistry(entityRegistry)
 {
 	for (cellIndex x = 0; x < mapSizeX; ++x) {
 		for (cellIndex y = 0; y < mapSizeY; ++y) {
@@ -156,7 +156,7 @@ bool sl::CollisionCellMap::adjustingEntityOnMap(sl::EntityId entityId, sf::Vecto
 
 bool sl::CollisionCellMap::occupiedCellsAdd(sl::EntityId entityId, sf::Vector2f pos)
 {
-	auto entityOpt = world.getEntityById(entityId);
+	auto entityOpt = entityRegistry.getEntityById(entityId);
 
 	if (!entityOpt.has_value()) { return false; }
 
@@ -188,7 +188,7 @@ bool sl::CollisionCellMap::occupiedCellsAdd(sl::EntityId entityId, sf::Vector2f 
 
 bool sl::CollisionCellMap::occupiedCellsRemove(sl::EntityId entityId)
 {
-	auto entityOpt = world.getEntityById(entityId);
+	auto entityOpt = entityRegistry.getEntityById(entityId);
 
 	if (!entityOpt.has_value()) { return false; }
 
