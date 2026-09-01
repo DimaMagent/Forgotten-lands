@@ -41,6 +41,12 @@ namespace sl {
             sparse_dense_index.reserve(capacity);
         }
 
+        SlotMap(const SlotMap&) = delete;
+        SlotMap& operator=(const SlotMap&) = delete;
+
+        SlotMap(SlotMap&&) noexcept = default;
+        SlotMap& operator=(SlotMap&&) noexcept = default;
+
         ~SlotMap() = default;
 
         std::span<EntityData> view() {
@@ -70,7 +76,7 @@ namespace sl {
 
                 slot.is_alive = true;
 
-                dense.emplace_back(std::move(new_data));
+                dense.push_back(std::move(new_data));
                 sparse_dense_index.emplace_back(index);
                 
                 slot.denseIndexOrNextFree = dense.size() - 1;
@@ -104,6 +110,8 @@ namespace sl {
 
             uint32_t removed_dense_idx = slot.denseIndexOrNextFree;
             uint32_t last_dense_idx = dense.size() - 1;
+
+            //if (removed_dense_idx > dense.size()) { return; }
 
             if (removed_dense_idx != last_dense_idx) {
                 dense[removed_dense_idx] = std::move(dense[last_dense_idx]);

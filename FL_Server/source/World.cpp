@@ -12,7 +12,7 @@
 
 World::World(ConnectionEvents& connectionEvents) : WorldBase(std::make_unique<SystemUpdaterClass>())
 {
-	entities = sl::SlotMap<sl::Entity>(10000);
+	entities.reserve(10000);
 	entityFactory = std::make_unique<ServerEntityFactory>();
 
 	connectionEvents.OnClientDisconnected.addFunction([this](uint32_t token) {
@@ -70,9 +70,9 @@ void World::removePlayerEntityByToken(uint32_t sessionToken)
 	auto it = tokenToEntityId.find(sessionToken);
 	if (it == tokenToEntityId.end()) { return; }
 
-	tokenToEntityId.erase(sessionToken);
-
 	entities.destroy(it->second);
+
+	tokenToEntityId.erase(sessionToken);
 
 }
 
