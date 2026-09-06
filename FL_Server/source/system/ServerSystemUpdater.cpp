@@ -1,6 +1,6 @@
 #include "pch.hpp"
 #include "ServerSystemUpdater.hpp"
-#include "Serializer.hpp"
+#include "network/Serializer.hpp"
 #include "World.hpp"
 #include "MovementSystem.hpp"
 #include "CollisionSystem.hpp"

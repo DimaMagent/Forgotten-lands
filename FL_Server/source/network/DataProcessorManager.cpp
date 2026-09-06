@@ -2,7 +2,7 @@
 #include "DataProcessorManager.hpp"
 #include "PacketDataTypes.hpp"
 #include "PlayerIntentionsPacket.hpp"
-#include "PlayerManager.hpp"
+#include "system/playerSystems/PlayerManager.hpp"
 
 DataProcessorManager::DataProcessorManager(PlayerManager& playerManager): playerManager(playerManager)
 {

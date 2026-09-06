@@ -4,19 +4,19 @@
 #include <thread>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Clock.hpp>
-#include "Session.hpp"
-#include "IncomingDataManager.hpp"
-#include "DataProcessorManager.hpp"
-#include "NetManager.hpp"
-#include "World.hpp"
+#include "network/Session.hpp"
+#include "network/IncomingDataManager.hpp"
+#include "network/DataProcessorManager.hpp"
+#include "network/NetManager.hpp"
+#include "system/World.hpp"
 #include "Entity.hpp"
-#include "PlayerManager.hpp"
-#include "Packer.hpp"
+#include "system/playerSystems/PlayerManager.hpp"
+#include "network/Packer.hpp"
 #include "AuthPacket.hpp"
 #include <spdlog/async.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h> 
-#include "connectionEvents.hpp"
+#include "network/connectionEvents.hpp"
 #include "DefferedFunctionStorage.hpp"
 
 

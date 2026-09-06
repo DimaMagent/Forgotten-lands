@@ -3,7 +3,7 @@
 #include "MovementComponent.hpp"
 #include "TransformComponent.hpp"
 #include "Entity.hpp"
-#include "World.hpp"
+#include "system/World.hpp"
 #include "Utils.hpp"
 #include "AttackSystem.hpp"
 #include "WorldMap.hpp"

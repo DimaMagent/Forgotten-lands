@@ -5,7 +5,7 @@
 #include "StatusPacket.hpp"
 #include "EntityStorage.hpp"
 #include "Entity.hpp"
-#include "IEntityTokenRegistry.hpp"
+#include "system/IEntityTokenRegistry.hpp"
 #include "Serializable.hpp"
 
 int Serializer::serializationFrequency = 2;

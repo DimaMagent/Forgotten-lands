@@ -11,6 +11,8 @@ add_executable(FL_Server ${SOURCES} ${HEADERS})
 
 target_precompile_headers(FL_Server PRIVATE source/pch.hpp)
 
+target_include_directories(FL_Server PRIVATE source)
+
 set_target_properties(FL_Server PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin/${TARGET_ARCH}/Debug"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin/${TARGET_ARCH}/Release"
