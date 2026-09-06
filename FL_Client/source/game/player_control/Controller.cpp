@@ -1,8 +1,8 @@
 #include "pch.hpp"
 #include "Controller.hpp"
 #include "InputManager.hpp"
-#include "Entity.hpp"
-#include "Utils.hpp"
+#include "system/Entity.hpp"
+#include "system/Utils.hpp"
 
 Controller::Controller(InputManager& im)
 {

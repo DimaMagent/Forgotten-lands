@@ -1,5 +1,5 @@
 #pragma once
-#include "EntityFactory.hpp"
+#include "system/EntityFactory.hpp"
 
 class TextureManager;
 namespace sl {

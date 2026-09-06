@@ -1,10 +1,10 @@
 #include "pch.hpp"
 #include "IncomingDataManager.hpp"
-#include "DataQueue.hpp"
-#include "PacketManager.hpp"
-#include "NetUtils.hpp"
-#include "Header.hpp"
-#include "StatusPacket.hpp"
+#include "network/DataQueue.hpp"
+#include "network/packets/PacketManager.hpp"
+#include "network/NetUtils.hpp"
+#include "network/packets/Header.hpp"
+#include "network/packets/StatusPacket.hpp"
 #include "DataProcessorManager.hpp"
 
 namespace {

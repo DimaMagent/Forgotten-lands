@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "LockFreeDelegate.hpp"
+#include "system/handlers/LockFreeDelegate.hpp"
 #include <SFML/Window/Event.hpp>
 
 

@@ -1,13 +1,13 @@
 #include "pch.hpp"
 #include "PlayerIntentManager.hpp"
-#include "MovementComponent.hpp"
+#include "system/systems/movement/MovementComponent.hpp"
 #include "network/Packer.hpp"
-#include "PlayerIntentionsPacket.hpp"
-#include "Entity.hpp"
-#include "AttackSystem.hpp"
-#include "IEntityRegistry.hpp"
-#include "WorldBase.hpp"
-#include "WorldMap.hpp"
+#include "network/packets/PlayerIntentionsPacket.hpp"
+#include "system/Entity.hpp"
+#include "system/systems/attack/AttackSystem.hpp"
+#include "system/IEntityRegistry.hpp"
+#include "system/WorldBase.hpp"
+#include "system/WorldMap.hpp"
 
 PlayerIntentManager::PlayerIntentManager(
 	sl::LockFreeDelegate<sl::net::Action>& onNewAction,

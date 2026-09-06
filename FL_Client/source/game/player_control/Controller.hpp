@@ -4,8 +4,8 @@
 #include <functional>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
-#include "LockFreeDelegate.hpp"
-#include "PacketDataTypes.hpp"
+#include "system/handlers/LockFreeDelegate.hpp"
+#include "network/packets/PacketDataTypes.hpp"
 
 class InputManager;
 namespace sl {

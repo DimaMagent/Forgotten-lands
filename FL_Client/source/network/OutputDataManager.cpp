@@ -1,8 +1,8 @@
 #include "pch.hpp"
 #include "OutputDataManager.hpp"
 #include "ClientSession.hpp"
-#include "PacketManager.hpp"
-#include "Packet.hpp"
+#include "network/packets/PacketManager.hpp"
+#include "network/packets/Packet.hpp"
 
 OutputDataManager::OutputDataManager(std::weak_ptr<ClientSession> session):
 	session(session)

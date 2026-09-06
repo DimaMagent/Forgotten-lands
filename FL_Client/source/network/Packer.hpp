@@ -2,7 +2,7 @@
 #include <cstdint>
 #include <memory>
 #include <atomic>
-#include "PacketDataTypes.hpp"
+#include "network/packets/PacketDataTypes.hpp"
 
 class OutputDataManager;
 namespace sl::net {

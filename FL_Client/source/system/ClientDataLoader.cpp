@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "ClientDataLoader.hpp"
 #include <fstream>
-#include "EntityType.hpp"
+#include "system/EntityType.hpp"
 
 std::vector<std::string> ClientDataLoader::filePaths = { "manifests/ClientCharacterComponents.json" };
 

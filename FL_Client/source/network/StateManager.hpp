@@ -3,11 +3,11 @@
 #include <vector>
 #include <cstdint>
 #include <memory>
-#include "Delegate.hpp"
-#include "LockFreeDelegate.hpp"
-#include "PacketDataTypes.hpp"
-#include "EntityType.hpp"
-#include "EntityId.hpp"
+#include "system/handlers/Delegate.hpp"
+#include "system/handlers/LockFreeDelegate.hpp"
+#include "network/packets/PacketDataTypes.hpp"
+#include "system/EntityType.hpp"
+#include "system/EntityId.hpp"
 
 namespace sl {
 	class Entity;

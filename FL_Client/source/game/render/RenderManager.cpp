@@ -1,8 +1,8 @@
 #include "pch.hpp"
 #include "RenderManager.hpp"
-#include "Entity.hpp"
+#include "system/Entity.hpp"
 #include "RenderComponent.hpp"
-#include "TransformComponent.hpp"
+#include "system/systems/TransformComponent.hpp"
 
 RenderManager::RenderManager(sf::RenderTarget& renderTarget) :
 	renderTarget(renderTarget)

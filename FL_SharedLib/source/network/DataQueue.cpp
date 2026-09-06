@@ -1,0 +1,29 @@
+#include "pch.h"
+#include "network/DataQueue.hpp"
+
+namespace sl::net {
+	void DataQueue::push(const std::vector<uint8_t>& data) {
+		queueMutex.lock();
+		queue.push(data);
+		queueMutex.unlock();
+		onDataPushed.broadcast();
+	}
+
+	bool DataQueue::empty() const {
+		std::lock_guard<std::mutex> lock(queueMutex);
+		return queue.empty();
+	}
+
+	bool DataQueue::tryPop(std::vector<uint8_t>& out) {
+		std::lock_guard<std::mutex> lock(queueMutex);
+		if (queue.empty()) { return false; }
+
+		if (out.size() != queue.size()) {
+			out.resize(queue.size());
+		}
+
+		out = std::move(queue.front());
+		queue.pop();
+		return true;
+	}
+}

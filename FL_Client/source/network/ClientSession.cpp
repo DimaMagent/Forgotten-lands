@@ -1,6 +1,6 @@
 #include "pch.hpp"
 #include "ClientSession.hpp"
-#include "DataQueue.hpp"
+#include "network/DataQueue.hpp"
 #include "IncomingDataManager.hpp"
 #include "OutputDataManager.hpp"
 

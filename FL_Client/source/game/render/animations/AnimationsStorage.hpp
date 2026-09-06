@@ -6,7 +6,7 @@
 #include "SFML/Graphics/Texture.hpp"
 #include "SFML/System/Vector2.hpp"
 #include "AnimationType.hpp"
-#include "LockFreeDelegate.hpp"
+#include "system/handlers/LockFreeDelegate.hpp"
 
 using AnimationFrames = std::vector<std::shared_ptr<sf::Texture>>;
 using AnimationMap = std::unordered_map<std::string, AnimationFrames>;

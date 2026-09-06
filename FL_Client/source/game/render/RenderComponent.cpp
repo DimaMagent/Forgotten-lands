@@ -2,7 +2,7 @@
 #include "RenderComponent.hpp"
 #include <SFML/Graphics.hpp>
 #include "game/render/animations/AnimationsStorage.hpp"
-#include "Entity.hpp"
+#include "system/Entity.hpp"
 #include "TextureManager.hpp"
 
 

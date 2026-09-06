@@ -2,7 +2,7 @@
 #include "asio/ip/tcp.hpp"
 #include "asio/ssl.hpp"
 #include <string>
-#include "LockFreeDelegate.hpp"
+#include "system/handlers/LockFreeDelegate.hpp"
 
 class ClientSession;
 class IncomingDataManager;

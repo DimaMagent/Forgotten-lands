@@ -1,6 +1,6 @@
 #pragma once
 #include "AnimationType.hpp"
-#include "Component.hpp"
+#include "system/systems/Component.hpp"
 #include <memory>
 #include <unordered_map>
 

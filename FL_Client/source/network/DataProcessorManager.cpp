@@ -1,8 +1,8 @@
 #include "pch.hpp"
 #include "DataProcessorManager.hpp"
-#include "PacketDataTypes.hpp"
-#include "StatusPacket.hpp"
-#include "AuthPacket.hpp"
+#include "network/packets/PacketDataTypes.hpp"
+#include "network/packets/StatusPacket.hpp"
+#include "network/packets/AuthPacket.hpp"
 #include "StateManager.hpp"
 
 DataProcessorManager::DataProcessorManager(std::weak_ptr<StateManager> manager)

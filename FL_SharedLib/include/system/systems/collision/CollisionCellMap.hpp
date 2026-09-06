@@ -1,0 +1,43 @@
+#pragma once
+#include <SFML/System/Vector2.hpp>
+#include <vector>
+#include <cstdint>
+#include <unordered_map>
+#include "system/systems/collision/Cell.hpp"
+#include "system/systems/collision/Aabb.hpp"
+#include "system/EntityId.hpp"
+
+namespace sl {
+	class Entity;
+	class CollisionComponent;
+	class IEntityRegistry;
+
+	class CollisionCellMap {
+	public:
+		
+		CollisionCellMap(const IEntityRegistry& entityRegistry, cellIndex mapSizeX, cellIndex mapSizeY);
+		
+		void recordEntityToCollisionMap(const sl::Entity& entity);
+		
+		void removeEntityFromCollisionMap(const sl::Entity& entity);
+		
+		std::vector<sl::EntityId> getEntityIdsToCollisionMap(sf::Vector2f pos) const;
+		
+		[[nodiscard]] bool getNearestEntityIdsToPosition(sf::Vector2f pos, std::vector<sl::EntityId>& entityIdsOut, uint8_t searchDepth = 1) const;
+		
+		[[nodiscard]] bool getNearestEntityIdsToEntity(const AABB& aabb, sf::Vector2f pos, std::vector<sl::EntityId>& entityIdsOut, uint8_t searchDepth = 1) const;
+		
+		static uint8_t getSearchDepthByDistance(float distance);
+	private:
+		std::unordered_map<Cell, std::vector<sl::EntityId>> cellToEntityIds;
+
+		std::unordered_map<sl::EntityId, uint64_t> entityIdToDelegateToken;
+
+		const IEntityRegistry& entityRegistry;
+
+		[[nodiscard]] bool onMapBound(const AABB& aabb, sf::Vector2f pos) const;
+		[[nodiscard]] bool adjustingEntityOnMap(sl::EntityId entityId, sf::Vector2f pos);
+		[[nodiscard]] bool occupiedCellsAdd(sl::EntityId entityId, sf::Vector2f pos);
+		[[nodiscard]] bool occupiedCellsRemove(sl::EntityId entityId);
+	};
+}

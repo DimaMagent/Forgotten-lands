@@ -1,8 +1,8 @@
 #pragma once
 #include <SFML/System/Time.hpp>
-#include "LockFreeDelegate.hpp"
-#include "Intentions.hpp"
-#include "EntityId.hpp"
+#include "system/handlers/LockFreeDelegate.hpp"
+#include "network/packets/Intentions.hpp"
+#include "system/EntityId.hpp"
 
 
 namespace sl {

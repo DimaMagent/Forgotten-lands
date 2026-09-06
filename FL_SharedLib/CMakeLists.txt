@@ -8,6 +8,8 @@ add_library(FL_SharedLib STATIC ${SOURCES})
 
 target_precompile_headers(FL_SharedLib PRIVATE include/pch.h)
 
+target_include_directories(FL_SharedLib PRIVATE include)
+
 set_target_properties(FL_SharedLib PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin/${TARGET_ARCH}/Debug"
     ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin/${TARGET_ARCH}/Release"

@@ -1,10 +1,10 @@
 #include "pch.hpp"
 #include "StateManager.hpp"
-#include "StatusPacket.hpp"
-#include "Entity.hpp"
-#include "AuthPacket.hpp"
-#include "Serializable.hpp"
-#include "EntityStorage.hpp"
+#include "network/packets/StatusPacket.hpp"
+#include "system/Entity.hpp"
+#include "network/packets/AuthPacket.hpp"
+#include "network/Serializable.hpp"
+#include "system/storages/EntityStorage.hpp"
 
 StateManager::StateManager(sl::EntityStorage& entities):
 	entities(entities)

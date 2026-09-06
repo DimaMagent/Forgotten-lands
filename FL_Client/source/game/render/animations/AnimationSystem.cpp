@@ -1,10 +1,10 @@
 #include "pch.hpp"
 #include "AnimationSystem.hpp"
-#include "Entity.hpp"
-#include "TransformComponent.hpp"
+#include "system/Entity.hpp"
+#include "system/systems/TransformComponent.hpp"
 #include "game/render/RenderComponent.hpp"
-#include "WeaponComponent.hpp"
-#include "StateComponent.hpp"
+#include "system/systems/attack/WeaponComponent.hpp"
+#include "system/systems/StateComponent.hpp"
 #include "AnimationComponent.hpp"
 
 AnimationSystem::AnimationSystem(){}

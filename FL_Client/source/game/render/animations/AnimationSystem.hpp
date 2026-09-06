@@ -1,7 +1,6 @@
 #pragma once
 #include "AnimationType.hpp"
-#include "EntityStorage.hpp"
-#include "Delegate.hpp"
+#include "system/storages/EntityStorage.hpp"
 
 namespace sl {
 	class Entity;

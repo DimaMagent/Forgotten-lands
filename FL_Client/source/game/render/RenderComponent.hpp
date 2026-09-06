@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "SFML/Graphics/Rect.hpp"
-#include "Component.hpp"
+#include "system/systems/Component.hpp"
 #include "game/render/animations/AnimationType.hpp"
 
 namespace sf {

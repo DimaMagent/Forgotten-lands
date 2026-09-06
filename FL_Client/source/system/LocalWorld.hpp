@@ -1,12 +1,12 @@
 #pragma once
-#include "WorldBase.hpp"
+#include "system/WorldBase.hpp"
 #include <memory>
 #include <vector>
-#include "LockFreeDelegate.hpp"
+#include "system/handlers/LockFreeDelegate.hpp"
 #include "SFML/System/Time.hpp"
-#include "EntityType.hpp"
-#include "EntityStorage.hpp"
-#include "EntityId.hpp"
+#include "system/EntityType.hpp"
+#include "system/storages/EntityStorage.hpp"
+#include "system/EntityId.hpp"
 
 namespace sl {
 	class Entity;

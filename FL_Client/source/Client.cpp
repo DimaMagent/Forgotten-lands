@@ -3,7 +3,7 @@
 #include "network/NetManager.hpp"
 #include "game/player_control/InputManager.hpp"
 #include "system/LocalWorld.hpp"
-#include "Entity.hpp"
+#include "system/Entity.hpp"
 #include "game/player_control/Controller.hpp"
 #include "network/DataProcessorManager.hpp"
 #include "network/StateManager.hpp"
@@ -11,7 +11,7 @@
 #include <spdlog/async.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h> 
-#include "DefferedFunctionStorage.hpp"
+#include "system/handlers/DefferedFunctionStorage.hpp"
 
 Client::Client() 
 {

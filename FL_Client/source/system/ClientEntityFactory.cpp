@@ -1,12 +1,12 @@
 #include "pch.hpp"
 #include "ClientEntityFactory.hpp"
-#include "Entity.hpp"
-#include "DataLoader.hpp"
+#include "system/Entity.hpp"
+#include "system/DataLoader.hpp"
 #include <nlohmann/json.hpp>
-#include "StatusPacket.hpp"
+#include "network/packets/StatusPacket.hpp"
 #include "game/render/TextureManager.hpp"
 #include "ClientDataLoader.hpp"
-#include "Serializable.hpp"
+#include "network/Serializable.hpp"
 
 ClientEntityFactory::ClientEntityFactory() : sl::EntityFactory(std::make_unique<ClientDataLoader>())
 {

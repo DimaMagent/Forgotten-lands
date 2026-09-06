@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include <vector>
-#include "Delegate.hpp"
+#include "system/handlers/Delegate.hpp"
 
 namespace sf {
 	class RenderTarget;

@@ -3,7 +3,7 @@
 #include <vector>
 #include "asio\ip\tcp.hpp"
 #include "asio\ssl.hpp"
-#include "Delegate.hpp"
+#include "system/handlers/Delegate.hpp"
 
 namespace sl::net {
 	class DataQueue;
