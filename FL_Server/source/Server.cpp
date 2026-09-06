@@ -9,15 +9,15 @@
 #include "network/DataProcessorManager.hpp"
 #include "network/NetManager.hpp"
 #include "system/World.hpp"
-#include "Entity.hpp"
+#include "system/Entity.hpp"
 #include "system/playerSystems/PlayerManager.hpp"
 #include "network/Packer.hpp"
-#include "AuthPacket.hpp"
+#include "network/packets/AuthPacket.hpp"
 #include <spdlog/async.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h> 
 #include "network/connectionEvents.hpp"
-#include "DefferedFunctionStorage.hpp"
+#include "system/handlers/DefferedFunctionStorage.hpp"
 
 
 Server::Server(short port)

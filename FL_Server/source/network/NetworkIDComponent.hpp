@@ -1,5 +1,5 @@
 #pragma once
-#include "Component.hpp"
+#include "system/systems/Component.hpp"
 #include <cstdint>
 
 using sessionToken = uint32_t;

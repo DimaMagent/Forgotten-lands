@@ -1,5 +1,5 @@
 #pragma once
-#include "DataLoader.hpp"
+#include "system/DataLoader.hpp"
 #include <optional>
 
 class ServerDataLoader : public sl::DataLoader {

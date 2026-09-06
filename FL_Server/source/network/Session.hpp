@@ -4,8 +4,8 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
-#include "Delegate.hpp"
-#include "LockFreeDelegate.hpp"
+#include "system/handlers/Delegate.hpp"
+#include "system/handlers/LockFreeDelegate.hpp"
 
 namespace sl::net {
 	class DataQueue;

@@ -4,8 +4,8 @@
 #include <string>
 #include <memory>
 #include <cstdint>
-#include "TimerHandle.hpp"
-#include "LockFreeDelegate.hpp"
+#include "system/handlers/TimerHandle.hpp"
+#include "system/handlers/LockFreeDelegate.hpp"
 
 class Session;
 class OutputDataManager;

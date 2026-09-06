@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <optional>
 #include <concepts>
-#include "EntityId.hpp"
+#include "system/EntityId.hpp"
 
 namespace sl {
 

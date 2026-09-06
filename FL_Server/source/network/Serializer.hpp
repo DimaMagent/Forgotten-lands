@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <memory>
 #include <span>
-#include "LockFreeDelegate.hpp"
+#include "system/handlers/LockFreeDelegate.hpp"
 
 
 namespace sl {

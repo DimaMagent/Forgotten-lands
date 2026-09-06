@@ -1,12 +1,12 @@
 #pragma once
-#include "WorldBase.hpp"
+#include "system/WorldBase.hpp"
 #include "IEntityTokenRegistry.hpp"
-#include "LockFreeDelegate.hpp"
+#include "system/handlers/LockFreeDelegate.hpp"
 #include <unordered_map>
 #include <cstdint>
 #include <optional>
-#include "SlotMap.hpp"
-#include "Entity.hpp"
+#include "system/storages/SlotMap.hpp"
+#include "system/Entity.hpp"
 
 class Serializer;
 class ConnectionEvents;

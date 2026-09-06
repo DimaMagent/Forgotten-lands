@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "Packer.hpp"
-#include "Header.hpp"
-#include "Packet.hpp"
+#include "network/packets/Header.hpp"
+#include "network/packets/Packet.hpp"
 #include "OutputDataManager.hpp"
 
 std::atomic<uint16_t> Packer::sequenceNumber = 1;

@@ -1,6 +1,6 @@
 #include "pch.hpp"
 #include "ServerEntityFactory.hpp"
-#include "Entity.hpp"
+#include "system/Entity.hpp"
 #include "ServerDataLoader.hpp"
 
 

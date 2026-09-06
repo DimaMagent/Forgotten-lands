@@ -6,8 +6,8 @@
 #include <functional>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
-#include "PacketDataTypes.hpp"
-#include "Intentions.hpp"
+#include "network/packets/PacketDataTypes.hpp"
+#include "network/packets/Intentions.hpp"
 
 namespace sl {
 	class Entity;

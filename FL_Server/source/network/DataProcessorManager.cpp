@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "DataProcessorManager.hpp"
-#include "PacketDataTypes.hpp"
-#include "PlayerIntentionsPacket.hpp"
+#include "network/packets/PacketDataTypes.hpp"
+#include "network/packets/PlayerIntentionsPacket.hpp"
 #include "system/playerSystems/PlayerManager.hpp"
 
 DataProcessorManager::DataProcessorManager(PlayerManager& playerManager): playerManager(playerManager)

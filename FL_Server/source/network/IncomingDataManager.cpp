@@ -1,11 +1,11 @@
 #include "pch.hpp"
 #include "IncomingDataManager.hpp"
-#include "DataQueue.hpp"
-#include "PacketManager.hpp"
-#include "Packet.hpp"
-#include "Header.hpp"
+#include "network/DataQueue.hpp"
+#include "network/packets/PacketManager.hpp"
+#include "network/packets/Packet.hpp"
+#include "network/packets/Header.hpp"
 #include "DataProcessorManager.hpp"
-#include "NetUtils.hpp"
+#include "network/NetUtils.hpp"
 
 namespace {
 	constexpr size_t WIRE_HEADER_SIZE = sizeof(uint32_t) + sizeof(uint16_t) + sizeof(uint8_t) + sizeof(uint32_t);

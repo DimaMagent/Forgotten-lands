@@ -1,5 +1,5 @@
 #pragma once
-#include "LockFreeDelegate.hpp"
+#include "system/handlers/LockFreeDelegate.hpp"
 
 class ConnectionEvents {
 public:

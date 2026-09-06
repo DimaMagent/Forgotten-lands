@@ -1,5 +1,5 @@
 #pragma once
-#include "EntityFactory.hpp"
+#include "system/EntityFactory.hpp"
 
 class ServerEntityFactory : public sl::EntityFactory {
 public:

@@ -3,8 +3,8 @@
 #include <cstdint>
 #include <functional>
 #include <unordered_map>
-#include "PacketDataTypes.hpp"
-#include "PacketManager.hpp"
+#include "network/packets/PacketDataTypes.hpp"
+#include "network/packets/PacketManager.hpp"
 
 namespace sl::net { class Packet; }
 class PlayerManager;

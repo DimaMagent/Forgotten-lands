@@ -1,6 +1,6 @@
 #pragma once
 #include "NetworkIDComponent.hpp"
-#include "Entity.hpp"
+#include "system/Entity.hpp"
 
 NetworkIDComponent::NetworkIDComponent()
 {

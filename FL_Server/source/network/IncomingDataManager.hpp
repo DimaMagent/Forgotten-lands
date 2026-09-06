@@ -2,7 +2,7 @@
 #include <memory>
 #include <vector>
 #include <cstdint>
-#include "LockFreeDelegate.hpp"
+#include "system/handlers/LockFreeDelegate.hpp"
 
 class DataProcessorManager;
 namespace sl::net {

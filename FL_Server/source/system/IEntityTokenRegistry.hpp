@@ -1,7 +1,7 @@
 #pragma once
 #include <optional>
 #include <cstdint>
-#include "EntityId.hpp"
+#include "system/EntityId.hpp"
 
 namespace sl {
 	class Entity;

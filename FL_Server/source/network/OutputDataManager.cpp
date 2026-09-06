@@ -1,8 +1,8 @@
 #include "pch.hpp"
 #include "OutputDataManager.hpp"
 #include "Session.hpp"
-#include "PacketManager.hpp"
-#include "Packet.hpp"
+#include "network/packets/PacketManager.hpp"
+#include "network/packets/Packet.hpp"
 
 OutputDataManager::OutputDataManager(std::unordered_map<uint32_t, std::weak_ptr<Session>>& sessions) :
 	tokenToSessions(sessions)

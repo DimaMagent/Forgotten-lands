@@ -1,12 +1,12 @@
 #include "pch.hpp"
 #include "PlayerManager.hpp"
-#include "MovementComponent.hpp"
-#include "TransformComponent.hpp"
-#include "Entity.hpp"
+#include "system/systems/movement/MovementComponent.hpp"
+#include "system/systems/TransformComponent.hpp"
+#include "system/Entity.hpp"
 #include "system/World.hpp"
-#include "Utils.hpp"
-#include "AttackSystem.hpp"
-#include "WorldMap.hpp"
+#include "system/Utils.hpp"
+#include "system/systems/attack/AttackSystem.hpp"
+#include "system/WorldMap.hpp"
 
 PlayerManager::PlayerManager()
 {

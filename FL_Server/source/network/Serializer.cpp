@@ -1,12 +1,12 @@
 #include "pch.hpp"
 #include "Serializer.hpp"
-#include "NetUtils.hpp"
+#include "network/NetUtils.hpp"
 #include "Packer.hpp"
-#include "StatusPacket.hpp"
-#include "EntityStorage.hpp"
-#include "Entity.hpp"
+#include "network/packets/StatusPacket.hpp"
+#include "system/storages/EntityStorage.hpp"
+#include "system/Entity.hpp"
 #include "system/IEntityTokenRegistry.hpp"
-#include "Serializable.hpp"
+#include "network/Serializable.hpp"
 
 int Serializer::serializationFrequency = 2;
 

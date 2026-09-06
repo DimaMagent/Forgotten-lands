@@ -5,7 +5,7 @@
 #include <memory>
 #include <spdlog/logger.h>
 #include <SFML/System/Clock.hpp>
-#include "TimerHandle.hpp"
+#include "system/handlers/TimerHandle.hpp"
 
 class DataProcessorManager;
 class NetManager;

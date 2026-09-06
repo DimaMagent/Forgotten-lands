@@ -2,8 +2,8 @@
 #include "ServerSystemUpdater.hpp"
 #include "network/Serializer.hpp"
 #include "World.hpp"
-#include "MovementSystem.hpp"
-#include "CollisionSystem.hpp"
+#include "system/systems/movement/MovementSystem.hpp"
+#include "system/systems/collision/CollisionSystem.hpp"
 
 ServerSystemUpdater::ServerSystemUpdater()
 {

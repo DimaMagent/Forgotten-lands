@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "ServerDataLoader.hpp"
 #include <fstream>
-#include "EntityType.hpp"
+#include "system/EntityType.hpp"
 
 std::vector<std::string> ServerDataLoader::filePaths = { "manifests/Characters.json" };
 
