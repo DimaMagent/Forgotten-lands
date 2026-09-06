@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "PlayerIntentManager.hpp"
 #include "MovementComponent.hpp"
-#include "Packer.hpp"
+#include "network/Packer.hpp"
 #include "PlayerIntentionsPacket.hpp"
 #include "Entity.hpp"
 #include "AttackSystem.hpp"

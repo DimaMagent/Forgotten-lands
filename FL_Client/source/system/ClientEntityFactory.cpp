@@ -4,7 +4,7 @@
 #include "DataLoader.hpp"
 #include <nlohmann/json.hpp>
 #include "StatusPacket.hpp"
-#include "TextureManager.hpp"
+#include "game/render/TextureManager.hpp"
 #include "ClientDataLoader.hpp"
 #include "Serializable.hpp"
 

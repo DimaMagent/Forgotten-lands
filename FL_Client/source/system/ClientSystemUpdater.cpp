@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "ClientSystemUpdater.hpp"
 #include <memory>
-#include "AnimationSystem.hpp"
+#include "game/render/animations/AnimationSystem.hpp"
 
 
 ClientSystemUpdater::ClientSystemUpdater() {

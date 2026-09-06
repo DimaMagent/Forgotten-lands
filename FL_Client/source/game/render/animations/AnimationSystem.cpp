@@ -2,7 +2,7 @@
 #include "AnimationSystem.hpp"
 #include "Entity.hpp"
 #include "TransformComponent.hpp"
-#include "RenderComponent.hpp"
+#include "game/render/RenderComponent.hpp"
 #include "WeaponComponent.hpp"
 #include "StateComponent.hpp"
 #include "AnimationComponent.hpp"

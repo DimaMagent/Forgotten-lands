@@ -1,7 +1,7 @@
 #include "pch.hpp"
 #include "RenderComponent.hpp"
 #include <SFML/Graphics.hpp>
-#include "AnimationsStorage.hpp"
+#include "game/render/animations/AnimationsStorage.hpp"
 #include "Entity.hpp"
 #include "TextureManager.hpp"
 

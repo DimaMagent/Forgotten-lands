@@ -2,7 +2,7 @@
 #include <memory>
 #include "SFML/Graphics/Rect.hpp"
 #include "Component.hpp"
-#include "AnimationType.hpp"
+#include "game/render/animations/AnimationType.hpp"
 
 namespace sf {
 	class Texture;

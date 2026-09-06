@@ -10,6 +10,8 @@ add_executable(FL_Client ${SOURCES} ${HEADERS})
 
 target_precompile_headers(FL_Client PRIVATE source/pch.hpp)
 
+target_include_directories(FL_Client PRIVATE source)
+
 set_target_properties(FL_Client PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin/${TARGET_ARCH}/Debug"
     RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin/${TARGET_ARCH}/Release"

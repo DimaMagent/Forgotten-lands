@@ -3,7 +3,7 @@
 #include "AnimationsStorage.hpp"
 #include "SFML/Graphics/Texture.hpp"
 #include "Entity.hpp"
-#include "TextureManager.hpp"
+#include "game/render/TextureManager.hpp"
 
 AnimationComponent::AnimationComponent()
 {
