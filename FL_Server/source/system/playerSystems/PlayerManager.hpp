@@ -6,8 +6,8 @@
 #include <functional>
 #include <SFML/System/Time.hpp>
 #include <SFML/System/Vector2.hpp>
-#include "network/packets/PacketDataTypes.hpp"
 #include "network/packets/Intentions.hpp"
+#include "network/DataProcessorTypes.hpp"
 
 namespace sl {
 	class Entity;
@@ -17,7 +17,7 @@ class World;
 
 class PlayerManager {
 public:
-	PlayerManager();
+	PlayerManager(DataProcessedDelegate& OnDataProcessed);
 	~PlayerManager();
 
 	void updatePlayerInputState(uint32_t playerToken, sl::Intentions intentions);

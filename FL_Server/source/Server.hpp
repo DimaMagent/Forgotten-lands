@@ -31,8 +31,8 @@ private:
 
 	std::unique_ptr<ConnectionEvents> connectionEvents;
 	std::unique_ptr<World> world;
-	std::unique_ptr<PlayerManager> playerManager;
 	std::unique_ptr<DataProcessorManager> dataProcessorManager;
+	std::unique_ptr<PlayerManager> playerManager;
 	std::unique_ptr<NetManager> netManager;
 	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;
 

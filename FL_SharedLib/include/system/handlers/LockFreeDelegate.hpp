@@ -5,6 +5,7 @@
 #include <atomic>
 #include <cstdint>
 #include <algorithm>
+#include <utility>
 
 namespace sl {
 
@@ -58,7 +59,7 @@ namespace sl {
 			auto snapshot = functions.load(std::memory_order_acquire);
 			if (!snapshot || snapshot->empty()) return;
 			for (const auto& e : *snapshot) {
-				(*e.func)(args...);
+				(*e.func)(std::forward<Args>(args)...);
 			}
 		}
 

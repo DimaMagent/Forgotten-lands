@@ -29,8 +29,8 @@ Server::Server(short port)
 	serverContext = std::make_unique<asio::io_context>();
 	connectionEvents = std::make_unique<ConnectionEvents>();
 	world = std::make_unique<World>(*connectionEvents);
-	playerManager = std::make_unique<PlayerManager>();
-	dataProcessorManager = std::make_unique<DataProcessorManager>(*playerManager);
+	dataProcessorManager = std::make_unique<DataProcessorManager>();
+	playerManager = std::make_unique<PlayerManager>(dataProcessorManager->OnDataProcessed);
 	netManager = std::make_unique<NetManager>(*serverContext, port, *dataProcessorManager, *connectionEvents);
 	tickTimer = std::make_shared<asio::steady_timer>(*serverContext);
 

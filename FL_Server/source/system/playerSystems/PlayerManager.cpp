@@ -7,10 +7,20 @@
 #include "system/Utils.hpp"
 #include "system/systems/attack/AttackSystem.hpp"
 #include "system/WorldMap.hpp"
+#include "network/packets/PacketManager.hpp"
+#include "network/packets/PlayerIntentionsPacket.hpp"
 
-PlayerManager::PlayerManager()
+PlayerManager::PlayerManager(DataProcessedDelegate& OnDataProcessed)
 {
 	attackSystem = std::make_unique<sl::AttackSystem>();
+	OnDataProcessed.addFunction([this](sl::net::PacketType type, std::vector<uint8_t>&& data, uint32_t token) {
+		if (type == sl::net::PacketType::PT_InputState) {
+			sl::net::PlayerIntentionsPacket pkt;
+			sl::net::PacketManager::read(data, pkt);
+			const auto& intentions = pkt.getData();
+			this->updatePlayerInputState(token, intentions.intentions);
+		}
+		});
 }
 
 PlayerManager::~PlayerManager() = default;
