@@ -15,8 +15,8 @@ NetManager::NetManager(asio::io_context& context, short port, DataProcessorManag
 {
 	logger = spdlog::get("network");
 	cleaningTimer = std::make_unique<sl::TimerHandle<void>>(context,
-		asio::chrono::seconds(120),
-		asio::chrono::seconds(120),
+		CLEANING_INTERVAL,
+		CLEANING_INTERVAL,
 		[this]() {cleaning(); },
 		true);
 	initSSL();
@@ -43,7 +43,7 @@ void NetManager::doAccept() {
 				}
 				auto now = std::chrono::steady_clock::now();
 				auto& [count, firstTime] = connectionAttempts[ip];
-				if (now - firstTime < std::chrono::seconds(60)) {
+				if (now - firstTime < CONNECTION_ATTEMPT_WINDOW) {
 					if (count >= MAX_CONNECTIONS_PER_IP) {
 						logger->warn("Rate limit exceeded for IP: {} ", ip);
 						socket.close();
@@ -100,7 +100,7 @@ void NetManager::cleaning() {
 	auto now = std::chrono::steady_clock::now();
 
 	for (auto it = connectionAttempts.begin(); it != connectionAttempts.end(); ) {
-		if (now - it->second.second > std::chrono::seconds(300)) {
+		if (now - it->second.second > SESSION_TIMEOUT) {
 			std::string ip = it->first;
 			it = connectionAttempts.erase(it);
 			logger->info("Cleared connection attempts for IP: {}", ip);
@@ -109,17 +109,18 @@ void NetManager::cleaning() {
 			++it;
 		}
 	}
-	/* TODO: реализовать систему очистки невалидных сессий
+
 	if (sessions.size() != 0) {
-		for (size_t i = 0; i < sessions.size(); ++i) {
-			if (sessions[i].expired()) {
-				sessions[i] = std::move(sessions.back());
-				sessions.pop_back();
-				--i;
+		for (auto it = sessions.begin(); it != sessions.end();) {
+			if (it->second.expired()) {
+				logger->info("Session with token {} has expired and was removed", it->first);
+				it = sessions.erase(it);
+			}
+			else {
+				++it;
 			}
 		}
 	}
-	*/
 }
 
 uint32_t NetManager::generateToken() const

@@ -44,6 +44,10 @@ private:
 	static constexpr int MAX_CONNECTIONS_PER_IP = 5;
 	static constexpr int MAX_TOTAL_SESSIONS = 10000;
 
+	const asio::chrono::seconds CLEANING_INTERVAL = asio::chrono::seconds(120);
+	const asio::chrono::seconds CONNECTION_ATTEMPT_WINDOW = asio::chrono::seconds(60);
+	const asio::chrono::seconds SESSION_TIMEOUT = asio::chrono::seconds(300);
+
 	void initSSL();
 	void cleaning();
 	uint32_t generateToken() const;
