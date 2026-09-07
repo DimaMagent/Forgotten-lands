@@ -32,8 +32,8 @@ private:
 
 	std::unique_ptr<asio::io_context> clientContext;
 	std::unique_ptr<sf::RenderWindow> window;
-	std::unique_ptr<LocalWorld> world;
 	std::unique_ptr<DataProcessorManager> dataProcessorManager;
+	std::unique_ptr<LocalWorld> world;
 	std::unique_ptr<NetManager> netManager;
 	std::unique_ptr<InputManager> inputManager;
 	std::unique_ptr<Controller> controller;

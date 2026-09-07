@@ -8,6 +8,7 @@
 #include "network/packets/PacketDataTypes.hpp"
 #include "system/EntityType.hpp"
 #include "system/EntityId.hpp"
+#include "network/DataProcessorTypes.hpp"
 
 namespace sl {
 	class Entity;
@@ -27,7 +28,7 @@ public:
 	sl::LockFreeDelegate<sl::EntityId> OnEntityAbsenceOnStatusPacket;
 	sl::LockFreeDelegate<const sl::net::EntityData&> OnAuth;
 
-	StateManager(sl::EntityStorage& entities);
+	StateManager(sl::EntityStorage& entities, DataProcessedDelegate& OnDataProcessed);
 	void recordRollback(const sl::net::StatusData& data);
 	void auth(const sl::net::AuthData& data);
 private:

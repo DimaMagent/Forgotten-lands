@@ -19,8 +19,8 @@ Client::Client()
 
 	clientContext = std::make_unique<asio::io_context>();
 	window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "FL_Client.exe", sf::State::Windowed); // sf::State::Fullscreen
-	world = std::make_unique<LocalWorld>(*window);
-	dataProcessorManager = std::make_unique<DataProcessorManager>(world->getStateManager());
+	dataProcessorManager = std::make_unique<DataProcessorManager>();
+	world = std::make_unique<LocalWorld>(*window, dataProcessorManager->OnDataProcessed);
 	netManager = std::make_unique<NetManager>(*clientContext, *dataProcessorManager);
 	inputManager = std::make_unique<InputManager>(isRunningFlag);
 	controller = std::make_unique<Controller>(*inputManager);

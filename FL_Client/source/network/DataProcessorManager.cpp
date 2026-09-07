@@ -1,40 +1,13 @@
 #include "pch.hpp"
 #include "DataProcessorManager.hpp"
-#include "network/packets/PacketDataTypes.hpp"
-#include "network/packets/StatusPacket.hpp"
-#include "network/packets/AuthPacket.hpp"
-#include "StateManager.hpp"
 
-DataProcessorManager::DataProcessorManager(std::weak_ptr<StateManager> manager)
+DataProcessorManager::DataProcessorManager()
 {
 	net_logger = spdlog::get("network");
-
-	this->stateManager = manager;
-
-	registerHandler<sl::net::StatusPacket>(sl::net::StatusPacket::type(),
-		[this](const sl::net::StatusPacket& p) {
-			const auto& data = p.getData();
-			auto sm = stateManager.lock();
-			if (!sm) { return; }
-			sm->recordRollback(data);
-		});
-	registerHandler<sl::net::AuthPacket>(sl::net::AuthPacket::type(),
-		[this](const sl::net::AuthPacket& p) {
-			const auto& data = p.getData();
-			auto sm = stateManager.lock();
-			if (!sm) { return; }
-			sm->auth(data);
-		});
 }
 
-void DataProcessorManager::routeData(std::vector<uint8_t>&& data, sl::net::PacketType type)
+void DataProcessorManager::routeData(std::vector<uint8_t>&& data, sl::net::PacketType type) const
 {
-	auto it = handlers.find(static_cast<uint8_t>(type));
-	if (it != handlers.end()) {
-		it->second(std::move(data));
-	}
-	else {
-		net_logger->warn("Unknown packet type: {}", static_cast<int>(type));
-	}
+	OnDataProcessed.broadcast(type, std::move(data));
 }
 

@@ -5,11 +5,33 @@
 #include "network/packets/AuthPacket.hpp"
 #include "network/Serializable.hpp"
 #include "system/storages/EntityStorage.hpp"
+#include "network/packets/PacketManager.hpp"
 
-StateManager::StateManager(sl::EntityStorage& entities):
+StateManager::StateManager(sl::EntityStorage& entities, DataProcessedDelegate& OnDataProcessed):
 	entities(entities)
 {
 	net_logger = spdlog::get("network");
+	OnDataProcessed.addFunction([this](sl::net::PacketType type, std::vector<uint8_t>&& data) {
+		switch (type) {
+		case sl::net::PacketType::PT_Status:
+		{
+			sl::net::StatusPacket pkt;
+			sl::net::PacketManager::read(data, pkt);
+			recordRollback(pkt.getData());
+			break;
+		}
+		case sl::net::PacketType::PT_Auth:
+		{
+			sl::net::AuthPacket pkt;
+			sl::net::PacketManager::read(data, pkt);
+			auth(pkt.getData());
+			break;
+		}
+		default:
+			net_logger->warn("StateManager: Unhandled packet type: {}", static_cast<uint8_t>(type));
+			break;
+		}
+		});	
 }
 
 void StateManager::recordRollback(const sl::net::StatusData& data)

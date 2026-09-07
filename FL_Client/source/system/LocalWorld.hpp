@@ -7,6 +7,7 @@
 #include "system/EntityType.hpp"
 #include "system/storages/EntityStorage.hpp"
 #include "system/EntityId.hpp"
+#include "network/DataProcessorTypes.hpp"
 
 namespace sl {
 	class Entity;
@@ -25,7 +26,7 @@ class LocalWorld: public sl::WorldBase {
 public:
 	sl::LockFreeDelegate<std::optional<sl::EntityId>> OnSetPlayerEntity;
 
-	LocalWorld(sf::RenderTarget& renderTarget);
+	LocalWorld(sf::RenderTarget& renderTarget, DataProcessedDelegate& OnDataProcessed);
 
 	virtual ~LocalWorld();
 

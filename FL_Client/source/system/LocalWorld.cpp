@@ -12,8 +12,8 @@
 #include "system/WorldMap.hpp"
 #include "ClientSystemUpdater.hpp"
 
-LocalWorld::LocalWorld(sf::RenderTarget& renderTarget) : WorldBase(std::make_unique<ClientSystemUpdater>()) ,
-	stateManager(std::make_shared<StateManager>(entities)),
+LocalWorld::LocalWorld(sf::RenderTarget& renderTarget, DataProcessedDelegate& OnDataProcessed) : WorldBase(std::make_unique<ClientSystemUpdater>()) ,
+	stateManager(std::make_shared<StateManager>(entities, OnDataProcessed)),
 	entityFactory(std::make_unique<ClientEntityFactory>()), renderManager(std::make_unique<RenderManager>(renderTarget))
 {
 	game_logger = spdlog::get("game");
