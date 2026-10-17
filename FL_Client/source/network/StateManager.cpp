@@ -11,7 +11,7 @@ StateManager::StateManager(sl::EntityStorage& entities, DataProcessedDelegate& O
 	entities(entities)
 {
 	net_logger = spdlog::get("network");
-	OnDataProcessed.addFunction([this](sl::net::PacketType type, std::vector<uint8_t>&& data) {
+	token = OnDataProcessed.addFunction([this](sl::net::PacketType type, std::vector<uint8_t>&& data) {
 		switch (type) {
 		case sl::net::PacketType::PT_Status:
 		{

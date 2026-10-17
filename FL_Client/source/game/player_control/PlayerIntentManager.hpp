@@ -38,6 +38,8 @@ private:
 
 	bool isIntentsChanged = false;
 
+	std::vector<std::shared_ptr<sl::DelegateToken>> tokens;
+
 	void onPlayerEntitySet(std::optional<sl::EntityId> playerEntityId);
 
 	//returns true if direction changed successfully

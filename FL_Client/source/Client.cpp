@@ -32,7 +32,7 @@ Client::Client()
 	tickTimer = std::make_shared<asio::steady_timer>(*clientContext);
 
 	sl::DefferedFunctionStorage::init(*clientContext);
-	netManager->OnAccept.addFunction([this]() {this->whenClientAccepted(); });
+	token = netManager->OnAccept.addFunction([this]() {this->whenClientAccepted(); });
 	window->setVerticalSyncEnabled(true);
 }
 

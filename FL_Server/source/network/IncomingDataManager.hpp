@@ -21,6 +21,7 @@ private:
 
 	std::vector<uint8_t> buffer;
 	uint32_t token;
+	std::vector<std::shared_ptr<sl::DelegateToken>> tokens;
 
 	void assemblePacket();
 	void onDataPushed();

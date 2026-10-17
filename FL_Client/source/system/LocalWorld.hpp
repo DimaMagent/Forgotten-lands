@@ -64,6 +64,8 @@ protected:
 	std::shared_ptr<StateManager> stateManager;
 	std::unique_ptr<ClientEntityFactory> entityFactory;
 
+	std::vector<std::shared_ptr<sl::DelegateToken>> tokens;
+
 	void onAbsenceEntity(const sl::net::EntityData& enData);
 
 	void onAbsenceEntityOnStatusPacket(sl::EntityId id);

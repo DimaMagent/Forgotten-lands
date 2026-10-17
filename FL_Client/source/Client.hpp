@@ -17,6 +17,9 @@ namespace asio {
 namespace sf {
 	class RenderWindow;
 }
+namespace sl {
+	class DelegateToken;
+}
 
 class Client {
 public:
@@ -41,6 +44,9 @@ private:
 
 	std::shared_ptr<asio::steady_timer> tickTimer;
 	sf::Clock clock;
+
+	//delegate tokens
+	std::shared_ptr<sl::DelegateToken> token;
 
 	bool isRunningFlag = false;
 

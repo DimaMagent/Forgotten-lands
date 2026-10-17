@@ -31,6 +31,8 @@ private:
 
 	sf::Vector2i lastMovementDirectionIntent;
 
+	std::shared_ptr<sl::DelegateToken> token;
+
 	void onEvent(const sf::Event& event);
 
 	void initKeyBindings();

@@ -50,4 +50,6 @@ private:
 	std::unique_ptr<ServerEntityFactory> entityFactory;
 
 	std::unordered_map<uint32_t, sl::EntityId> tokenToEntityId;
+
+	std::shared_ptr<sl::DelegateToken> delegateToken;
 };

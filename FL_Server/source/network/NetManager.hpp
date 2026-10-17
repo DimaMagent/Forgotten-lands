@@ -48,6 +48,8 @@ private:
 	const asio::chrono::seconds CONNECTION_ATTEMPT_WINDOW = asio::chrono::seconds(60);
 	const asio::chrono::seconds SESSION_TIMEOUT = asio::chrono::seconds(300);
 
+	std::vector<std::shared_ptr<sl::DelegateToken>> tokens;
+
 	void initSSL();
 	void cleaning();
 	uint32_t generateToken() const;

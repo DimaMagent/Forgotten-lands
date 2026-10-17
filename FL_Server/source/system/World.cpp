@@ -15,7 +15,7 @@ World::World(ConnectionEvents& connectionEvents) : WorldBase(std::make_unique<Sy
 	entities.reserve(10000);
 	entityFactory = std::make_unique<ServerEntityFactory>();
 
-	connectionEvents.OnClientDisconnected.addFunction([this](uint32_t token) {
+	delegateToken = connectionEvents.OnClientDisconnected.addFunction([this](uint32_t token) {
 		removePlayerEntityByToken(token);
 	});
 }

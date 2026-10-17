@@ -18,19 +18,19 @@ PlayerIntentManager::PlayerIntentManager(
 
 	attackSystem = std::make_unique<sl::AttackSystem>();
 
-	onNewAction.addFunction([this](sl::net::Action action) 
+	tokens.push_back(onNewAction.addFunction([this](sl::net::Action action)
 		{
 			currentIntentions.actions.push_back(action);
 			isIntentsChanged = true;
-		});
+		}));
 
-	onSetMovementDirection.addFunction([this](const sf::Vector2i& newDirection) 
+	tokens.push_back(onSetMovementDirection.addFunction([this](const sf::Vector2i& newDirection)
 		{
 			currentIntentions.movementDirectionIntentions = newDirection;
 			isIntentsChanged = true;
-		});
+		}));
 
-	onSetPlayerEntity.addFunction([this](std::optional<sl::EntityId> playerEntityId) { onPlayerEntitySet(playerEntityId); });
+	tokens.push_back(onSetPlayerEntity.addFunction([this](std::optional<sl::EntityId> playerEntityId) { onPlayerEntitySet(playerEntityId); }));
 }
 
 PlayerIntentManager::~PlayerIntentManager() = default;

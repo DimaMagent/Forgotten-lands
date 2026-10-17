@@ -18,7 +18,7 @@ using ssl_socket = asio::ssl::stream<asio::ip::tcp::socket>;
 
 class Session: public std::enable_shared_from_this<Session> {
 public:
-	sl::Delegate<> OnAcceptSucceeded;
+	sl::LockFreeDelegate<> OnAcceptSucceeded;
 	sl::LockFreeDelegate<uint32_t> OnClientDisconnected;
 	Session(asio::ip::tcp::socket socket, asio::ssl::context& sslContext, uint32_t token, DataProcessorManager& dpm);
 	~Session();
@@ -36,6 +36,8 @@ private:
 	asio::steady_timer handshakeTimer;
 
 	std::shared_ptr<spdlog::logger> logger;
+
+	std::shared_ptr<sl::DelegateToken> DelegateToken;
 
 	void doHandshake();
 	void doRead();

@@ -11,6 +11,7 @@ namespace sl {
 	class Entity;
 	class CollisionComponent;
 	class IEntityRegistry;
+	class DelegateToken;
 
 	class CollisionCellMap {
 	public:
@@ -31,7 +32,7 @@ namespace sl {
 	private:
 		std::unordered_map<Cell, std::vector<sl::EntityId>> cellToEntityIds;
 
-		std::unordered_map<sl::EntityId, uint64_t> entityIdToDelegateToken;
+		std::unordered_map<sl::EntityId, std::shared_ptr<sl::DelegateToken>> entityIdToDelegateToken;
 
 		const IEntityRegistry& entityRegistry;
 

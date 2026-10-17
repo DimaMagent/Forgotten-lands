@@ -17,6 +17,10 @@ class ServerEntityFactory;
 namespace asio {
 	class io_context;
 }
+namespace sl {
+	class DelegateToken;
+}
+
 class Server {
 public:
 	Server(short port);
@@ -38,6 +42,8 @@ private:
 
 	std::shared_ptr<asio::steady_timer> tickTimer;
 	sf::Clock clock;
+
+	std::shared_ptr<sl::DelegateToken> delegateToken;
 
 	short port;
 

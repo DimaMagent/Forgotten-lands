@@ -36,4 +36,5 @@ private:
 
 	uint32_t lastAppliedSequence = 0;
 	sl::EntityStorage& entities;
+	std::shared_ptr<sl::DelegateToken> token;
 };

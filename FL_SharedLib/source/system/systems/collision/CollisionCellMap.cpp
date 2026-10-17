@@ -37,14 +37,11 @@ void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
 
 	sl::EntityId entityId = entity.getId();
 
-	uint64_t token = transComp->onCellChanged.addFunction([this, entityId](sf::Vector2f pos) {
+	entityIdToDelegateToken.try_emplace(entity.getId(), transComp->onCellChanged.addFunction([this, entityId](sf::Vector2f pos) {
 		if (!adjustingEntityOnMap(entityId, pos)) {
 			std::cout << "sl::CollisionCellMap::recordEntityToCollisionMap: adjustingEntityOnMap failed\n";
 		}
-		
-		});
-
-	entityIdToDelegateToken.try_emplace(entity.getId(), token);
+		}));
 
 }
 
@@ -61,7 +58,6 @@ void sl::CollisionCellMap::removeEntityFromCollisionMap(const sl::Entity& entity
 	auto tokenIt = entityIdToDelegateToken.find(entity.getId());
 	if (tokenIt == entityIdToDelegateToken.end()) { return; }
 
-	transComp->onCellChanged.removeFunction(tokenIt->second);
 	entityIdToDelegateToken.erase(tokenIt);
 }
 

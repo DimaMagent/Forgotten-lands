@@ -8,7 +8,7 @@ Controller::Controller(InputManager& im)
 {
 	game_logger = spdlog::get("game");
 	lastMovementDirectionIntent = sf::Vector2i(0, 0);
-	im.onEvent.addFunction([this](const sf::Event& event) { onEvent(event); });
+	token = im.onEvent.addFunction([this](const sf::Event& event) { onEvent(event); });
 	initKeyBindings();
 }
 

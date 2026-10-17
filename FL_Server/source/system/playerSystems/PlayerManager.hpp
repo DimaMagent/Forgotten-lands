@@ -39,6 +39,8 @@ private:
 
 	sf::Time timeSinceLastUpdate = sf::Time::Zero;
 
+	std::shared_ptr<sl::DelegateToken> delegateToken;
+
 	[[nodiscard]] bool movementUpdate(const sl::Entity& entity, sf::Vector2i movementDirectionIntentions);
 
 	void intentionCheck(const sl::Entity& entity, sl::Intentions intentions, const World& world);

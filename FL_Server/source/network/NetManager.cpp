@@ -63,8 +63,8 @@ void NetManager::doAccept() {
 
 				std::shared_ptr<Session> sessionPtr = std::make_shared<Session>(std::move(socket), sslContext, sessionToken, dataProcessorManager);
 				sessionPtr->start();
-				sessionPtr->OnClientDisconnected.addFunction([this](uint32_t token) {connectionEvents.OnClientDisconnected.broadcast(token); });
-				sessionPtr->OnAcceptSucceeded.addFunction([this, sessionToken]() { OnAccept.broadcast(sessionToken); });
+				tokens.push_back(sessionPtr->OnClientDisconnected.addFunction([this](uint32_t token) {connectionEvents.OnClientDisconnected.broadcast(token); }));
+				tokens.push_back(sessionPtr->OnAcceptSucceeded.addFunction([this, sessionToken]() { OnAccept.broadcast(sessionToken); }));
 				sessions.try_emplace(sessionToken, sessionPtr);
 				
 			}

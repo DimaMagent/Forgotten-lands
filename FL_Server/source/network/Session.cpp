@@ -18,7 +18,7 @@ Session::Session(asio::ip::tcp::socket socket, asio::ssl::context& sslContext, u
 	incomingQueue = std::make_shared<sl::net::DataQueue>();
 	outgoingQueue = std::make_shared<sl::net::DataQueue>();
 	incomingManager = std::make_unique<IncomingDataManager>(incomingQueue, dpm, token);
-	incomingManager->OnWrongData.addFunction([this]() { close(); });
+	DelegateToken = incomingManager->OnWrongData.addFunction([this]() { close(); });
 }
 
 Session::~Session() = default;

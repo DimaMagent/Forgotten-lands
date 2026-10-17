@@ -35,7 +35,7 @@ Server::Server(short port)
 	tickTimer = std::make_shared<asio::steady_timer>(*serverContext);
 
 	sl::DefferedFunctionStorage::init(*serverContext);
-	netManager->OnAccept.addFunction([this](uint32_t token) {onClientAccept(token); });
+	delegateToken = netManager->OnAccept.addFunction([this](uint32_t token) {onClientAccept(token); });
 }
 
 Server::~Server() {

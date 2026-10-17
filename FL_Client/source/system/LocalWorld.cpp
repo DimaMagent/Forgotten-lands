@@ -18,9 +18,9 @@ LocalWorld::LocalWorld(sf::RenderTarget& renderTarget, DataProcessedDelegate& On
 {
 	game_logger = spdlog::get("game");
 
-	stateManager->OnAbsenceEntity.addFunction([this](const sl::net::EntityData& enData) {this->onAbsenceEntity(enData); });
-	stateManager->OnEntityAbsenceOnStatusPacket.addFunction([this](sl::EntityId entityId) {this->onAbsenceEntityOnStatusPacket(entityId); });
-	stateManager->OnAuth.addFunction([this](const sl::net::EntityData& enData) {this->onAuth(enData); });
+	tokens.push_back(stateManager->OnAbsenceEntity.addFunction([this](const sl::net::EntityData& enData) {this->onAbsenceEntity(enData); }));
+	tokens.push_back(stateManager->OnEntityAbsenceOnStatusPacket.addFunction([this](sl::EntityId entityId) {this->onAbsenceEntityOnStatusPacket(entityId); }));
+	tokens.push_back(stateManager->OnAuth.addFunction([this](const sl::net::EntityData& enData) {this->onAuth(enData); }));
 }
 
 LocalWorld::~LocalWorld() = default;

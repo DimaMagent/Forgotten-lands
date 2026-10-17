@@ -16,7 +16,7 @@ IncomingDataManager::IncomingDataManager(std::weak_ptr<sl::net::DataQueue> incQu
 {
 	logger = spdlog::get("network");
 	if (auto iq = incQueue.lock()) {
-		iq->onDataPushed.addFunction([this]() { onDataPushed(); });
+		tokens.push_back(iq->onDataPushed.addFunction([this]() { onDataPushed(); }));
 	}
 }
 
