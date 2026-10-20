@@ -82,7 +82,7 @@ void PlayerManager::intentionCheck(const sl::Entity& entity, sl::Intentions inte
 	}
 }
 
-void PlayerManager::tick(float dt, const World& world) {
+void PlayerManager::update(float dt, const World& world) {
 	timeSinceLastUpdate += std::min(sf::seconds(dt), sf::seconds(0.1f));
 	while (timeSinceLastUpdate >= updateTime) {
 		timeSinceLastUpdate -= updateTime;

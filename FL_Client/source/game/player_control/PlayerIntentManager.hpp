@@ -22,7 +22,7 @@ public:
 
 	~PlayerIntentManager();
 
-	void tick(float dt, const sl::WorldBase& world);
+	void update(float dt, const sl::WorldBase& world);
 private:
 	std::shared_ptr<spdlog::logger> game_logger;
 

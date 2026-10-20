@@ -35,7 +35,7 @@ PlayerIntentManager::PlayerIntentManager(
 
 PlayerIntentManager::~PlayerIntentManager() = default;
 
-void PlayerIntentManager::tick(float dt, const sl::WorldBase& world)
+void PlayerIntentManager::update(float dt, const sl::WorldBase& world)
 {
 	timeSinceLastUpdate += std::min(sf::seconds(dt), sf::seconds(0.1f));
 	while (timeSinceLastUpdate >= updateTime) {
@@ -44,7 +44,7 @@ void PlayerIntentManager::tick(float dt, const sl::WorldBase& world)
 		
 		if (!setMovingDirection(world)) {
 			#ifdef DEBUG
-			game_logger->warn("PlayerIntentManager::tick movingDirection cannot change: playerEntity or movementComponent is not valid");
+			game_logger->warn("PlayerIntentManager::update movingDirection cannot change: playerEntity or movementComponent is not valid");
 			#endif
 		}
 

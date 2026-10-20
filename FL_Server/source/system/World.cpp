@@ -3,17 +3,15 @@
 #include "system/Entity.hpp"
 #include "network/Serializer.hpp"
 #include "network/ConnectionEvents.hpp"
-#include "system/systems/movement/MovementSystem.hpp"
 #include "system/WorldMap.hpp"
-#include "system/systems/collision/CollisionSystem.hpp"
 #include "network/NetworkIDComponent.hpp"
 #include "ServerEntityFactory.hpp"
-#include "ServerSystemUpdater.hpp"
 
-World::World(ConnectionEvents& connectionEvents) : WorldBase(std::make_unique<SystemUpdaterClass>())
+World::World(ConnectionEvents& connectionEvents): WorldBase()
 {
 	entities.reserve(10000);
 	entityFactory = std::make_unique<ServerEntityFactory>();
+	serializer = std::make_unique<Serializer>();
 
 	delegateToken = connectionEvents.OnClientDisconnected.addFunction([this](uint32_t token) {
 		removePlayerEntityByToken(token);
@@ -43,15 +41,6 @@ sl::EntityId World::addPlayerEntity(sl::EntityType entityType, const uint32_t& s
 
 		enPtr->setId(entityId);
 		worldMap->onEntityAdded(*enPtr);
-
-		//temp
-		auto* sysUpdater = dynamic_cast<ServerSystemUpdater*>(systemUpdater.get());
-		if (!sysUpdater)
-		{
-			throw std::runtime_error("World::addPlayerEntity: dynamic_cast<ServerSystemUpdater*> failed. AddPlayerEntity failed.");
-		}
-
-		auto serializer = sysUpdater->getSerializer();
 
 		if (!serializer) {
 			throw std::runtime_error("World::addPlayerEntity: serializer is not valid. AddPlayerEntity failed.");
@@ -172,4 +161,9 @@ std::optional<uint32_t> World::getTokenById(sl::EntityId id) const
 
 	return netComp->getSessionToken();
 
+}
+
+void World::onUpdate(float deltaTime)
+{
+	serializer->onUpdate(deltaTime, getEntities(), *this);
 }

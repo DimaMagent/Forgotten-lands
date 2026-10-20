@@ -6,7 +6,7 @@ class AnimationSystem;
 
 class ClientSystemUpdater : public sl::SystemUpdater {
 public:
-	ClientSystemUpdater();
+	ClientSystemUpdater(const sl::SystemCreatorContext& context);
 
 protected:
 	std::unique_ptr<AnimationSystem> animationSystem;

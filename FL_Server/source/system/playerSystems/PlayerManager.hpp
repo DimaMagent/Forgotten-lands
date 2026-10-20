@@ -22,7 +22,7 @@ public:
 
 	void updatePlayerInputState(uint32_t playerToken, sl::Intentions intentions);
 
-	void tick(float dt, const World& world);
+	void update(float dt, const World& world);
 private:
 
 	struct PlayerIntention {

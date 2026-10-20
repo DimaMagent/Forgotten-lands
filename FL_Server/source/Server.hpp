@@ -13,6 +13,7 @@ class World;
 class PlayerManager;
 class ConnectionEvents;
 class ServerEntityFactory;
+class ServerSystemUpdater;
 
 namespace asio {
 	class io_context;
@@ -38,6 +39,7 @@ private:
 	std::unique_ptr<DataProcessorManager> dataProcessorManager;
 	std::unique_ptr<PlayerManager> playerManager;
 	std::unique_ptr<NetManager> netManager;
+	std::unique_ptr<ServerSystemUpdater> systemUpdater;
 	std::unique_ptr<sl::TimerHandle<void>> cleaningTimer;
 
 	std::shared_ptr<asio::steady_timer> tickTimer;
@@ -51,7 +53,7 @@ private:
 	
 	void initLogging();
 
-	void tick(float dt);
+	void update(float dt);
 
 	void sheduleTick();
 };

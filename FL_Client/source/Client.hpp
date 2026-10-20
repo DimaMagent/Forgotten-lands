@@ -10,6 +10,7 @@ class ClientEntityFactory;
 class DataProcessorManager;
 class StateManager;
 class PlayerIntentManager;
+class ClientSystemUpdater;
 
 namespace asio {
 	class io_context;
@@ -41,6 +42,7 @@ private:
 	std::unique_ptr<InputManager> inputManager;
 	std::unique_ptr<Controller> controller;
 	std::unique_ptr<PlayerIntentManager> playerIntentManager;
+	std::unique_ptr<ClientSystemUpdater> systemUpdater;
 
 	std::shared_ptr<asio::steady_timer> tickTimer;
 	sf::Clock clock;
@@ -54,7 +56,7 @@ private:
 
 	void initLogging();
 
-	void tick(float dt);
+	void update(float dt);
 
 	void sheduleTick();
 };

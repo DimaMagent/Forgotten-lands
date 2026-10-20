@@ -6,13 +6,10 @@ class Serializer;
 
 class ServerSystemUpdater: public sl::SystemUpdater {
 public:
-	ServerSystemUpdater();
+	ServerSystemUpdater(const sl::SystemCreatorContext& context);
 
-	//temp
-	Serializer* getSerializer() const { return serializer.get(); }
 
 protected:
-	std::unique_ptr<Serializer> serializer;
 
 	virtual void onUpdate(float deltaTime, const sl::WorldBase& world) override;
 

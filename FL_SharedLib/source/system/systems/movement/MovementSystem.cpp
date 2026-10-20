@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "system/Entity.hpp"
 #include "system/systems/movement/MovementSystem.hpp"
+#include "system/Entity.hpp"
 #include "system/systems/movement/MovementComponent.hpp"
 #include "system/systems/TransformComponent.hpp"
 #include "system/systems/StunComponent.hpp"
@@ -8,15 +8,17 @@
 #include "system/systems/StateComponent.hpp"
 #include "system/systems/collision/CollisionCellMap.hpp"
 #include "system/IEntityRegistry.hpp"
+#include "system/WorldBase.hpp"
 #include <algorithm>
 
-sl::MovementSystem::MovementSystem()
+sl::MovementSystem::MovementSystem(const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry):
+    collisionCellMap(collisionCellMap), entityRegistry(entityRegistry)
 {
     reusableEntityIdsBuffer = std::vector<sl::EntityId>();
 }
 
-void sl::MovementSystem::onUpdate(float updateTime, const sl::Entity& entity, const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry){
-    movingWithCollisionCheck(updateTime, entity,collisionCellMap, entityRegistry);
+void sl::MovementSystem::update(float updateTime, const sl::Entity& entity){
+    movingWithCollisionCheck(updateTime, entity, collisionCellMap, entityRegistry);
 }
 
 void sl::MovementSystem::movingWithCollisionCheck(float updateTime, const sl::Entity& entity,
@@ -148,4 +150,8 @@ bool sl::MovementSystem::isBlockedOnPosition(const sl::Entity& entity, const sf:
     }
 
     return false;
+}
+
+sl::systemPtr sl::MovementSystem::initialize(sl::SystemCreatorContext context) {
+    return std::make_unique<sl::MovementSystem>(context.collisionCellMap, context.worldBase);
 }

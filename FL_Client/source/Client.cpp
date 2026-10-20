@@ -12,6 +12,8 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h> 
 #include "system/handlers/DefferedFunctionStorage.hpp"
+#include "system/ClientSystemUpdater.hpp"
+#include "system/WorldMap.hpp"
 
 Client::Client() 
 {
@@ -29,6 +31,9 @@ Client::Client()
 		controller->onSetMovementDirection,
 		world->OnSetPlayerEntity
 	);
+
+	sl::SystemCreatorContext context = { world->getWorldMap().value().get().getCollisionMap().value() , *world };
+	systemUpdater = std::make_unique<ClientSystemUpdater>(context);
 	tickTimer = std::make_shared<asio::steady_timer>(*clientContext);
 
 	sl::DefferedFunctionStorage::init(*clientContext);
@@ -124,14 +129,15 @@ void Client::initLogging() {
 	}
 }
 
-void Client::tick(float dt) {
+void Client::update(float dt) {
 	if (world) {
 		world->update(dt);
-		playerIntentManager->tick(dt, *world);
+		playerIntentManager->update(dt, *world);
+		systemUpdater->update(dt, *world);
 	}
 	else {
 		#ifdef DEBUG
-			system_logger->error("Client::tick: world is not valid, world's update and playerIntentManager's tick cannot calls");
+			system_logger->error("Client::update: world is not valid, world's update and playerIntentManager's update cannot calls");
 		#endif // DEBUG
 	}
 }
@@ -140,7 +146,7 @@ void Client::sheduleTick() {
 	tickTimer->expires_at(tickTimer->expiry() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(1.0 / 60.0)));
 	tickTimer->async_wait([this](const asio::error_code& ec) {
 		if (ec) return;
-		tick(clock.restart().asSeconds());
+		update(clock.restart().asSeconds());
 		sheduleTick();
 		});
 }

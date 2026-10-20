@@ -18,6 +18,8 @@
 #include <spdlog/sinks/rotating_file_sink.h> 
 #include "network/connectionEvents.hpp"
 #include "system/handlers/DefferedFunctionStorage.hpp"
+#include "system/ServerSystemUpdater.hpp"
+#include "system/WorldMap.hpp"
 
 
 Server::Server(short port)
@@ -33,6 +35,9 @@ Server::Server(short port)
 	playerManager = std::make_unique<PlayerManager>(dataProcessorManager->OnDataProcessed);
 	netManager = std::make_unique<NetManager>(*serverContext, port, *dataProcessorManager, *connectionEvents);
 	tickTimer = std::make_shared<asio::steady_timer>(*serverContext);
+
+	sl::SystemCreatorContext context = {  world->getWorldMap().value().get().getCollisionMap().value() , *world };
+	systemUpdater = std::make_unique<ServerSystemUpdater>(context);
 
 	sl::DefferedFunctionStorage::init(*serverContext);
 	delegateToken = netManager->OnAccept.addFunction([this](uint32_t token) {onClientAccept(token); });
@@ -112,14 +117,15 @@ void Server::initLogging()
 	}
 }
 
-void Server::tick(float dt) {
+void Server::update(float dt) {
 	if (world) {
 		world->update(dt);
-		playerManager->tick(dt, *world);
+		playerManager->update(dt, *world);
+		systemUpdater->update(dt, *world);
 	}
 	else {
 	#ifdef DEBUG
-		system_logger->error("Server::tick: world is not valid, world's update and playerManager's tick cannot calls");
+		system_logger->error("Server::update: world is not valid, world's update and playerManager's update cannot calls");
 	#endif // DEBUG
 	}
 }
@@ -129,7 +135,7 @@ void Server::sheduleTick()
 	tickTimer->expires_at(tickTimer->expiry() + std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::duration<double>(1.0 / 60.0)));
 	tickTimer->async_wait([this](const asio::error_code& ec) {
 		if (ec) return;
-		tick(clock.restart().asSeconds());
+		update(clock.restart().asSeconds());
 		sheduleTick();
 		});
 }

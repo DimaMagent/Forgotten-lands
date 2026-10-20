@@ -42,12 +42,16 @@ public:
 
 	std::optional<uint32_t> getTokenById(sl::EntityId id) const override;
 
+	virtual void onUpdate(float deltaTime) override;
+
 private:
 	using SystemUpdaterClass = ServerSystemUpdater;
 
 	sl::SlotMap<sl::Entity> entities;
 
 	std::unique_ptr<ServerEntityFactory> entityFactory;
+
+	std::unique_ptr<Serializer> serializer;
 
 	std::unordered_map<uint32_t, sl::EntityId> tokenToEntityId;
 

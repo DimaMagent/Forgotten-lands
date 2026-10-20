@@ -1,17 +1,18 @@
 #pragma once
 #include <SFML/System/Vector2.hpp>
 #include "system/EntityId.hpp"
+#include "system/systems/UpdatableSystem.hpp"
 
 namespace sl {
 	class Entity;
 	class CollisionCellMap;
 	class IEntityRegistry;
 
-	class MovementSystem {
+	class MovementSystem: public sl::UpdatableSystem {
 	public:
-		MovementSystem();
+		MovementSystem(const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry);
 
-		void onUpdate(float updateTime, const sl::Entity& entity, const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry);
+		void update(float updateTime, const sl::Entity& entity) override;
 
 	private:
 
@@ -20,6 +21,10 @@ namespace sl {
 		const float MIN_SPEED_FOR_SUB_STEPPING_ALGORITHM = 30.f;
 
 		const int ON_POSITION_SEARCH_DEPTH = 1;
+
+		const sl::CollisionCellMap& collisionCellMap;
+
+		const IEntityRegistry& entityRegistry;
 
 		std::vector<sl::EntityId> reusableEntityIdsBuffer;
 
@@ -34,5 +39,7 @@ namespace sl {
 
 		void subSteppingPositionCalculate(const sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos,
 			const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry);
+
+		RegisterUpdatableSystem();
 	};
 }

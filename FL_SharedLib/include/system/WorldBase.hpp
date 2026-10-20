@@ -10,7 +10,6 @@
 
 namespace sl {
 	class Entity;
-	class MovementSystem;
 	class WorldMap;
 	class CollisionSystem;
 	class SystemUpdater;
@@ -19,9 +18,9 @@ namespace sl {
 namespace sl {
 	class WorldBase: public IEntityRegistry {
 	public:
-		WorldBase(std::unique_ptr<sl::SystemUpdater> currentSystemUpdater);
+		WorldBase();
 		virtual ~WorldBase();
-		virtual void update(float deltaTime);
+		void update(float deltaTime);
 		virtual void removeEntityById(sl::EntityId id) = 0;
 		virtual std::span<sl::Entity> getEntities() = 0;
 		virtual std::span<const sl::Entity> getEntities() const = 0;
@@ -32,7 +31,8 @@ namespace sl {
 		sf::Time timeSinceLastUpdate = sf::Time::Zero;
 
 		std::unique_ptr<sl::WorldMap> worldMap;
-		std::unique_ptr<sl::SystemUpdater> systemUpdater;
+		
+		virtual void onUpdate(float deltaTime);
 	
 	};
 }

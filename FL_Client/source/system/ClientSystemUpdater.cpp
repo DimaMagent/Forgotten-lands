@@ -4,7 +4,7 @@
 #include "game/render/animations/AnimationSystem.hpp"
 
 
-ClientSystemUpdater::ClientSystemUpdater() {
+ClientSystemUpdater::ClientSystemUpdater(const sl::SystemCreatorContext& context): SystemUpdater(context) {
 	animationSystem = std::make_unique<AnimationSystem>();
 }
 

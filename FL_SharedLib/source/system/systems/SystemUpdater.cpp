@@ -6,11 +6,12 @@
 #include "system/systems/collision/CollisionSystem.hpp"
 #include "system/systems/movement/MovementSystem.hpp"
 
-sl::SystemUpdater::SystemUpdater()
+sl::SystemUpdater::SystemUpdater(const SystemCreatorContext& context)
 {
 	collisionSystem = std::make_unique<sl::CollisionSystem>();
-	movementSystem = std::make_unique<sl::MovementSystem>();
+	creatorContext = std::make_unique<SystemCreatorContext>(context.collisionCellMap, context.worldBase);
 
+	createSystems();
 }
 
 sl::SystemUpdater::~SystemUpdater() = default;
@@ -46,13 +47,19 @@ void sl::SystemUpdater::onUpdate(float deltaTime, const sl::WorldBase& world) {
 }
 
 void sl::SystemUpdater::onEnitiesUpdate(float deltaTime, const sl::WorldBase& world, const sl::Entity& entity) {
-	auto worldMap = world.getWorldMap();
+	for (auto& system : systems) {
+		system->update(deltaTime, entity);
+	}
+}
 
-	if (worldMap.has_value()) {
-		auto ColisMap = worldMap.value().get().getCollisionMap();
+void sl::SystemUpdater::registerSystem(systemCreator creator) {
+	getRegistry().push_back(std::move(creator));
+}
 
-		if (ColisMap.has_value()) {
-			movementSystem->onUpdate(deltaTime, entity, ColisMap.value().get(), world);
-		}
+void sl::SystemUpdater::createSystems() {
+	if (!creatorContext) { return; }
+
+	for (systemCreator& creator : getRegistry()) {
+		systems.push_back(std::move(creator(*creatorContext)));
 	}
 }
