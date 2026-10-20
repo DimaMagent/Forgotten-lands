@@ -9,10 +9,9 @@ public:
 	ClientSystemUpdater(const sl::SystemCreatorContext& context);
 
 protected:
-	std::unique_ptr<AnimationSystem> animationSystem;
 
-	virtual void onUpdate(float deltaTime, const sl::WorldBase& world) override;
+	virtual void onUpdate(float deltaTime) override;
 
-	virtual void onEnitiesUpdate(float deltaTime, const sl::WorldBase& world, const sl::Entity& entity) override;
+	virtual void onEnitiesUpdate(float deltaTime, const sl::Entity& entity) override;
 
 };

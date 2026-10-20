@@ -8,8 +8,7 @@
 
 sl::SystemUpdater::SystemUpdater(const SystemCreatorContext& context)
 {
-	collisionSystem = std::make_unique<sl::CollisionSystem>();
-	creatorContext = std::make_unique<SystemCreatorContext>(context.collisionCellMap, context.worldBase);
+	creatorContext = std::make_unique<SystemCreatorContext>(context.collisionCellMap, context.entityRegistry);
 
 	createSystems();
 }
@@ -22,31 +21,20 @@ void sl::SystemUpdater::update(float deltaTime, const sl::WorldBase& world) {
 		timeSinceLastUpdate -= updateTime;
 		float updateTimeCount = updateTime.asSeconds();
 
-		onUpdate(updateTimeCount, world);
+		onUpdate(updateTimeCount);
 
 		for (auto& en : world.getEntities()) {
 
-			onEnitiesUpdate(updateTimeCount, world, en);
+			onEnitiesUpdate(updateTimeCount, en);
 
 		}
 	}
 }
 
-void sl::SystemUpdater::onUpdate(float deltaTime, const sl::WorldBase& world) {
-
-	auto worldMap = world.getWorldMap();
-
-	if (worldMap.has_value()) {
-
-		auto ColisMap = worldMap.value().get().getCollisionMap();
-
-		if (ColisMap.has_value()) {
-			collisionSystem->onUpdate(deltaTime, ColisMap.value().get(), world);
-		}
-	}
+void sl::SystemUpdater::onUpdate(float deltaTime) {
 }
 
-void sl::SystemUpdater::onEnitiesUpdate(float deltaTime, const sl::WorldBase& world, const sl::Entity& entity) {
+void sl::SystemUpdater::onEnitiesUpdate(float deltaTime, const sl::Entity& entity) {
 	for (auto& system : systems) {
 		system->update(deltaTime, entity);
 	}

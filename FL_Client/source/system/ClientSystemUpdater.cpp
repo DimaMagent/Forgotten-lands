@@ -5,19 +5,16 @@
 
 
 ClientSystemUpdater::ClientSystemUpdater(const sl::SystemCreatorContext& context): SystemUpdater(context) {
-	animationSystem = std::make_unique<AnimationSystem>();
 }
 
-void ClientSystemUpdater::onUpdate(float deltaTime, const sl::WorldBase& world)
+void ClientSystemUpdater::onUpdate(float deltaTime)
 {
-	SystemUpdater::onUpdate(deltaTime, world);
+	SystemUpdater::onUpdate(deltaTime);
 
 }
 
-void ClientSystemUpdater::onEnitiesUpdate(float deltaTime, const sl::WorldBase& world, const sl::Entity& entity)
+void ClientSystemUpdater::onEnitiesUpdate(float deltaTime, const sl::Entity& entity)
 {
-	SystemUpdater::onEnitiesUpdate(deltaTime, world, entity);
-
-	animationSystem->onUpdate(deltaTime, entity);
+	SystemUpdater::onEnitiesUpdate(deltaTime, entity);
 
 }

@@ -6,10 +6,10 @@ ServerSystemUpdater::ServerSystemUpdater(const sl::SystemCreatorContext& context
 {
 }
 
-void ServerSystemUpdater::onUpdate(float deltaTime, const sl::WorldBase& world){
-	SystemUpdater::onUpdate(deltaTime, world);
+void ServerSystemUpdater::onUpdate(float deltaTime){
+	SystemUpdater::onUpdate(deltaTime);
 }
 
-void ServerSystemUpdater::onEnitiesUpdate(float deltaTime, const sl::WorldBase& world, const sl::Entity& entity){
-	SystemUpdater::onEnitiesUpdate(deltaTime, world, entity);
+void ServerSystemUpdater::onEnitiesUpdate(float deltaTime, const sl::Entity& entity){
+	SystemUpdater::onEnitiesUpdate(deltaTime, entity);
 }

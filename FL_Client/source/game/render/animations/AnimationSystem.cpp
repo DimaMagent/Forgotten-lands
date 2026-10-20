@@ -9,7 +9,7 @@
 
 AnimationSystem::AnimationSystem(){}
 
-void AnimationSystem::onUpdate(float updateTime, const sl::Entity& entity) {
+void AnimationSystem::update(float updateTime, const sl::Entity& entity) {
 
 	updateAnimations(entity, updateTime);
 }
@@ -101,4 +101,8 @@ void AnimationSystem::updateAnimations(const sl::Entity& entity, float updateTim
 			rendComp->setCurrentTexture(texture);
 		}
 	}
+}
+
+sl::systemPtr AnimationSystem::initialize(sl::SystemCreatorContext context) {
+	return std::make_unique<AnimationSystem>();
 }

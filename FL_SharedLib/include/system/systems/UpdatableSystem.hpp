@@ -19,7 +19,7 @@ namespace sl {
 		} \
 		inline static const bool isRegistered = (registerSystem(), true); \
 		\
-		static systemPtr initialize(sl::SystemCreatorContext context); \
+		static sl::systemPtr initialize(sl::SystemCreatorContext context); \
 
 	public:
 

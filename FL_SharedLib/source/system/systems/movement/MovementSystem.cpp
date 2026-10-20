@@ -8,7 +8,6 @@
 #include "system/systems/StateComponent.hpp"
 #include "system/systems/collision/CollisionCellMap.hpp"
 #include "system/IEntityRegistry.hpp"
-#include "system/WorldBase.hpp"
 #include <algorithm>
 
 sl::MovementSystem::MovementSystem(const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry):
@@ -153,5 +152,5 @@ bool sl::MovementSystem::isBlockedOnPosition(const sl::Entity& entity, const sf:
 }
 
 sl::systemPtr sl::MovementSystem::initialize(sl::SystemCreatorContext context) {
-    return std::make_unique<sl::MovementSystem>(context.collisionCellMap, context.worldBase);
+    return std::make_unique<sl::MovementSystem>(context.collisionCellMap, context.entityRegistry);
 }

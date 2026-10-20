@@ -6,18 +6,19 @@
 
 
 namespace sl {
-	class WorldBase;
+	class IEntityRegistry;
 	class CollisionSystem;
 	class Entity;
 	class UpdatableSystem;
 	class CollisionCellMap;
+	class WorldBase;
 
-
+	//To establish new system dependencies in other projects, you need to create a structure that inherits from `SystemCreatorContext`.
 	struct SystemCreatorContext {
-		SystemCreatorContext(const sl::CollisionCellMap& collisionCellMap, const WorldBase& worldBase):
-			collisionCellMap(collisionCellMap), worldBase(worldBase){}
+		SystemCreatorContext(const sl::CollisionCellMap& collisionCellMap, const sl::IEntityRegistry& entityRegistry):
+			collisionCellMap(collisionCellMap), entityRegistry(entityRegistry){}
 		const sl::CollisionCellMap& collisionCellMap;
-		const WorldBase& worldBase;
+		const sl::IEntityRegistry& entityRegistry;
 	};
 
 	using systemPtr = std::unique_ptr<sl::UpdatableSystem>;
@@ -38,8 +39,6 @@ namespace sl {
 		const sf::Time updateTime = sf::seconds(1.f / 60.f);
 		sf::Time timeSinceLastUpdate = sf::Time::Zero;
 
-		std::unique_ptr<sl::CollisionSystem> collisionSystem;
-
 		std::vector<std::unique_ptr<sl::UpdatableSystem>> systems;
 
 		std::unique_ptr<SystemCreatorContext> creatorContext;
@@ -51,9 +50,9 @@ namespace sl {
 			return registry;
 		}
 
-		virtual void onUpdate(float deltaTime, const sl::WorldBase& world);
+		virtual void onUpdate(float deltaTime);
 
-		virtual void onEnitiesUpdate(float deltaTime, const sl::WorldBase& world, const sl::Entity& entity);
+		virtual void onEnitiesUpdate(float deltaTime, const sl::Entity& entity);
 
 	};
 
