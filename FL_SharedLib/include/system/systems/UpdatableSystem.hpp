@@ -10,7 +10,7 @@ namespace sl {
 		#define RegisterUpdatableSystem() \
 		static void registerSystem(){ \
 			try{ \
-				sl::SystemUpdater::registerSystem(std::function(initialize)); \
+				sl::SystemUpdater::registerSystem(std::function(initialize), getProcessingPhase()); \
 			} \
 			catch(std::exception& e){ \
 				std::cerr << " [CRITICAL] system registration error: " << e.what() << "\n"; \
@@ -20,6 +20,7 @@ namespace sl {
 		inline static const bool isRegistered = (registerSystem(), true); \
 		\
 		static sl::systemPtr initialize(sl::SystemCreatorContext context); \
+		static sl::SystemProcessingPhase getProcessingPhase(); \
 
 	public:
 

@@ -35,19 +35,40 @@ void sl::SystemUpdater::onUpdate(float deltaTime) {
 }
 
 void sl::SystemUpdater::onEnitiesUpdate(float deltaTime, const sl::Entity& entity) {
-	for (auto& system : systems) {
+	for (auto& system : inputSystems) {
+		system->update(deltaTime, entity);
+	}
+	for (auto& system : simulationSystems) {
+		system->update(deltaTime, entity);
+	}
+	for (auto& system : postSimulationSystems) {
 		system->update(deltaTime, entity);
 	}
 }
 
-void sl::SystemUpdater::registerSystem(systemCreator creator) {
-	getRegistry().push_back(std::move(creator));
+void sl::SystemUpdater::registerSystem(systemCreator creator, SystemProcessingPhase processingPhase) {
+	getRegistry().push_back(std::make_pair(std::move(creator), processingPhase));
 }
 
 void sl::SystemUpdater::createSystems() {
 	if (!creatorContext) { return; }
 
-	for (systemCreator& creator : getRegistry()) {
-		systems.push_back(std::move(creator(*creatorContext)));
+	for (auto& [creator, phase] : getRegistry()) {
+		switch (phase)
+		{
+		case(sl::SystemProcessingPhase::Input):
+			inputSystems.push_back(std::move(creator(*creatorContext)));
+			break;
+		case(sl::SystemProcessingPhase::Simulation):
+			simulationSystems.push_back(std::move(creator(*creatorContext)));
+			break;
+		case(sl::SystemProcessingPhase::PostSimulation):
+			postSimulationSystems.push_back(std::move(creator(*creatorContext)));
+			break;
+		default:
+			std::cerr << " [CRITICAL] system creation error: Unknown processing phase\n";
+			break;
+		}
+		
 	}
 }

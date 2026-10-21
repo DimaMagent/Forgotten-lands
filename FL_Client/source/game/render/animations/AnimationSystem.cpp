@@ -106,3 +106,6 @@ void AnimationSystem::updateAnimations(const sl::Entity& entity, float updateTim
 sl::systemPtr AnimationSystem::initialize(sl::SystemCreatorContext context) {
 	return std::make_unique<AnimationSystem>();
 }
+sl::SystemProcessingPhase AnimationSystem::getProcessingPhase() {
+	return sl::SystemProcessingPhase::PostSimulation;
+}
