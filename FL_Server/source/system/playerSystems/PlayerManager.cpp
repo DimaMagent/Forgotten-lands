@@ -25,7 +25,7 @@ PlayerManager::PlayerManager(DataProcessedDelegate& OnDataProcessed)
 
 PlayerManager::~PlayerManager() = default;
 
-void PlayerManager::updatePlayerInputState(uint32_t playerToken, sl::Intentions intentions)
+void PlayerManager::updatePlayerInputState(uint32_t playerToken, const sl::Intentions& intentions)
 {
 	playerIntents.emplace_back(PlayerIntention(intentions, playerToken));
 }
@@ -40,7 +40,7 @@ bool PlayerManager::movementUpdate(const sl::Entity& entity, sf::Vector2i moveme
 	return true;
 }
 
-void PlayerManager::intentionCheck(const sl::Entity& entity, sl::Intentions intentions, const World& world)
+void PlayerManager::intentionCheck(const sl::Entity& entity, const sl::Intentions& intentions, const World& world)
 {
 	bool isSuccess = movementUpdate(entity, intentions.movementDirectionIntentions);
 
@@ -98,7 +98,7 @@ void PlayerManager::update(float dt, const World& world) {
 	}
 }
 
-PlayerManager::PlayerIntention::PlayerIntention(sl::Intentions intentions, uint32_t playerToken)
+PlayerManager::PlayerIntention::PlayerIntention(const sl::Intentions& intentions, uint32_t playerToken)
 {
 	this->intentions = intentions;
 	this->playerToken = playerToken;

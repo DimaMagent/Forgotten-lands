@@ -156,5 +156,5 @@ sl::systemPtr sl::MovementSystem::initialize(sl::SystemCreatorContext context) {
 }
 
 sl::SystemProcessingPhase sl::MovementSystem::getProcessingPhase() {
-	return sl::SystemProcessingPhase::Input;
+	return sl::SystemProcessingPhase::Simulation;
 }

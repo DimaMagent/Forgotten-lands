@@ -20,13 +20,13 @@ public:
 	PlayerManager(DataProcessedDelegate& OnDataProcessed);
 	~PlayerManager();
 
-	void updatePlayerInputState(uint32_t playerToken, sl::Intentions intentions);
+	void updatePlayerInputState(uint32_t playerToken, const sl::Intentions& intentions);
 
 	void update(float dt, const World& world);
 private:
 
 	struct PlayerIntention {
-		PlayerIntention(sl::Intentions intentions, uint32_t playerToken);
+		PlayerIntention(const sl::Intentions& intentions, uint32_t playerToken);
 		sl::Intentions intentions;
 		uint32_t playerToken;
 	};
@@ -43,5 +43,5 @@ private:
 
 	[[nodiscard]] bool movementUpdate(const sl::Entity& entity, sf::Vector2i movementDirectionIntentions);
 
-	void intentionCheck(const sl::Entity& entity, sl::Intentions intentions, const World& world);
+	void intentionCheck(const sl::Entity& entity, const sl::Intentions& intentions, const World& world);
 };
