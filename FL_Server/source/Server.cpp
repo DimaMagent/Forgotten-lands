@@ -32,7 +32,7 @@ Server::Server(short port)
 	connectionEvents = std::make_unique<ConnectionEvents>();
 	world = std::make_unique<World>(*connectionEvents);
 	dataProcessorManager = std::make_unique<DataProcessorManager>();
-	playerManager = std::make_unique<PlayerManager>(dataProcessorManager->OnDataProcessed);
+	playerManager = std::make_unique<PlayerManager>(dataProcessorManager->OnDataProcessed, *world);
 	netManager = std::make_unique<NetManager>(*serverContext, port, *dataProcessorManager, *connectionEvents);
 	tickTimer = std::make_shared<asio::steady_timer>(*serverContext);
 
@@ -120,7 +120,6 @@ void Server::initLogging()
 void Server::update(float dt) {
 	if (world) {
 		world->update(dt);
-		playerManager->update(dt, *world);
 		systemUpdater->update(dt, *world);
 	}
 	else {

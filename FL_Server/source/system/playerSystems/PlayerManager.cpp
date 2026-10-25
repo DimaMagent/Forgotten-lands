@@ -1,18 +1,15 @@
 #include "pch.hpp"
 #include "PlayerManager.hpp"
-#include "system/systems/movement/MovementComponent.hpp"
-#include "system/systems/TransformComponent.hpp"
 #include "system/Entity.hpp"
-#include "system/World.hpp"
 #include "system/Utils.hpp"
-#include "system/systems/attack/AttackSystem.hpp"
-#include "system/WorldMap.hpp"
 #include "network/packets/PacketManager.hpp"
 #include "network/packets/PlayerIntentionsPacket.hpp"
+#include "system/systems/IntentComponent.hpp"
+#include "system/IEntityTokenRegistry.hpp"
 
-PlayerManager::PlayerManager(DataProcessedDelegate& OnDataProcessed)
+PlayerManager::PlayerManager(DataProcessedDelegate& OnDataProcessed, const IEntityTokenRegistry& entityTokenRegistry):
+	entityTokenRegistry(entityTokenRegistry)
 {
-	attackSystem = std::make_unique<sl::AttackSystem>();
 	delegateToken = OnDataProcessed.addFunction([this](sl::net::PacketType type, std::vector<uint8_t>&& data, uint32_t token) {
 		if (type == sl::net::PacketType::PT_InputState) {
 			sl::net::PlayerIntentionsPacket pkt;
@@ -27,79 +24,10 @@ PlayerManager::~PlayerManager() = default;
 
 void PlayerManager::updatePlayerInputState(uint32_t playerToken, const sl::Intentions& intentions)
 {
-	playerIntents.emplace_back(PlayerIntention(intentions, playerToken));
-}
+	auto entity = entityTokenRegistry.getPlayerEntityByToken(playerToken);
+	if (!entity.has_value()) { return; }
 
-bool PlayerManager::movementUpdate(const sl::Entity& entity, sf::Vector2i movementDirectionIntentions)
-{
-	sl::MovementComponent* movComp = entity.getComponent<sl::MovementComponent>();
-	if (!movComp) { return false; }
-
-	movComp->setVelocityDirection(sl::inBounds(movementDirectionIntentions, sf::Vector2i(-1, -1), sf::Vector2i(1, 1)));
-
-	return true;
-}
-
-void PlayerManager::intentionCheck(const sl::Entity& entity, const sl::Intentions& intentions, const World& world)
-{
-	bool isSuccess = movementUpdate(entity, intentions.movementDirectionIntentions);
-
-	#ifdef DEBUG
-		if (!isSuccess) {
-			std::shared_ptr<spdlog::logger> system_logger = spdlog::get("system");
-			if (system_logger) {
-				system_logger->warn("PlayerManager::intentionCheck: movementUpdate call is not successfully");
-			}
-		}
-	#endif // DEBUG
-
-	for (auto& action : intentions.actions) {
-		if (action == sl::net::Action::None) { continue; }
-
-		if (action == sl::net::Action::Attack)
-		{
-			if (!attackSystem) { continue; }
-
-			const auto WorldMap = world.getWorldMap();
-
-			if (!WorldMap.has_value()) { return; }
-
-			const auto collisionCellMap = WorldMap.value().get().getCollisionMap();
-
-			if (!collisionCellMap.has_value()) { return; }
-
-			isSuccess = attackSystem->tryMeleeAttack(entity, collisionCellMap.value(), world);
-
-			#ifdef DEBUG
-				if (!isSuccess) {
-					std::shared_ptr<spdlog::logger> system_logger = spdlog::get("system");
-					if (system_logger) {
-						system_logger->warn("PlayerManager::intentionCheck: tryMeleeAttack call is not successfully");
-					}
-				}
-			#endif // DEBUG
-		}
-	}
-}
-
-void PlayerManager::update(float dt, const World& world) {
-	timeSinceLastUpdate += std::min(sf::seconds(dt), sf::seconds(0.1f));
-	while (timeSinceLastUpdate >= updateTime) {
-		timeSinceLastUpdate -= updateTime;
-
-		for (auto& playerIntention : playerIntents) {
-
-			auto entity = world.getPlayerEntityByToken(playerIntention.playerToken);
-			if (!entity.has_value()) { return; }
-
-			intentionCheck(entity.value(), playerIntention.intentions, world);
-		}
-		playerIntents.clear();
-	}
-}
-
-PlayerManager::PlayerIntention::PlayerIntention(const sl::Intentions& intentions, uint32_t playerToken)
-{
-	this->intentions = intentions;
-	this->playerToken = playerToken;
+	sl::IntentComponent* intenComp = entity.value().get().getComponent<sl::IntentComponent>();
+	if (!intenComp) { std::cout << "intentComponent is not valid\n"; return; }
+	intenComp->setIntentions(intentions);
 }

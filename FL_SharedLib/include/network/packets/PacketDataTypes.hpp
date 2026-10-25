@@ -4,11 +4,6 @@
 
 namespace sl::net {
 
-	enum Action : uint8_t {
-		None = 0,
-		Attack = 1,
-	};
-
 	enum PacketType : uint8_t {
 		PT_Auth = 0,
 		PT_InputState = 1,

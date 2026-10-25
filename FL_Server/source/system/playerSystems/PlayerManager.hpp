@@ -11,37 +11,19 @@
 
 namespace sl {
 	class Entity;
-	class AttackSystem;
 }
-class World;
+class IEntityTokenRegistry;
 
 class PlayerManager {
 public:
-	PlayerManager(DataProcessedDelegate& OnDataProcessed);
+	PlayerManager(DataProcessedDelegate& OnDataProcessed, const IEntityTokenRegistry& entityTokenRegistry);
 	~PlayerManager();
 
 	void updatePlayerInputState(uint32_t playerToken, const sl::Intentions& intentions);
 
-	void update(float dt, const World& world);
 private:
 
-	struct PlayerIntention {
-		PlayerIntention(const sl::Intentions& intentions, uint32_t playerToken);
-		sl::Intentions intentions;
-		uint32_t playerToken;
-	};
-
-	std::vector<PlayerIntention> playerIntents;
-
-	std::unique_ptr<sl::AttackSystem> attackSystem;
-
-	const sf::Time updateTime = sf::seconds(1.f / 30.f);
-
-	sf::Time timeSinceLastUpdate = sf::Time::Zero;
+	const IEntityTokenRegistry& entityTokenRegistry;
 
 	std::shared_ptr<sl::DelegateToken> delegateToken;
-
-	[[nodiscard]] bool movementUpdate(const sl::Entity& entity, sf::Vector2i movementDirectionIntentions);
-
-	void intentionCheck(const sl::Entity& entity, const sl::Intentions& intentions, const World& world);
 };

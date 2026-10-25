@@ -25,8 +25,9 @@ Client::Client()
 	world = std::make_unique<LocalWorld>(*window, dataProcessorManager->OnDataProcessed);
 	netManager = std::make_unique<NetManager>(*clientContext, *dataProcessorManager);
 	inputManager = std::make_unique<InputManager>(isRunningFlag);
-	controller = std::make_unique<Controller>(*inputManager);
+	controller = std::make_unique<Controller>(*inputManager, world->OnSetPlayerEntity);
 	playerIntentManager = std::make_unique<PlayerIntentManager>(
+		*world,
 		controller->onNewAction,
 		controller->onSetMovementDirection,
 		world->OnSetPlayerEntity
@@ -130,14 +131,14 @@ void Client::initLogging() {
 }
 
 void Client::update(float dt) {
+	playerIntentManager->update(dt);
 	if (world) {
 		world->update(dt);
-		playerIntentManager->update(dt, *world);
 		systemUpdater->update(dt, *world);
 	}
 	else {
 		#ifdef DEBUG
-			system_logger->error("Client::update: world is not valid, world's update and playerIntentManager's update cannot calls");
+			system_logger->error("Client::update: world is not valid, world's update and systemUpdater's update cannot calls");
 		#endif // DEBUG
 	}
 }

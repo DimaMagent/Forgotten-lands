@@ -30,6 +30,10 @@ target_link_libraries(FL_Client PRIVATE
     spdlog::spdlog_header_only
 )
 
+target_link_options(FL_Client PRIVATE
+    "/WHOLEARCHIVE:$<TARGET_FILE:FL_SharedLib>"
+)
+
 add_custom_command(
     TARGET FL_Client POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory

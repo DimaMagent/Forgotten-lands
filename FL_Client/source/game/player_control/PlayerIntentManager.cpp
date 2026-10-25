@@ -1,33 +1,41 @@
 #include "pch.hpp"
 #include "PlayerIntentManager.hpp"
-#include "system/systems/movement/MovementComponent.hpp"
 #include "network/Packer.hpp"
 #include "network/packets/PlayerIntentionsPacket.hpp"
 #include "system/Entity.hpp"
-#include "system/systems/attack/AttackSystem.hpp"
 #include "system/IEntityRegistry.hpp"
-#include "system/WorldBase.hpp"
 #include "system/WorldMap.hpp"
+#include "system/systems/IntentComponent.hpp"
 
 PlayerIntentManager::PlayerIntentManager(
-	sl::LockFreeDelegate<sl::net::Action>& onNewAction,
-	sl::LockFreeDelegate<const sf::Vector2i& >& onSetMovementDirection,
-	sl::LockFreeDelegate<std::optional<sl::EntityId>>& onSetPlayerEntity)
+	const sl::IEntityRegistry& entityRegistry,
+	sl::LockFreeDelegate<sl::EntityId, sl::Action>& onNewAction,
+	sl::LockFreeDelegate<sl::EntityId, const sf::Vector2i& >& onSetMovementDirection,
+	sl::LockFreeDelegate<std::optional<sl::EntityId>>& onSetPlayerEntity):
+	entityRegistry(entityRegistry)
 {
 	game_logger = spdlog::get("game");
 
-	attackSystem = std::make_unique<sl::AttackSystem>();
-
-	tokens.push_back(onNewAction.addFunction([this](sl::net::Action action)
+	tokens.push_back(onNewAction.addFunction([this](sl::EntityId id, sl::Action action)
 		{
-			currentIntentions.actions.push_back(action);
-			isIntentsChanged = true;
+			if (auto entity = this->entityRegistry.getEntityById(id); entity.has_value()) {
+				if (id == playerEntityId) { isIntentsChanged = true; }
+
+				sl::IntentComponent* intentComponent = entity.value().get().getComponent<sl::IntentComponent>();
+				if (!intentComponent) { std::cout << "intentComponent is not valid\n"; return; }
+				intentComponent->addAction(action);
+			}
 		}));
 
-	tokens.push_back(onSetMovementDirection.addFunction([this](const sf::Vector2i& newDirection)
+	tokens.push_back(onSetMovementDirection.addFunction([this](sl::EntityId id, const sf::Vector2i& newDirection)
 		{
-			currentIntentions.movementDirectionIntentions = newDirection;
-			isIntentsChanged = true;
+			if (auto entity = this->entityRegistry.getEntityById(id); entity.has_value()) {
+				if (id == playerEntityId) { isIntentsChanged = true; }
+
+				sl::IntentComponent* intentComponent = entity.value().get().getComponent<sl::IntentComponent>();
+				if (!intentComponent) { std::cout << "intentComponent is not valid\n"; return; }
+				intentComponent->setMovementDirection(newDirection);
+			}
 		}));
 
 	tokens.push_back(onSetPlayerEntity.addFunction([this](std::optional<sl::EntityId> playerEntityId) { onPlayerEntitySet(playerEntityId); }));
@@ -35,26 +43,22 @@ PlayerIntentManager::PlayerIntentManager(
 
 PlayerIntentManager::~PlayerIntentManager() = default;
 
-void PlayerIntentManager::update(float dt, const sl::WorldBase& world)
+void PlayerIntentManager::update(float dt)
 {
 	timeSinceLastUpdate += std::min(sf::seconds(dt), sf::seconds(0.1f));
 	while (timeSinceLastUpdate >= updateTime) {
 		timeSinceLastUpdate -= updateTime;
 		if (!isIntentsChanged) { continue; }
-		
-		if (!setMovingDirection(world)) {
-			#ifdef DEBUG
-			game_logger->warn("PlayerIntentManager::update movingDirection cannot change: playerEntity or movementComponent is not valid");
-			#endif
+
+		if (playerEntityId.has_value()) {
+
+			auto playerEn = entityRegistry.getEntityById(playerEntityId.value());
+			sl::IntentComponent* intentComp = playerEn.value().get().getComponent<sl::IntentComponent>();
+
+			if (!intentComp) { continue; }
+
+			Packer::send<sl::net::PlayerIntentionsPacket>(intentComp->getIntentions());
 		}
-
-		for (auto action: currentIntentions.actions) {
-			actionCheck(action, world);
-		}
-
-		Packer::send<sl::net::PlayerIntentionsPacket>(currentIntentions);
-
-		currentIntentions.actions.clear();
 		isIntentsChanged = false;
 	}
 }
@@ -65,73 +69,5 @@ void PlayerIntentManager::onPlayerEntitySet(std::optional<sl::EntityId> playerEn
 
 	if (playerEntityId.has_value()) {
 		game_logger->info("Player with id: {} character set in PlayerIntentManager.", playerEntityId.value().ID);
-	}
-}
-
-bool PlayerIntentManager::setMovingDirection(const sl::IEntityRegistry& entityRegistry) const
-{
-	if (!playerEntityId.has_value()) { return false; }
-
-	auto player = entityRegistry.getEntityById(playerEntityId.value());
-	if (!player.has_value()) { return false; }
-
-	sl::MovementComponent* movComp = player.value().get().getComponent<sl::MovementComponent>();
-
-	if (!movComp) { return false; }
-
-	if (movComp->getVelocityDirection() != currentIntentions.movementDirectionIntentions) {
-		movComp->setVelocityDirection(currentIntentions.movementDirectionIntentions);
-	}
-
-	return true;
-}
-
-void PlayerIntentManager::actionCheck(sl::net::Action action, const sl::WorldBase& world)
-{
-
-	if (!playerEntityId.has_value())
-	{
-		#ifdef DEBUG
-		game_logger->warn("PlayerIntentManager::actionCheck cannot call any action: playerEntity is not set");
-		#endif
-		return; 
-	}
-
-	auto playerEn = world.getEntityById(playerEntityId.value());
-
-	if (!playerEn.has_value())
-	{
-		#ifdef DEBUG
-		game_logger->warn("PlayerIntentManager::actionCheck cannot call any action: playerEntity is not valid");
-		#endif
-		return;
-	}
-
-	if (action == sl::net::Action::None) { return; }
-
-	if (action == sl::net::Action::Attack) {
-
-		if (!attackSystem) {
-			#ifdef DEBUG
-			game_logger->error("PlayerIntentManager::actionCheck cannot call tryMeleeAttack: attackSystem is not valid");
-			#endif
-			return;
-		}
-
-		const auto WorldMap = world.getWorldMap();
-
-		if (!WorldMap.has_value()) { return ; }
-
-		const auto collisionCellMap = WorldMap.value().get().getCollisionMap();
-
-		if (!collisionCellMap.has_value()) { return ; }
-
-		bool isSucess = attackSystem->tryMeleeAttack(*playerEn, collisionCellMap.value(), world);
-
-		if (!isSucess) {
-			#ifdef DEBUG
-			game_logger->warn("PlayerIntentManager::actionCheck tryMeleeAttack was unsuccessful");
-			#endif
-		}
 	}
 }

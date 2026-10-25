@@ -29,6 +29,10 @@ target_link_libraries(FL_Server PRIVATE
     OpenSSL::Crypto
 )
 
+target_link_options(FL_Server PRIVATE
+    "/WHOLEARCHIVE:$<TARGET_FILE:FL_SharedLib>"
+)
+
 add_custom_command(
     TARGET FL_Server POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy_directory

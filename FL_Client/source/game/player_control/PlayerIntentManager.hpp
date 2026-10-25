@@ -7,30 +7,27 @@
 
 namespace sl {
 	class Entity;
-	class AttackSystem;
-	class WorldBase;
 	class IEntityRegistry;
 }
 
 class PlayerIntentManager {
 public:
 	PlayerIntentManager(
-		sl::LockFreeDelegate<sl::net::Action>& onNewAction,
-		sl::LockFreeDelegate<const sf::Vector2i& >& onSetMovementDirection,
+		const sl::IEntityRegistry& entityRegistry,
+		sl::LockFreeDelegate<sl::EntityId, sl::Action>& onNewAction,
+		sl::LockFreeDelegate<sl::EntityId, const sf::Vector2i& >& onSetMovementDirection,
 		sl::LockFreeDelegate<std::optional<sl::EntityId>>& onSetPlayerEntity
 	);
 
 	~PlayerIntentManager();
 
-	void update(float dt, const sl::WorldBase& world);
+	void update(float dt);
 private:
 	std::shared_ptr<spdlog::logger> game_logger;
 
-	sl::Intentions currentIntentions;
+	const sl::IEntityRegistry& entityRegistry;
 
 	std::optional<sl::EntityId> playerEntityId;
-
-	std::unique_ptr<sl::AttackSystem> attackSystem;
 
 	const sf::Time updateTime = sf::seconds(1.f / 30.f);
 
@@ -42,8 +39,4 @@ private:
 
 	void onPlayerEntitySet(std::optional<sl::EntityId> playerEntityId);
 
-	//returns true if direction changed successfully
-	[[nodiscard]] bool setMovingDirection(const sl::IEntityRegistry& entityRegistry) const;
-
-	void actionCheck(sl::net::Action action, const sl::WorldBase& world);
 };

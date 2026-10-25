@@ -15,16 +15,35 @@
 #include "system/WorldBase.hpp"
 #include "system/WorldMap.hpp"
 #include "system/handlers/DefferedFunctionStorage.hpp"
+#include "system/systems/IntentComponent.hpp"
+
+namespace {
+    float minDist = 0.0001f;
+    float pi = 3.14159265f;
+    float semicircleDegrees = 180.f;
+}
 
 
-
-sl::AttackSystem::AttackSystem()
+sl::AttackSystem::AttackSystem(const sl::CollisionCellMap& collisionCellMap, const sl::IEntityRegistry& entityRegistry):
+    collisionCellMap(collisionCellMap), entityRegistry(entityRegistry)
 {
     reusableEntityIdsBuffer = std::vector<sl::EntityId>();
     temporaryIgnoreList = std::set<sl::EntityId>();
 }
 
-bool sl::AttackSystem::tryMeleeAttack(const sl::Entity& attackingEntity, const sl::CollisionCellMap& collisionCellMap, const sl::IEntityRegistry& entityRegistry) {
+void sl::AttackSystem::update(float updateTime, const sl::Entity& entity) {
+    sl::IntentComponent* intentComp = entity.getComponent<sl::IntentComponent>();
+
+    if (!intentComp) { return; }
+
+    if (intentComp->hasAction(triggerAction)) {
+        if (!tryMeleeAttack(entity)) {
+            std::cerr << "Attack for entity with id: " << entity.getId().ID << " is not success\n";
+        }
+    }
+}
+
+bool sl::AttackSystem::tryMeleeAttack(const sl::Entity& attackingEntity) {
 	sl::WeaponComponent* weaponComp = attackingEntity.getComponent<sl::WeaponComponent>();
 	if (!weaponComp) { return false; }
 
@@ -107,7 +126,7 @@ bool sl::AttackSystem::tryMeleeAttack(const sl::Entity& attackingEntity, const s
     temporaryIgnoreList.clear();
     reusableEntityIdsBuffer.clear();
 
-    DefferedFunctionStorage::addDefferedCall([this, &entityRegistry](uint32_t attackingEntityId) { attackEnd(attackingEntityId, entityRegistry); },
+    DefferedFunctionStorage::addDefferedCall([this](uint32_t attackingEntityId) { attackEnd(attackingEntityId, this->entityRegistry); },
         weaponComp->getAttackCooldown(),
         attackingEntity.getId().ID);
 
@@ -123,7 +142,7 @@ bool sl::AttackSystem::isAABBinAttackCone(
     float maxAngleDegrees)
 {
     float lookLen = std::sqrt(lookDir.x * lookDir.x + lookDir.y * lookDir.y);
-    if (lookLen < 0.0001f) return false;
+    if (lookLen < minDist) return false;
     sf::Vector2f lookDirNorm = lookDir / lookLen;
 
     sl::AABB worldAABB(targetAABB.minX + targetPos.x, targetAABB.minY + targetPos.y,
@@ -140,13 +159,13 @@ bool sl::AttackSystem::isAABBinAttackCone(
     float radiusSq = attackRadius * attackRadius;
     if (distSq > radiusSq) return false;
 
-    if (distSq < 0.0001f) return true;
+    if (distSq < minDist) return true;
 
     float dist = std::sqrt(distSq);
     sf::Vector2f toTargetNorm = toTarget / dist;
 
     float dot = lookDirNorm.x * toTargetNorm.x + lookDirNorm.y * toTargetNorm.y;
-    float minDotCos = std::cos(maxAngleDegrees * 3.14159265f / 180.0f);
+    float minDotCos = std::cos(maxAngleDegrees * pi / semicircleDegrees);
 
     return dot >= minDotCos;
 }
@@ -166,4 +185,12 @@ void sl::AttackSystem::attackEnd(sl::EntityId attackingEntityId, const sl::IEnti
     stunComp->removeWithinStun(sl::StunState::Immobilized);
     stunComp->removeWithinStun(sl::StunState::Disarmed);
 
+}
+
+sl::systemPtr sl::AttackSystem::initialize(sl::SystemCreatorContext context) {
+    return std::make_unique<sl::AttackSystem>(context.collisionCellMap, context.entityRegistry);
+}
+
+sl::SystemProcessingPhase sl::AttackSystem::getProcessingPhase() {
+    return sl::SystemProcessingPhase::Input;
 }

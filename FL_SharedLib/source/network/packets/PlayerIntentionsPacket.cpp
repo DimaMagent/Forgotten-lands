@@ -39,7 +39,7 @@ void sl::net::PlayerIntentionsData::read(const std::vector<uint8_t>& in, size_t&
 		actionsSize = net::read<uint8_t>(in, offset);
 		for (uint8_t i = 0; i < actionsSize; ++i) {
 			if (offset + sizeof(uint8_t) <= in.size()) {
-				intentions.actions.push_back(static_cast<sl::net::Action>(net::read<std::underlying_type_t<sl::net::Action>>(in, offset)));
+				intentions.actions.push_back(static_cast<sl::Action>(net::read<std::underlying_type_t<sl::Action>>(in, offset)));
 			}
 			else {
 				break;

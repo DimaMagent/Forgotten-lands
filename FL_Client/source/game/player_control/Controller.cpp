@@ -4,12 +4,20 @@
 #include "system/Entity.hpp"
 #include "system/Utils.hpp"
 
-Controller::Controller(InputManager& im)
+Controller::Controller(InputManager& im, sl::LockFreeDelegate<std::optional<sl::EntityId>>& onSetPlayerEntity)
 {
 	game_logger = spdlog::get("game");
 	lastMovementDirectionIntent = sf::Vector2i(0, 0);
 	token = im.onEvent.addFunction([this](const sf::Event& event) { onEvent(event); });
 	initKeyBindings();
+	token = onSetPlayerEntity.addFunction([this](std::optional<sl::EntityId> playerEntityId) {
+		this->playerEntityId = playerEntityId;
+
+		if (playerEntityId.has_value()) {
+			game_logger->info("Player with id: {} character set in Controller.", playerEntityId.value().ID);
+		}
+
+		});
 }
 
 Controller::~Controller() = default;
@@ -29,7 +37,9 @@ void Controller::onEvent(const sf::Event& event) {
 		case sf::Keyboard::Key::S: keyStates.at(sf::Keyboard::Key::S) = true; updateMovementDirection(); break;
 		case sf::Keyboard::Key::D: keyStates.at(sf::Keyboard::Key::D) = true; updateMovementDirection(); break;
 		case sf::Keyboard::Key::Q:
-			onNewAction.broadcast(sl::net::Action::Attack);
+			if (playerEntityId.has_value()) {
+				onNewAction.broadcast(playerEntityId.value(), sl::Action::Attack);
+			}
 			break;
 		default: break;
 
@@ -43,7 +53,9 @@ void Controller::onEvent(const sf::Event& event) {
 		case sf::Keyboard::Key::S: keyStates.at(sf::Keyboard::Key::S) = false; updateMovementDirection(); break;
 		case sf::Keyboard::Key::D: keyStates.at(sf::Keyboard::Key::D) = false; updateMovementDirection(); break;
 		case sf::Keyboard::Key::Q:
-			onNewAction.broadcast(sl::net::Action::None);
+			if (playerEntityId.has_value()) {
+				onNewAction.broadcast(playerEntityId.value(), sl::Action::None);
+			}
 			break;
 		default: break;
 		}
@@ -72,8 +84,10 @@ void Controller::updateMovementDirection() {
 	if (keyStates.at(sf::Keyboard::Key::D)) newDirection.x += 1;
 
 	if (newDirection != lastMovementDirectionIntent) {
-		lastMovementDirectionIntent = newDirection;
-		onSetMovementDirection.broadcast(lastMovementDirectionIntent);
+		if (playerEntityId.has_value()) {
+			lastMovementDirectionIntent = newDirection;
+			onSetMovementDirection.broadcast(playerEntityId.value(), lastMovementDirectionIntent);
+		}
 	}
 }
 

@@ -5,7 +5,8 @@
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Event.hpp>
 #include "system/handlers/LockFreeDelegate.hpp"
-#include "network/packets/PacketDataTypes.hpp"
+#include "system/systems/Action.hpp"
+#include "system/EntityId.hpp"
 
 class InputManager;
 namespace sl {
@@ -14,20 +15,20 @@ namespace sl {
 
 class Controller {
 public:
-	Controller(InputManager& im);
+	Controller(InputManager& im, sl::LockFreeDelegate<std::optional<sl::EntityId>>& onSetPlayerEntity);
 
 	~Controller();
 
-	sl::LockFreeDelegate<sl::net::Action> onNewAction;
+	sl::LockFreeDelegate<sl::EntityId, sl::Action> onNewAction;
 
-	sl::LockFreeDelegate<const sf::Vector2i&> onSetMovementDirection;
+	sl::LockFreeDelegate<sl::EntityId, const sf::Vector2i&> onSetMovementDirection;
 
 private:
 	std::shared_ptr<spdlog::logger> game_logger;
 
 	std::unordered_map<sf::Keyboard::Key, bool> keyStates;
 
-	std::weak_ptr<sl::Entity> playerEntity;
+	std::optional<sl::EntityId> playerEntityId;
 
 	sf::Vector2i lastMovementDirectionIntent;
 

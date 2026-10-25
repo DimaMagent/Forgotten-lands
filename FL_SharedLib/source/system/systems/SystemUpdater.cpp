@@ -3,8 +3,7 @@
 #include "system/WorldBase.hpp"
 #include "system/WorldMap.hpp"
 #include "system/Entity.hpp"
-#include "system/systems/collision/CollisionSystem.hpp"
-#include "system/systems/movement/MovementSystem.hpp"
+#include "system/systems/UpdatableSystem.hpp"
 
 sl::SystemUpdater::SystemUpdater(const SystemCreatorContext& context)
 {
