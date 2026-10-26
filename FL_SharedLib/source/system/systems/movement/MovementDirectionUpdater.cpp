@@ -18,7 +18,7 @@ void sl::MovementDirectionUpdater::update(float updateTime, const sl::Entity& en
 	}
 }
 
-sl::systemPtr sl::MovementDirectionUpdater::initialize(sl::SystemCreatorContext context) {
+sl::systemPtr sl::MovementDirectionUpdater::initialize(sl::SystemCreatorContext& context) {
 	return std::make_unique<sl::MovementDirectionUpdater>();
 }
 

@@ -151,7 +151,7 @@ bool sl::MovementSystem::isBlockedOnPosition(const sl::Entity& entity, const sf:
     return false;
 }
 
-sl::systemPtr sl::MovementSystem::initialize(sl::SystemCreatorContext context) {
+sl::systemPtr sl::MovementSystem::initialize(sl::SystemCreatorContext& context) {
     return std::make_unique<sl::MovementSystem>(context.collisionCellMap, context.entityRegistry);
 }
 

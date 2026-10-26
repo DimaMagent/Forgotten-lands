@@ -9,19 +9,34 @@ namespace sl {
 	public:
 		IntentComponent() = default;
 		~IntentComponent() override = default;
-		void setIntentions(const sl::Intentions& intentions) {  this->intentions = intentions; }
+		void setIntentions(const sl::Intentions& intentions) {
+			intentChanged = true;
+			this->intentions = intentions; 
+		}
 		const sl::Intentions& getIntentions() const { return intentions; }
-		const std::span<sl::Action> getActions() { std::cout << "show action\n"; return intentions.actions; }
+		const std::span<sl::Action> getActions() { return intentions.actions; }
 		const sf::Vector2i& getMovementDirectionIntentions() const { return intentions.movementDirectionIntentions; }
 		bool hasAction(sl::Action action) const;
-		void addAction(sl::Action action) { intentions.actions.push_back(action); }
-		void setMovementDirection(const sf::Vector2i& newDirection) { intentions.movementDirectionIntentions = newDirection; }
-		void clearActions() { intentions.actions.clear(); }
+		void addAction(sl::Action action) { 
+			intentChanged = true;
+			intentions.actions.push_back(action); 
+		}
+		void setMovementDirection(const sf::Vector2i& newDirection) {
+			intentChanged = true;
+			intentions.movementDirectionIntentions = newDirection; 
+		}
+		void clearActions() { 
+			intentChanged = false;
+			intentions.actions.clear(); 
+		}
+
+		bool isIntentChanged() const { return intentChanged; }
 
 		COMPONENT_TYPE(IntentComponent);
 
 	private:
 		sl::Intentions intentions;
+		bool intentChanged = false;
 
 		REGISTER_COMPONENT();
 	};

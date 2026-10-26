@@ -8,10 +8,12 @@ void sl::ActionClearSystem::update(float updateTime, const sl::Entity& entity) {
 
 	if (!intentComp) { return; }
 
+	if (!intentComp->isIntentChanged()) { return; }
+
 	intentComp->clearActions();
 }
 
-sl::systemPtr sl::ActionClearSystem::initialize(sl::SystemCreatorContext context) {
+sl::systemPtr sl::ActionClearSystem::initialize(sl::SystemCreatorContext& context) {
 	return std::make_unique<sl::ActionClearSystem>();
 }
 

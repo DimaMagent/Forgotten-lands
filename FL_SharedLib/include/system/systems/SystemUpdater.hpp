@@ -30,7 +30,7 @@ namespace sl {
 
 	using systemPtr = std::unique_ptr<sl::UpdatableSystem>;
 
-	using systemCreator = std::function<systemPtr(SystemCreatorContext)>;
+	using systemCreator = std::function<systemPtr(SystemCreatorContext&)>;
 
 	class SystemUpdater {
 	public:
@@ -42,17 +42,19 @@ namespace sl {
 
 		static void registerSystem(systemCreator creator, SystemProcessingPhase processingPhase);
 
+		void createSystems();
+
 	protected:
 		const sf::Time updateTime = sf::seconds(1.f / 60.f);
 		sf::Time timeSinceLastUpdate = sf::Time::Zero;
+
+		bool systemsAlreadyCreated = false;
 
 		std::vector<std::unique_ptr<sl::UpdatableSystem>> inputSystems;
 		std::vector<std::unique_ptr<sl::UpdatableSystem>> simulationSystems;
 		std::vector<std::unique_ptr<sl::UpdatableSystem>> postSimulationSystems;
 
 		std::unique_ptr<SystemCreatorContext> creatorContext;
-
-		void createSystems();
 
 		static std::vector<std::pair<systemCreator, SystemProcessingPhase>>& getRegistry() {
 			static std::vector<std::pair<systemCreator, SystemProcessingPhase>> registry;

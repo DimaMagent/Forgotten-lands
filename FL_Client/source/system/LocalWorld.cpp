@@ -9,7 +9,7 @@
 #include "system/EntityType.hpp"
 #include "network/packets/StatusPacket.hpp"
 #include "system/WorldMap.hpp"
-#include "ClientSystemUpdater.hpp"
+#include "system/systems/ClientSystemUpdater.hpp"
 
 LocalWorld::LocalWorld(sf::RenderTarget& renderTarget, DataProcessedDelegate& OnDataProcessed) : WorldBase(),
 	stateManager(std::make_shared<StateManager>(entities, OnDataProcessed)),
@@ -34,6 +34,17 @@ void LocalWorld::addPlayerEntity(sl::EntityType entityType, sl::EntityId id)
 
 	OnSetPlayerEntity.broadcast(playerEntityId);
 	
+}
+
+void LocalWorld::addPlayerEntity(sl::Entity&& entity, sl::EntityId id)
+{
+	addEntity(std::move(entity), id);
+
+	playerEntityId = id;
+
+	isPlayerEntityAssigned = true;
+
+	OnSetPlayerEntity.broadcast(playerEntityId);
 }
 
 void LocalWorld::addEntity(sl::EntityType entityType, sl::EntityId id)
@@ -70,7 +81,7 @@ void LocalWorld::render()
 
 void LocalWorld::removeEntityById(sl::EntityId id)
 {
-	if (id == playerEntityId) {
+	if (playerEntityId.has_value() && id == playerEntityId.value()) {
 		isPlayerEntityAssigned = false;
 		OnSetPlayerEntity.broadcast({});
 		#ifdef DEBUG
@@ -144,7 +155,7 @@ void LocalWorld::onAuth(const sl::net::EntityData& enData)
 
 	}
 	catch (std::exception& e) {
-		game_logger->error("{}.Entity id {}", e.what(), enData.entityId);
+		game_logger->error("LocalWorld::onAuth: {}.Entity id {}", e.what(), enData.entityId);
 	}
 }
 
@@ -152,7 +163,14 @@ std::optional<std::reference_wrapper<sl::Entity>> LocalWorld::getPlayerEntity()
 {
 	if (!isPlayerEntityAssigned) { return {}; }
 
-	return *entities.getEntityToId(playerEntityId);
+	return *entities.getEntityToId(playerEntityId.value());
+}
+
+std::optional<std::reference_wrapper<const sl::Entity>> LocalWorld::getPlayerEntity() const
+{
+	if (!isPlayerEntityAssigned) { return {}; }
+
+	return *entities.getEntityToId(playerEntityId.value());
 }
 
 void LocalWorld::addEntity(sl::Entity&& entity, sl::EntityId id)
@@ -168,13 +186,3 @@ void LocalWorld::addEntity(sl::Entity&& entity, sl::EntityId id)
 	}
 }
 
-void LocalWorld::addPlayerEntity(sl::Entity&& entity, sl::EntityId id)
-{
-	addEntity(std::move(entity), id);
-
-	playerEntityId = id;
-
-	isPlayerEntityAssigned = true;
-
-	OnSetPlayerEntity.broadcast(playerEntityId);
-}

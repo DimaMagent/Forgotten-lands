@@ -61,6 +61,8 @@ bool sl::AttackSystem::tryMeleeAttack(const sl::Entity& attackingEntity) {
 
     if (stunComp->hasStun(StunState::Disarmed)) { return true; }
 
+    if (stateComp->getCurrentActionState() == sl::ActionState::MeleeAttack) { return true; }
+
     AABB aabb = colisComp->getAABB();
 	float attackDistance = weaponComp->getAttackDistance();
     float attackDegrees = weaponComp->getAttackDegrees();
@@ -187,7 +189,7 @@ void sl::AttackSystem::attackEnd(sl::EntityId attackingEntityId, const sl::IEnti
 
 }
 
-sl::systemPtr sl::AttackSystem::initialize(sl::SystemCreatorContext context) {
+sl::systemPtr sl::AttackSystem::initialize(sl::SystemCreatorContext& context) {
     return std::make_unique<sl::AttackSystem>(context.collisionCellMap, context.entityRegistry);
 }
 

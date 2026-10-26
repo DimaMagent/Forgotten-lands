@@ -22,7 +22,6 @@ namespace sl {
             sl::generationType generation = 1;
             bool is_alive = false;
 
-            // if is_alive == true: denseIndex. Else NextFree
             uint32_t denseIndexOrNextFree = UINT32_MAX;
 
             SparseSlot(){}
@@ -110,8 +109,6 @@ namespace sl {
 
             uint32_t removed_dense_idx = slot.denseIndexOrNextFree;
             uint32_t last_dense_idx = dense.size() - 1;
-
-            //if (removed_dense_idx > dense.size()) { return; }
 
             if (removed_dense_idx != last_dense_idx) {
                 dense[removed_dense_idx] = std::move(dense[last_dense_idx]);

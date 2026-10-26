@@ -77,7 +77,7 @@ void sl::CollisionSystem::update(float updateTime, const sl::Entity& entity) {
 	}
 }
 
-sl::systemPtr sl::CollisionSystem::initialize(sl::SystemCreatorContext context) {
+sl::systemPtr sl::CollisionSystem::initialize(sl::SystemCreatorContext& context) {
 	return std::make_unique<sl::CollisionSystem>(context.collisionCellMap, context.entityRegistry);
 }
 

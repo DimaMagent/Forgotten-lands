@@ -8,6 +8,7 @@
 #include "system/storages/EntityStorage.hpp"
 #include "system/EntityId.hpp"
 #include "network/DataProcessorTypes.hpp"
+#include "system/IPlayerEntityStorage.hpp"
 
 namespace sl {
 	class Entity;
@@ -22,7 +23,7 @@ class ClientEntityFactory;
 class AnimationSystem;
 class ClientSystemUpdater;
 
-class LocalWorld: public sl::WorldBase {
+class LocalWorld: public sl::WorldBase, public IPlayerEntityStorage {
 public:
 	sl::LockFreeDelegate<std::optional<sl::EntityId>> OnSetPlayerEntity;
 
@@ -48,7 +49,11 @@ public:
 
 	std::weak_ptr<StateManager> getStateManager() const { return stateManager; }
 
-	std::optional<std::reference_wrapper<sl::Entity>> getPlayerEntity();
+	std::optional<std::reference_wrapper<sl::Entity>> getPlayerEntity() override;
+
+	virtual std::optional<std::reference_wrapper<const sl::Entity>> getPlayerEntity() const override;
+
+	std::optional<sl::EntityId> getPlayerEntityId() const override { return playerEntityId; }
 
 protected:
 	using SystemUpdaterClass = ClientSystemUpdater;
@@ -57,7 +62,8 @@ protected:
 
 	sl::EntityStorage entities;
 
-	sl::EntityId playerEntityId;
+	std::optional<sl::EntityId> playerEntityId;
+
 	bool isPlayerEntityAssigned = false;
 
 	std::unique_ptr<RenderManager> renderManager;

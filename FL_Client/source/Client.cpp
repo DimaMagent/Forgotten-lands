@@ -12,7 +12,7 @@
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/rotating_file_sink.h> 
 #include "system/handlers/DefferedFunctionStorage.hpp"
-#include "system/ClientSystemUpdater.hpp"
+#include "system/systems/ClientSystemUpdater.hpp"
 #include "system/WorldMap.hpp"
 
 Client::Client() 
@@ -33,8 +33,9 @@ Client::Client()
 		world->OnSetPlayerEntity
 	);
 
-	sl::SystemCreatorContext context = { world->getWorldMap().value().get().getCollisionMap().value() , *world };
+	ClientSystemCreatorContext context = { world->getWorldMap().value().get().getCollisionMap().value(), *world, *world};
 	systemUpdater = std::make_unique<ClientSystemUpdater>(context);
+	systemUpdater->createSystems();
 	tickTimer = std::make_shared<asio::steady_timer>(*clientContext);
 
 	sl::DefferedFunctionStorage::init(*clientContext);

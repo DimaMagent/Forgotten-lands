@@ -38,6 +38,7 @@ Server::Server(short port)
 
 	sl::SystemCreatorContext context = {  world->getWorldMap().value().get().getCollisionMap().value() , *world };
 	systemUpdater = std::make_unique<ServerSystemUpdater>(context);
+	systemUpdater->createSystems();
 
 	sl::DefferedFunctionStorage::init(*serverContext);
 	delegateToken = netManager->OnAccept.addFunction([this](uint32_t token) {onClientAccept(token); });

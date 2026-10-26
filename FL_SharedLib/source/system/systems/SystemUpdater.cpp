@@ -7,9 +7,7 @@
 
 sl::SystemUpdater::SystemUpdater(const SystemCreatorContext& context)
 {
-	creatorContext = std::make_unique<SystemCreatorContext>(context.collisionCellMap, context.entityRegistry);
-
-	createSystems();
+	creatorContext = std::make_unique<SystemCreatorContext>(context);
 }
 
 sl::SystemUpdater::~SystemUpdater() = default;
@@ -50,6 +48,8 @@ void sl::SystemUpdater::registerSystem(systemCreator creator, SystemProcessingPh
 }
 
 void sl::SystemUpdater::createSystems() {
+	if (systemsAlreadyCreated) { return; }
+
 	if (!creatorContext) { return; }
 
 	for (auto& [creator, phase] : getRegistry()) {
@@ -70,4 +70,6 @@ void sl::SystemUpdater::createSystems() {
 		}
 		
 	}
+
+	systemsAlreadyCreated = true;
 }

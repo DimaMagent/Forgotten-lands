@@ -13,7 +13,6 @@ namespace sl {
 	class WorldBase;
 	class IEntityRegistry;
 
-	//не работает из-за системы очистки actions, поэтому атака не может начаться толком
 	class AttackSystem: public sl::UpdatableSystem {
 	public:
 		AttackSystem(const sl::CollisionCellMap& collisionCellMap, const sl::IEntityRegistry& entityRegistry);

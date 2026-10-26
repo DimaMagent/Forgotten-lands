@@ -1,7 +1,5 @@
 #include "pch.hpp"
 #include "PlayerIntentManager.hpp"
-#include "network/Packer.hpp"
-#include "network/packets/PlayerIntentionsPacket.hpp"
 #include "system/Entity.hpp"
 #include "system/IEntityRegistry.hpp"
 #include "system/WorldMap.hpp"
@@ -22,7 +20,7 @@ PlayerIntentManager::PlayerIntentManager(
 				if (id == playerEntityId) { isIntentsChanged = true; }
 
 				sl::IntentComponent* intentComponent = entity.value().get().getComponent<sl::IntentComponent>();
-				if (!intentComponent) { std::cout << "intentComponent is not valid\n"; return; }
+				if (!intentComponent) { return; }
 				intentComponent->addAction(action);
 			}
 		}));
@@ -33,7 +31,7 @@ PlayerIntentManager::PlayerIntentManager(
 				if (id == playerEntityId) { isIntentsChanged = true; }
 
 				sl::IntentComponent* intentComponent = entity.value().get().getComponent<sl::IntentComponent>();
-				if (!intentComponent) { std::cout << "intentComponent is not valid\n"; return; }
+				if (!intentComponent) { return; }
 				intentComponent->setMovementDirection(newDirection);
 			}
 		}));
@@ -49,17 +47,6 @@ void PlayerIntentManager::update(float dt)
 	while (timeSinceLastUpdate >= updateTime) {
 		timeSinceLastUpdate -= updateTime;
 		if (!isIntentsChanged) { continue; }
-
-		if (playerEntityId.has_value()) {
-
-			auto playerEn = entityRegistry.getEntityById(playerEntityId.value());
-			sl::IntentComponent* intentComp = playerEn.value().get().getComponent<sl::IntentComponent>();
-
-			if (!intentComp) { continue; }
-
-			Packer::send<sl::net::PlayerIntentionsPacket>(intentComp->getIntentions());
-		}
-		isIntentsChanged = false;
 	}
 }
 
