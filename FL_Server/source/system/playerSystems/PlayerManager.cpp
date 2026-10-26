@@ -28,6 +28,7 @@ void PlayerManager::updatePlayerInputState(uint32_t playerToken, const sl::Inten
 	if (!entity.has_value()) { return; }
 
 	sl::IntentComponent* intenComp = entity.value().get().getComponent<sl::IntentComponent>();
-	if (!intenComp) { std::cout << "intentComponent is not valid\n"; return; }
+	if (!intenComp) { return; }
+
 	intenComp->setIntentions(intentions);
 }

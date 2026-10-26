@@ -3,6 +3,7 @@
 #include "network/packets/Intentions.hpp"
 #include <span>
 #include <iostream>
+#include <optional>
 
 namespace sl {
 	class IntentComponent : public sl::Component {
@@ -14,20 +15,22 @@ namespace sl {
 			this->intentions = intentions; 
 		}
 		const sl::Intentions& getIntentions() const { return intentions; }
-		const std::span<sl::Action> getActions() { return intentions.actions; }
 		const sf::Vector2i& getMovementDirectionIntentions() const { return intentions.movementDirectionIntentions; }
 		bool hasAction(sl::Action action) const;
-		void addAction(sl::Action action) { 
-			intentChanged = true;
-			intentions.actions.push_back(action); 
+		void setAction(sl::Action action, bool isActionActive) { 
+			intentChanged = intentions.isActionActive != isActionActive || action != intentions.action;
+			intentions.action = action;
+			intentions.isActionActive = isActionActive;
 		}
 		void setMovementDirection(const sf::Vector2i& newDirection) {
 			intentChanged = true;
 			intentions.movementDirectionIntentions = newDirection; 
 		}
-		void clearActions() { 
+		void clearActions() {
 			intentChanged = false;
-			intentions.actions.clear(); 
+			if (!intentions.isActionActive) {
+				intentions.action = sl::Action::None;
+			}
 		}
 
 		bool isIntentChanged() const { return intentChanged; }

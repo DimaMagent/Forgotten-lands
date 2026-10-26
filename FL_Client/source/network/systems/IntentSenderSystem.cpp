@@ -6,6 +6,7 @@
 #include "network/Packer.hpp"
 #include "network/packets/PlayerIntentionsPacket.hpp"
 #include "system/systems/ClientSystemCreatorContext.hpp"
+#include "network/packets/Intentions.hpp"
 
 IntentSenderSystem::IntentSenderSystem(const IPlayerEntityStorage& playerEntityStorage):
 	playerEntityStorage(playerEntityStorage){}

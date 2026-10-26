@@ -37,8 +37,9 @@ void Controller::onEvent(const sf::Event& event) {
 		case sf::Keyboard::Key::S: keyStates.at(sf::Keyboard::Key::S) = true; updateMovementDirection(); break;
 		case sf::Keyboard::Key::D: keyStates.at(sf::Keyboard::Key::D) = true; updateMovementDirection(); break;
 		case sf::Keyboard::Key::Q:
+			keyStates.at(sf::Keyboard::Key::Q) = true;
 			if (playerEntityId.has_value()) {
-				onNewAction.broadcast(playerEntityId.value(), sl::Action::Attack);
+				onNewAction.broadcast(playerEntityId.value(), sl::Action::Attack, true);
 			}
 			break;
 		default: break;
@@ -53,8 +54,9 @@ void Controller::onEvent(const sf::Event& event) {
 		case sf::Keyboard::Key::S: keyStates.at(sf::Keyboard::Key::S) = false; updateMovementDirection(); break;
 		case sf::Keyboard::Key::D: keyStates.at(sf::Keyboard::Key::D) = false; updateMovementDirection(); break;
 		case sf::Keyboard::Key::Q:
+			keyStates.at(sf::Keyboard::Key::Q) = false;
 			if (playerEntityId.has_value()) {
-				onNewAction.broadcast(playerEntityId.value(), sl::Action::None);
+				onNewAction.broadcast(playerEntityId.value(), sl::Action::None, false);
 			}
 			break;
 		default: break;

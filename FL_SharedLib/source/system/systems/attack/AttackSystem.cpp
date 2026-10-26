@@ -194,5 +194,5 @@ sl::systemPtr sl::AttackSystem::initialize(sl::SystemCreatorContext& context) {
 }
 
 sl::SystemProcessingPhase sl::AttackSystem::getProcessingPhase() {
-    return sl::SystemProcessingPhase::Input;
+    return sl::SystemProcessingPhase::Simulation;
 }

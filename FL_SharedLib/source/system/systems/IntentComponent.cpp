@@ -3,7 +3,7 @@
 #include "system/Entity.hpp"
 
 bool sl::IntentComponent::hasAction(sl::Action action) const {
-	return std::find(intentions.actions.begin(), intentions.actions.end(), action) != intentions.actions.end();
+	return intentions.isActionActive && intentions.action == action;
 }
 
 void sl::IntentComponent::initialize(sl::ComponentInitContext context) {

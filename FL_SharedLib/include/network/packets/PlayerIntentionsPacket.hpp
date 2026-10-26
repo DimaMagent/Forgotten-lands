@@ -10,9 +10,6 @@ namespace sl::net {
 
 	struct PlayerIntentionsData : public Data {
 		sl::Intentions intentions;
-		// size of actions cannot exceed uint8_t
-		uint8_t actionsSize;
-
 		virtual bool write(std::vector<uint8_t>& out) const override;
 		virtual void read(const std::vector<uint8_t>& in, size_t& offset) override;
 		virtual void fillPacketData(uint16_t sequenceNumber, PacketType type, uint32_t token, sl::Intentions intentions);

@@ -7,7 +7,8 @@ namespace sl {
 
 	struct Intentions {
 		sf::Vector2i movementDirectionIntentions;
-		std::vector<sl::Action> actions;
+		sl::Action action;
+		bool isActionActive = false;
 	};
 
 }

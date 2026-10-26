@@ -14,7 +14,7 @@ class PlayerIntentManager {
 public:
 	PlayerIntentManager(
 		const sl::IEntityRegistry& entityRegistry,
-		sl::LockFreeDelegate<sl::EntityId, sl::Action>& onNewAction,
+		sl::LockFreeDelegate<sl::EntityId, sl::Action, bool>& onNewAction,
 		sl::LockFreeDelegate<sl::EntityId, const sf::Vector2i& >& onSetMovementDirection);
 
 	~PlayerIntentManager();
