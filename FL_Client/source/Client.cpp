@@ -29,9 +29,7 @@ Client::Client()
 	playerIntentManager = std::make_unique<PlayerIntentManager>(
 		*world,
 		controller->onNewAction,
-		controller->onSetMovementDirection,
-		world->OnSetPlayerEntity
-	);
+		controller->onSetMovementDirection);
 
 	ClientSystemCreatorContext context = { world->getWorldMap().value().get().getCollisionMap().value(), *world, *world};
 	systemUpdater = std::make_unique<ClientSystemUpdater>(context);
@@ -132,7 +130,6 @@ void Client::initLogging() {
 }
 
 void Client::update(float dt) {
-	playerIntentManager->update(dt);
 	if (world) {
 		world->update(dt);
 		systemUpdater->update(dt, *world);
