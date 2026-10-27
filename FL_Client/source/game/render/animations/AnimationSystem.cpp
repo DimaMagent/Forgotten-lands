@@ -32,7 +32,7 @@ AnimationType AnimationSystem::selectInstantAnimationType(const sl::StateCompone
 
 bool AnimationSystem::isInstantAnimation(AnimationType type)
 {
-	if (type == AnimationType::Death || type == AnimationType::Attack) { return true; }
+	if (type == AnimationType::Death) { return true; }
 	return false;
 }
 
