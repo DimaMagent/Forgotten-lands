@@ -12,6 +12,10 @@ namespace sl {
 
 		AABB() : minX(-1.f), minY(-1.f), maxX(-1.f), maxY(-1.f) {}
 
+		sl::AABB getRelativeAABB(float posX, float posY) const
+		{
+			return AABB(posX + minX, posY + minY, posX + maxX, posY + maxY);
+		}
 
 		bool intersects(const AABB& other) const {
 			return !(maxX <= other.minX || minX >= other.maxX ||
