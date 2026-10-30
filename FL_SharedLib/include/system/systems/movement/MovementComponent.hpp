@@ -29,6 +29,10 @@ namespace sl {
 
 		sf::Vector2i getVelocityDirection() const { return velocityDirectionVector; }
 
+		sf::Vector2f getMovementEndPoint() const { return movementEndPoint; }
+
+		void setMovementEndPoint(sf::Vector2f movementEndPoint) { this->movementEndPoint = movementEndPoint; }
+
 		void setVelocityDirection(const sf::Vector2i& direction);
 
 		void resetVelocity() { velocityVector = sf::Vector2f(0.f, 0.f); }
@@ -49,6 +53,7 @@ namespace sl {
 	private:
 		sf::Vector2f velocityVector;
 		sf::Vector2i velocityDirectionVector;
+		sf::Vector2f movementEndPoint;
 		float maxSpeed;
 		float currentSpeed = 0.f;
 		sf::Time maxAccelerationTime;

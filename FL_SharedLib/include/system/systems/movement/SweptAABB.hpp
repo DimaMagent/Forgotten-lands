@@ -6,6 +6,7 @@ namespace sl {
 	class Entity;
 	class CollisionCellMap;
 	class IEntityRegistry;
+	class AABB;
 
 	class SweptAABB : public sl::UpdatableSystem {
 	public:
@@ -26,7 +27,7 @@ namespace sl {
 
 		const IEntityRegistry& entityRegistry;
 
-		SweptResult movementCheck(const sf::Vector2f& movementVectorStart, const sf::Vector2f& movementVectorEnd,
+		SweptResult movementCheck(const sf::Vector2f& movementStartPoint, const sf::Vector2f& movementEndPoint,
 			const sf::Vector2f& blockerPos, const sl::AABB& movingAABB, const sl::AABB& blockerAABB);
 
 		RegisterUpdatableSystem();

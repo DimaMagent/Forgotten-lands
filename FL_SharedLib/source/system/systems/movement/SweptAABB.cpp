@@ -35,6 +35,8 @@ void sl::SweptAABB::update(float updateTime, const sl::Entity& entity) {
     sf::Vector2f movementStartPoint = trComp->getPosition();
     sf::Vector2f movementEndPoint = movComp->getMovementEndPoint();
 
+    if ((movementEndPoint - movementStartPoint).lengthSquared() < std::pow(EPSILON, 2)) { return; }
+
     sf::Vector2f remainingMovement = movementEndPoint - movementStartPoint;
 
     sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
@@ -53,14 +55,17 @@ void sl::SweptAABB::update(float updateTime, const sl::Entity& entity) {
             entityAABB,
             movementStartPoint,
             reusableEntityIdsBuffer,
-            getSearchDepthByDistance(remainingMovement.length())))
+            collisionCellMap.getSearchDepthByDistance(remainingMovement.length())))
         {
             break;
         }
 
-        sl::SweptResult EarliestCollidedResult = {sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f) , FLT_MAX, false};
+        SweptResult EarliestCollidedResult = {sf::Vector2f(0.0f, 0.0f), sf::Vector2f(0.0f, 0.0f) , FLT_MAX, false};
 
         for (auto& entityId : reusableEntityIdsBuffer) {
+
+            if (entityId == entity.getId()) { continue; }
+
             auto nearestEntity = entityRegistry.getEntityById(entityId);
 
             if (!nearestEntity.has_value()) { continue; }
@@ -71,7 +76,9 @@ void sl::SweptAABB::update(float updateTime, const sl::Entity& entity) {
             sl::CollisionComponent* anotherColisComp = nearestEntity.value().get().getComponent<sl::CollisionComponent>();
             if (!anotherColisComp) { continue; }
 
-            sl::SweptResult result = movementCheck(
+            if (anotherColisComp->getCollisionType() != CollisionType::Block) continue;
+
+            SweptResult result = movementCheck(
                 movementStartPoint,
                 movementEndPoint,
                 anotherTrComp->getPosition(),
@@ -94,7 +101,7 @@ void sl::SweptAABB::update(float updateTime, const sl::Entity& entity) {
     trComp->setPosition(movementEndPoint);
 }
 
-sl::SweptResult sl::SweptAABB::movementCheck(const sf::Vector2f& movementStartPoint, const sf::Vector2f& movementEndPoint,
+sl::SweptAABB::SweptResult sl::SweptAABB::movementCheck(const sf::Vector2f& movementStartPoint, const sf::Vector2f& movementEndPoint,
 	const sf::Vector2f& blockerPos, const sl::AABB& movingAABB, const sl::AABB& blockerAABB)
 {
     const sl::AABB movingWorldAABB =

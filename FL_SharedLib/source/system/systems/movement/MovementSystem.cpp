@@ -4,24 +4,21 @@
 #include "system/systems/movement/MovementComponent.hpp"
 #include "system/systems/TransformComponent.hpp"
 #include "system/systems/StunComponent.hpp"
-#include "system/systems/collision/CollisionComponent.hpp"
 #include "system/systems/StateComponent.hpp"
-#include "system/systems/collision/CollisionCellMap.hpp"
 #include "system/IEntityRegistry.hpp"
 #include <algorithm>
 
-sl::MovementSystem::MovementSystem(const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry):
-    collisionCellMap(collisionCellMap), entityRegistry(entityRegistry)
+sl::MovementSystem::MovementSystem(const IEntityRegistry& entityRegistry):
+    entityRegistry(entityRegistry)
 {
     reusableEntityIdsBuffer = std::vector<sl::EntityId>();
 }
 
 void sl::MovementSystem::update(float updateTime, const sl::Entity& entity){
-    movingWithCollisionCheck(updateTime, entity, collisionCellMap, entityRegistry);
+    moving(updateTime, entity, entityRegistry);
 }
 
-void sl::MovementSystem::movingWithCollisionCheck(float updateTime, const sl::Entity& entity,
-    const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry)
+void sl::MovementSystem::moving(float updateTime, const sl::Entity& entity, const IEntityRegistry& entityRegistry)
 {
     sl::MovementComponent* movComp = entity.getComponent<sl::MovementComponent>();
     sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
@@ -44,115 +41,15 @@ void sl::MovementSystem::movingWithCollisionCheck(float updateTime, const sl::En
     sf::Vector2f delta = movComp->calculateDelta(updateTime);
     sf::Vector2f currentPos = trComp->getPosition();
 
-    if (delta.x < MIN_SPEED_FOR_SUB_STEPPING_ALGORITHM && delta.y < MIN_SPEED_FOR_SUB_STEPPING_ALGORITHM) {
-        standartPositionCalculate(entity, delta, currentPos, collisionCellMap, entityRegistry);
-    }
-    else {
-        subSteppingPositionCalculate(entity, delta, currentPos, collisionCellMap, entityRegistry);
-    }
-
-    trComp->setPosition(currentPos);
+    movComp->setMovementEndPoint(currentPos + delta);
     trComp->setRotation(movComp->getVelocityDirection());
     stateComp->setCurrentMovementState(sl::MovementState::Walk);
     movComp->isMovementAlreadyReseted = false;
 }
 
-void sl::MovementSystem::standartPositionCalculate(const sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos,
-    const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry)
-{
-    if (delta.x != 0.f) {
-        sf::Vector2f targetPosX = { currentPos.x + delta.x, currentPos.y };
-        if (!isBlockedOnPosition(entity, targetPosX, collisionCellMap, entityRegistry)) {
-            currentPos.x = targetPosX.x;
-        }
-    }
-
-    if (delta.y != 0.f) {
-        sf::Vector2f targetPosY = { currentPos.x, currentPos.y + delta.y };
-        if (!isBlockedOnPosition(entity, targetPosY, collisionCellMap, entityRegistry)) {
-            currentPos.y = targetPosY.y;
-        }
-    }
-}
-
-void sl::MovementSystem::subSteppingPositionCalculate(const sl::Entity& entity, const sf::Vector2f& delta, sf::Vector2f& currentPos,
-    const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry)
-{
-    float maxStepSize = MAX_STEP_SIZE;
-
-    float totalDistance = std::hypot(delta.x, delta.y);
-    int steps = std::max(1, static_cast<int>(std::ceil(totalDistance / maxStepSize)));
-
-    sf::Vector2f subDelta = delta / static_cast<float>(steps);
-
-    for (int i = 0; i < steps; ++i) {
-
-        if (subDelta.x != 0.f) {
-            sf::Vector2f targetPosX = { currentPos.x + subDelta.x, currentPos.y };
-            if (!isBlockedOnPosition(entity, targetPosX, collisionCellMap, entityRegistry)) {
-                currentPos.x = targetPosX.x;
-            }
-            else {
-                subDelta.x = 0.f;
-            }
-        }
-
-        if (subDelta.y != 0.f) {
-            sf::Vector2f targetPosY = { currentPos.x, currentPos.y + subDelta.y };
-            if (!isBlockedOnPosition(entity, targetPosY, collisionCellMap, entityRegistry)) {
-                currentPos.y = targetPosY.y;
-            }
-            else {
-                subDelta.y = 0.f;
-            }
-        }
-
-        if (subDelta.x == 0.f && subDelta.y == 0.f) {
-            break;
-        }
-    }
-}
-
-bool sl::MovementSystem::isBlockedOnPosition(const sl::Entity& entity, const sf::Vector2f& testPos,
-    const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry)
-{
-    sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
-    if (!colisComp) { return false; }
-
-    AABB aabb = colisComp->getAABB();
-    reusableEntityIdsBuffer.clear();
-
-    if (!collisionCellMap.getNearestEntityIdsToEntity(aabb, testPos, reusableEntityIdsBuffer, ON_POSITION_SEARCH_DEPTH)) {
-        return false;
-    }
-
-    for (sl::EntityId id : reusableEntityIdsBuffer) {
-        if (id == entity.getId()) continue;
-
-        auto entityOpt = entityRegistry.getEntityById(id);
-        if (!entityOpt.has_value()) continue;
-
-        sl::CollisionComponent* anotherColisComp = entityOpt.value().get().getComponent<sl::CollisionComponent>();
-        sl::TransformComponent* anotherTransComp = entityOpt.value().get().getComponent<sl::TransformComponent>();
-        if (!anotherColisComp || !anotherTransComp) continue;
-
-        if (anotherColisComp->getCollisionType() != CollisionType::Block) continue;
-
-        AABB otherAABB = anotherColisComp->getAABB();
-        sf::Vector2f otherPosition = anotherTransComp->getPosition();
-
-        sl::CollisionType type = colisComp->isRelativeCollisionWith(testPos.x, testPos.y, otherAABB, otherPosition.x, otherPosition.y);
-
-        if (type == sl::CollisionType::Block) {
-            return true;
-        }
-    }
-
-    return false;
-}
 
 sl::systemPtr sl::MovementSystem::initialize(sl::SystemCreatorContext& context) {
-    return std::make_unique<sl::MovementSystem>(context.collisionCellMap, context.entityRegistry);
+    return std::make_unique<sl::MovementSystem>(context.entityRegistry);
 }
 
 sl::SystemProcessingPhase sl::MovementSystem::getProcessingPhase() {
