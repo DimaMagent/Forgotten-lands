@@ -21,10 +21,6 @@ namespace sl {
 		/*Use this method if the direction was obtained from within, such as player movement.*/
 		void addDirection(sf::Vector2i direction);
 
-		sf::Vector2f calculateDelta(float deltaTime);
-
-		void braking(float deltaTime);
-
 		//getters
 
 		sf::Vector2f getVelocity() const { return velocityVector; }
