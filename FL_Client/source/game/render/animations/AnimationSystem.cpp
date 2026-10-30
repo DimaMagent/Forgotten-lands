@@ -70,11 +70,8 @@ void AnimationSystem::updateAnimations(const sl::Entity& entity, float updateTim
 	if (!animComp->getTimeSinceLastUpdate(targetAnim, timeSinceLastUpdate)) { return; }
 
 	float currentFrequencyOfAnimation;
-	if (targetAnim == AnimationType::Attack) {
-		sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
-		sl::WeaponComponent* weaponComp = entity.getComponent<sl::WeaponComponent>();
-		currentFrequencyOfAnimation = weaponComp->getAttackCooldown().count() / animComp->getFramesCountForCurrentAnimation(targetAnim, trComp->getRotation());
-	} else if (!animComp->getCurrentFrequencyOfAnimationIfExist(targetAnim, currentFrequencyOfAnimation)) { return; }
+
+	if (!animComp->getCurrentFrequencyOfAnimationIfExist(targetAnim, currentFrequencyOfAnimation)) { return; }
 
 	if (timeSinceLastUpdate >= currentFrequencyOfAnimation) {
 
