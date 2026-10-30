@@ -25,15 +25,35 @@ namespace sl {
 
 		void braking(float deltaTime);
 
+		//getters
+
 		sf::Vector2f getVelocity() const { return velocityVector; }
 
 		sf::Vector2i getVelocityDirection() const { return velocityDirectionVector; }
 
 		sf::Vector2f getMovementEndPoint() const { return movementEndPoint; }
 
+		float getMaxSpeed() const { return maxSpeed; }
+
+		float getCurrentSpeed() const { return currentSpeed; }
+
+		const sf::Time& getMaxAccelerationTime() const { return maxAccelerationTime; }
+
+		const sf::Time& getCurrentAccelerationTime() const { return currentAccelerationTime; }
+
+		//end getters
+
+		//setters
+
 		void setMovementEndPoint(sf::Vector2f movementEndPoint) { this->movementEndPoint = movementEndPoint; }
 
 		void setVelocityDirection(const sf::Vector2i& direction);
+
+		void setCurrentSpeed(float newCurrentSpeed) { currentSpeed = newCurrentSpeed; }
+
+		void setCurrentAccelerationTime(const sf::Time& newAccelerationTime) { currentAccelerationTime = newAccelerationTime; }
+
+		//end setters
 
 		void resetVelocity() { velocityVector = sf::Vector2f(0.f, 0.f); }
 

@@ -6,6 +6,7 @@
 namespace sl {
 	class Entity;
 	class IEntityRegistry;
+	class MovementComponent;
 
 	class MovementSystem: public sl::UpdatableSystem {
 	public:
@@ -17,9 +18,11 @@ namespace sl {
 
 		const IEntityRegistry& entityRegistry;
 
-		std::vector<sl::EntityId> reusableEntityIdsBuffer;
-
 		void moving(float updateTime, const sl::Entity& entity, const IEntityRegistry& entityRegistry);
+
+		sf::Vector2f calculateDelta(float deltaTime, sl::MovementComponent& movComp);
+
+		void braking(float deltaTime, sl::MovementComponent& movComp);
 
 		RegisterUpdatableSystem();
 	};
