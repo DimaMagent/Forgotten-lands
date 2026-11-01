@@ -70,9 +70,9 @@ void Server::onClientAccept(uint32_t token)
 {
 	try {
 		std::vector<uint8_t> entityData;
-		uint32_t entityGlobalId = world->addPlayerEntity((sl::EntityType::Player), token, entityData).ID;
+		sl::EntityId entityGlobalId = world->addPlayerEntity("player", token, entityData).ID;
 
-		Packer::send<sl::net::AuthPacket>(token, entityGlobalId, entityData);
+		Packer::send<sl::net::AuthPacket>(token, entityGlobalId.ID, entityData);
 	}
 	catch (std::exception& e) {
 		net_logger->error("World::addPlayerEntity: token {} exception: {}", token, e.what());

@@ -5,8 +5,11 @@
 namespace sl {
 	Entity::~Entity() = default;
 
-	Entity::Entity(sl::EntityType type) {
+	Entity::Entity(sl::entityType type) {
 		this->type = type;
+	}
+	Entity::Entity(std::string typeName) {
+		this->type = sl::hashEntityType(typeName);
 	}
 
 	sl::Component* Entity::getComponent(TypeID ComponentTypeId) const {

@@ -1,11 +1,11 @@
 #pragma once
 #include <string>
 #include <cstdint>
+#include "system/Utils.hpp"
 
 namespace sl {
-	enum class EntityType: uint32_t {
-		Player,
-	};
+	using entityType = uint32_t;
 
-	std::string EntityTypeToString(EntityType type);
+	inline entityType hashEntityType(const char* typeName) { return sl::fnv1a(typeName); }
+	inline entityType hashEntityType(const std::string& typeName) { return sl::fnv1a(typeName.c_str()); }
 }

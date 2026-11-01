@@ -17,9 +17,9 @@ ClientEntityFactory::~ClientEntityFactory() = default;
 
 sl::Entity ClientEntityFactory::entityCollection(const sl::net::EntityData& enData)
 {
-	uint32_t type = enData.entityType;
+	sl::entityType type = enData.entityType;
 
-	sl::Entity entity = createEntity(static_cast<sl::EntityType>(type));
+	sl::Entity entity = createEntity(type);
 
 	for (auto& compData : enData.componentsData) {
 		sl::Serializable* s = createAndAttach(compData.typeId, entity);

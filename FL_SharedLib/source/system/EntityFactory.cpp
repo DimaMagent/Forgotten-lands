@@ -11,7 +11,7 @@ sl::EntityFactory::EntityFactory(std::unique_ptr<sl::DataLoader>&& dataLoader){
 
 sl::EntityFactory::~EntityFactory() = default;
 
-sl::Entity sl::EntityFactory::createEntity(sl::EntityType entityType)
+sl::Entity sl::EntityFactory::createEntity(sl::entityType entityType)
 {
 	if (!dataLoader)
 	{
@@ -37,6 +37,10 @@ sl::Entity sl::EntityFactory::createEntity(sl::EntityType entityType)
 	}
 
 	return entity;
+}
+
+sl::Entity sl::EntityFactory::createEntity(const std::string& entityTypeName) {
+	return createEntity(sl::hashEntityType(entityTypeName));
 }
 
 void sl::EntityFactory::registerComponent(sl::TypeID componentTypeId, sl::ComponentFactory factory)

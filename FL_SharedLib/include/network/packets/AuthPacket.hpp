@@ -1,6 +1,7 @@
 #pragma once
 #include "Packet.hpp"
 #include "PacketDataTypes.hpp"
+#include "system/EntityId.hpp"
 
 namespace sl::net {
 	struct AuthData : Data {

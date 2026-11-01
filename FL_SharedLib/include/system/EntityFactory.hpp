@@ -42,7 +42,8 @@ namespace sl {
 		EntityFactory(EntityFactory&&) = default;
 		virtual ~EntityFactory();
 
-		sl::Entity createEntity(sl::EntityType entityType);
+		sl::Entity createEntity(sl::entityType entityType);
+		sl::Entity createEntity(const std::string& entityTypeName);
 
 		static void registerComponent(sl::TypeID componentTypeId, sl::ComponentFactory factory);
 

@@ -2,6 +2,7 @@
 #include "ServerDataLoader.hpp"
 #include <fstream>
 #include "system/EntityType.hpp"
+#include "system/Utils.hpp"
 
 std::vector<std::string> ServerDataLoader::filePaths = { "manifests/Characters.json" };
 
@@ -20,9 +21,8 @@ void ServerDataLoader::loadData()
 				nlohmann::json data;
 				file >> data;
 
-				for (uint32_t entityType = 0; sl::EntityTypeToString(static_cast<sl::EntityType>(entityType)) != "undefined"; ++entityType) {
-					auto& EntityData = data.at(sl::EntityTypeToString(static_cast<sl::EntityType>(entityType)));
-					jsonFileData[path].try_emplace(entityType, EntityData);
+				for (auto& [typeName, entityData] : data.items()) {
+					jsonFileData[path].try_emplace(sl::hashEntityType(typeName), entityData);
 				}
 
 				file.close();
@@ -44,14 +44,28 @@ void ServerDataLoader::loadData()
 	}
 }
 
-std::optional<json> ServerDataLoader::getEntityData(sl::EntityType id) {
+std::optional<json> ServerDataLoader::getEntityData(sl::entityType type) {
 	if (filePaths.empty()) { return {}; }
 
 	auto enData = jsonFileData.find(filePaths[0]); //temp
 	if (enData == jsonFileData.end()) { return {}; }
 
-	auto jsonData = enData->second.find(static_cast<uint32_t>(id));
+	auto jsonData = enData->second.find(type);
 	if (jsonData == enData->second.end()) { return {}; }
 
 	return jsonData->second;
+}
+
+std::optional<json> ServerDataLoader::getEntityData(std::string typeName)
+{
+	if (filePaths.empty()) { return {}; }
+
+	auto enData = jsonFileData.find(filePaths[0]); //temp
+	if (enData == jsonFileData.end()) { return {}; }
+
+	auto jsonData = enData->second.find(sl::hashEntityType(typeName));
+	if (jsonData == enData->second.end()) { return {}; }
+
+	return jsonData->second;
+	return std::optional<json>();
 }

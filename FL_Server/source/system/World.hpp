@@ -20,9 +20,11 @@ public:
 
 	virtual ~World();
 
-	sl::EntityId addEntity(sl::EntityType entityType);
+	sl::EntityId addEntity(sl::entityType entityType);
+	sl::EntityId addEntity(const std::string& entityTypeName);
 
-	sl::EntityId addPlayerEntity(sl::EntityType entityType, const uint32_t& sessionToken, std::vector<uint8_t>& serializedEntityDataOut);
+	sl::EntityId addPlayerEntity(sl::entityType entityType, const uint32_t& sessionToken, std::vector<uint8_t>& serializedEntityDataOut);
+	sl::EntityId addPlayerEntity(const std::string& entityTypeName, const uint32_t& sessionToken, std::vector<uint8_t>& serializedEntityDataOut);
 
 	void removePlayerEntityByToken(uint32_t sessionToken);
 

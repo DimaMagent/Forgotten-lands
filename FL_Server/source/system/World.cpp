@@ -21,7 +21,7 @@ World::World(ConnectionEvents& connectionEvents): WorldBase()
 World::~World() = default;
 
 
-sl::EntityId World::addPlayerEntity(sl::EntityType entityType, const uint32_t& sessionToken, std::vector<uint8_t>& serializedEntityDataOut)
+sl::EntityId World::addPlayerEntity(sl::entityType entityType, const uint32_t& sessionToken, std::vector<uint8_t>& serializedEntityDataOut)
 {
 	sl::EntityId entityId = addEntity(entityType);
 
@@ -54,6 +54,10 @@ sl::EntityId World::addPlayerEntity(sl::EntityType entityType, const uint32_t& s
 
 }
 
+sl::EntityId World::addPlayerEntity(const std::string& entityTypeName, const uint32_t& sessionToken, std::vector<uint8_t>& serializedEntityDataOut) {
+	return addPlayerEntity(sl::hashEntityType(entityTypeName), sessionToken, serializedEntityDataOut);
+}
+
 void World::removePlayerEntityByToken(uint32_t sessionToken)
 {
 	auto it = tokenToEntityId.find(sessionToken);
@@ -82,7 +86,7 @@ void World::removeEntityById(sl::EntityId id)
 
 }
 
-sl::EntityId World::addEntity(sl::EntityType entityType)
+sl::EntityId World::addEntity(sl::entityType entityType)
 {
 	if (!entityFactory)
 	{
@@ -104,6 +108,10 @@ sl::EntityId World::addEntity(sl::EntityType entityType)
 	worldMap->onEntityAdded(*entityPtr);
 
 	return entityId;
+}
+
+sl::EntityId World::addEntity(const std::string& entityTypeName) {
+	return addEntity(sl::hashEntityType(entityTypeName));
 }
 
 std::optional<std::reference_wrapper<const sl::Entity>> World::getEntityById(sl::EntityId id) const

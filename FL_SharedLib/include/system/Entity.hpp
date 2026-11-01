@@ -14,7 +14,8 @@ namespace sl {
 
     class Entity {
     public:
-		Entity(sl::EntityType type);
+		Entity(sl::entityType type);
+        Entity(std::string typeName);
         ~Entity();
 
         Entity(const Entity&) = delete;
@@ -25,7 +26,7 @@ namespace sl {
 
         EntityId getId() const { return id; }
 
-        sl::EntityType getEntityType() const { return type; }
+        sl::entityType getEntityType() const { return type; }
 
         void setId(EntityId newId) { id = newId; }
 
@@ -99,7 +100,7 @@ namespace sl {
 
     private:
         sl::EntityId id;
-        sl::EntityType type;
+        sl::entityType type;
         std::vector<std::pair<TypeID, std::unique_ptr<sl::Component>>> components;
     };
 }

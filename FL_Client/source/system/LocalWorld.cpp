@@ -24,7 +24,7 @@ LocalWorld::LocalWorld(sf::RenderTarget& renderTarget, DataProcessedDelegate& On
 
 LocalWorld::~LocalWorld() = default;
 
-void LocalWorld::addPlayerEntity(sl::EntityType entityType, sl::EntityId id)
+void LocalWorld::addPlayerEntity(sl::entityType entityType, sl::EntityId id)
 {
 	addEntity(entityType, id);
 
@@ -34,6 +34,10 @@ void LocalWorld::addPlayerEntity(sl::EntityType entityType, sl::EntityId id)
 
 	OnSetPlayerEntity.broadcast(playerEntityId);
 	
+}
+
+void LocalWorld::addPlayerEntity(const std::string& entityType, sl::EntityId id) {
+	addPlayerEntity(sl::hashEntityType(entityType), id);
 }
 
 void LocalWorld::addPlayerEntity(sl::Entity&& entity, sl::EntityId id)
@@ -47,7 +51,7 @@ void LocalWorld::addPlayerEntity(sl::Entity&& entity, sl::EntityId id)
 	OnSetPlayerEntity.broadcast(playerEntityId);
 }
 
-void LocalWorld::addEntity(sl::EntityType entityType, sl::EntityId id)
+void LocalWorld::addEntity(sl::entityType entityType, sl::EntityId id)
 {
 	if (!entityFactory) {
 		throw std::runtime_error("LocalWorld::addEntity entityFactory is not valid. addEntity failed.");
@@ -64,6 +68,10 @@ void LocalWorld::addEntity(sl::EntityType entityType, sl::EntityId id)
 	if (enPtr) {
 		worldMap->onEntityAdded(*enPtr);
 	}
+}
+
+void LocalWorld::addEntity(const std::string& entityType, sl::EntityId id) {
+	return addEntity(sl::hashEntityType(entityType), id);
 }
 
 void LocalWorld::render()

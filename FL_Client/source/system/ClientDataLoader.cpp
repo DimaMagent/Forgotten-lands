@@ -2,6 +2,7 @@
 #include "ClientDataLoader.hpp"
 #include <fstream>
 #include "system/EntityType.hpp"
+#include "system/Utils.hpp"
 
 std::vector<std::string> ClientDataLoader::filePaths = { "manifests/ClientCharacterComponents.json" };
 
@@ -20,9 +21,8 @@ void ClientDataLoader::loadData()
 				nlohmann::json data;
 				file >> data;
 
-				for (uint32_t entityType = 0; sl::EntityTypeToString(static_cast<sl::EntityType>(entityType)) != "undefined"; ++entityType) {
-					auto& EntityData = data.at(sl::EntityTypeToString(static_cast<sl::EntityType>(entityType)));
-					jsonFileData[path].try_emplace(entityType, EntityData);
+				for (auto& [typeName, entityData] : data.items()) {
+					jsonFileData[path].try_emplace(sl::hashEntityType(typeName), entityData);
 				}
 
 				file.close();
@@ -33,7 +33,7 @@ void ClientDataLoader::loadData()
 			}
 		}
 	}
-	catch(std::exception& e){
+	catch (std::exception& e){
 		std::shared_ptr<spdlog::logger> load_logger = spdlog::get("load");
 		if (load_logger) {
 			load_logger->error("ClientDataLoader::loadData exception: {}", e.what());
@@ -44,14 +44,28 @@ void ClientDataLoader::loadData()
 	}
 }
 
-std::optional<json> ClientDataLoader::getEntityData(sl::EntityType id) {
+std::optional<json> ClientDataLoader::getEntityData(sl::entityType type) {
 	if (filePaths.empty()) { return {}; }
 
 	auto enData = jsonFileData.find(filePaths[0]); //temp
 	if (enData == jsonFileData.end()) { return {}; }
 
-	auto jsonData = enData->second.find(static_cast<uint32_t>(id));
+	auto jsonData = enData->second.find(type);
 	if (jsonData == enData->second.end()) { return {}; }
 
 	return jsonData->second;
+}
+
+std::optional<json> ClientDataLoader::getEntityData(std::string typeName)
+{
+	if (filePaths.empty()) { return {}; }
+
+	auto enData = jsonFileData.find(filePaths[0]); //temp
+	if (enData == jsonFileData.end()) { return {}; }
+
+	auto jsonData = enData->second.find(sl::hashEntityType(typeName));
+	if (jsonData == enData->second.end()) { return {}; }
+
+	return jsonData->second;
+	return std::optional<json>();
 }

@@ -31,9 +31,11 @@ public:
 
 	virtual ~LocalWorld();
 
-	void addEntity(sl::EntityType entityType, sl::EntityId id);
+	void addEntity(sl::entityType entityType, sl::EntityId id);
+	void addEntity(const std::string& entityType, sl::EntityId id);
 
-	void addPlayerEntity(sl::EntityType entityType, sl::EntityId id);
+	void addPlayerEntity(sl::entityType entityType, sl::EntityId id);
+	void addPlayerEntity(const std::string& entityType, sl::EntityId id);
 
 	void removeEntityById(sl::EntityId id) override;
 
