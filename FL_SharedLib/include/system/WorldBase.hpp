@@ -6,6 +6,7 @@
 #include <functional>
 #include <span>
 #include "IEntityRegistry.hpp"
+#include "IEntityStorage.hpp"
 #include "EntityId.hpp"
 
 namespace sl {
@@ -16,14 +17,12 @@ namespace sl {
 }
 
 namespace sl {
-	class WorldBase: public IEntityRegistry {
+	class WorldBase: public IEntityRegistry, public IEntityStorage {
 	public:
 		WorldBase();
 		virtual ~WorldBase();
 		void update(float deltaTime);
 		virtual void removeEntityById(sl::EntityId id) = 0;
-		virtual std::span<sl::Entity> getEntities() = 0;
-		virtual std::span<const sl::Entity> getEntities() const = 0;
 		const std::optional<std::reference_wrapper<sl::WorldMap>> getWorldMap() const;
 
 	protected:

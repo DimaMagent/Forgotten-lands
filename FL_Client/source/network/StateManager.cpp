@@ -6,9 +6,11 @@
 #include "network/Serializable.hpp"
 #include "system/storages/EntityStorage.hpp"
 #include "network/packets/PacketManager.hpp"
+#include "system/INetworkEntityRegistry.hpp"
+#include "system/IEntityStorage.hpp"
 
-StateManager::StateManager(sl::EntityStorage& entities, DataProcessedDelegate& OnDataProcessed):
-	entities(entities)
+StateManager::StateManager(INetworkEntityRegistry& networkEntityRegistry, sl::IEntityStorage& entityStorage, DataProcessedDelegate& OnDataProcessed):
+	networkEntityRegistry(networkEntityRegistry), entityStorage(entityStorage)
 {
 	net_logger = spdlog::get("network");
 	token = OnDataProcessed.addFunction([this](sl::net::PacketType type, std::vector<uint8_t>&& data) {
@@ -48,9 +50,13 @@ void StateManager::recordRollback(const sl::net::StatusData& data)
 		typeIds.push_back(enData.entityId);
 		for (auto& compData : enData.componentsData) {
 
-			if (auto en = entities.getEntityToId(enData.entityId); en)
+			if (auto en = networkEntityRegistry.getEntityByNetworkId(enData.entityId); en)
 			{
-				en->forCurrentSerialization(compData.typeId, [this, &compData](sl::Serializable& s) {
+				if (!en.has_value()) {
+					net_logger->warn("StateManager::recordRollback: on match entity with network id {}", enData.entityId);
+					continue;
+				}
+				en.value().get().forCurrentSerialization(compData.typeId, [this, &compData](sl::Serializable& s) {
 					size_t offset = 0;
 					s.deserialize(compData.componentData, offset);
 					});
@@ -62,10 +68,12 @@ void StateManager::recordRollback(const sl::net::StatusData& data)
 		}
 		
 	}
-	for (size_t i = 0; entities.getEntities().size() > i; ++i) {
-		auto it = std::find(typeIds.begin(), typeIds.end(), entities.getEntities()[i].getId());
+	auto entities = entityStorage.getEntities();
+
+	for (size_t i = 0; entities.size() > i; ++i) {
+		auto it = std::find(typeIds.begin(), typeIds.end(), entities[i].getId());
 		if (it == typeIds.end()) {
-			OnEntityAbsenceOnStatusPacket.broadcast(entities.getEntities()[i].getId());
+			OnEntityAbsenceOnStatusPacket.broadcast(entities[i].getId());
 		}
 	}
 }

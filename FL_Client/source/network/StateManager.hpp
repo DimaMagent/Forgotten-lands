@@ -12,14 +12,14 @@
 
 namespace sl {
 	class Entity;
+	class IEntityStorage;
 	namespace net {
 		struct StatusData;
 		struct AuthData;
 		struct EntityData;
 	}
-	struct EntityStorage;
-
 }
+class INetworkEntityRegistry;
 
 //stores the sequence of player actions
 class StateManager {
@@ -28,13 +28,14 @@ public:
 	sl::LockFreeDelegate<sl::EntityId> OnEntityAbsenceOnStatusPacket;
 	sl::LockFreeDelegate<const sl::net::EntityData&> OnAuth;
 
-	StateManager(sl::EntityStorage& entities, DataProcessedDelegate& OnDataProcessed);
+	StateManager(INetworkEntityRegistry& networkEntityRegistry, sl::IEntityStorage& entityStorage, DataProcessedDelegate& OnDataProcessed);
 	void recordRollback(const sl::net::StatusData& data);
 	void auth(const sl::net::AuthData& data);
 private:
 	std::shared_ptr<spdlog::logger> net_logger;
 
 	uint32_t lastAppliedSequence = 0;
-	sl::EntityStorage& entities;
+	sl::IEntityStorage& entityStorage;
+	INetworkEntityRegistry& networkEntityRegistry;
 	std::shared_ptr<sl::DelegateToken> token;
 };

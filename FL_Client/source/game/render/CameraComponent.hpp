@@ -21,6 +21,7 @@ public:
 	COMPONENT_TYPE(CameraComponent);
 private:
 	std::unique_ptr<sf::View> camera;
+
 	std::optional<sl::EntityId> targetEntityId;
 
 	REGISTER_COMPONENT();
