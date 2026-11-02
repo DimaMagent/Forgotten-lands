@@ -155,12 +155,9 @@ void LocalWorld::onAbsenceEntity(const sl::net::EntityData& enData)
 
 void LocalWorld::onAbsenceEntityOnStatusPacket(sl::EntityId networkId)
 {
-	auto localEntityId =  getLocalIdByNetworkId(networkId);
+	auto localEntityId = getLocalIdByNetworkId(networkId);
 
-	if (!localEntityId.has_value()) {
-		game_logger->error("LocalWorld::onAbsenceEntityOnStatusPacket: no match found for the local entity id to the network entity id: {}", networkId.ID);
-		return;
-	}
+	if (!localEntityId.has_value()) { return; }
 
 	removeEntityById(localEntityId.value());
 }

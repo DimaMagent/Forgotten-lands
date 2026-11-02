@@ -80,7 +80,9 @@ void Client::start()
 	}
 }
 
-void Client::whenClientAccepted(){}
+void Client::whenClientAccepted(){
+	//world->addEntity("camera");
+}
 
 void Client::initLogging() {
 	try {
