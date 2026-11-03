@@ -27,6 +27,9 @@
     },
     "StunComponent": {},
     "NetworkIDComponent": {},
-    "IntentComponent": {}
+    "IntentComponent": {},
+    "VisionComponent": {
+      "vision radius": 500.0
+    }
   }
 }

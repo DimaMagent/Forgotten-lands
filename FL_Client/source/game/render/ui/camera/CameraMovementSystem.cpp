@@ -1,3 +1,4 @@
+#include "pch.hpp"
 #include "game/render/ui/camera/CameraMovementSystem.hpp"
 #include "game/render/ui/camera/CameraComponent.hpp"
 #include "system/systems/TransformComponent.hpp"
