@@ -31,7 +31,7 @@ Client::Client()
 		controller->onNewAction,
 		controller->onSetMovementDirection);
 
-	ClientSystemCreatorContext context = { world->getWorldMap().value().get().getCollisionMap().value(), *world, *world};
+	ClientSystemCreatorContext context = { world->getWorldMap().value().get().getCollisionMap().value(), *world, *world, *window};
 	systemUpdater = std::make_unique<ClientSystemUpdater>(context);
 	systemUpdater->createSystems();
 	tickTimer = std::make_shared<asio::steady_timer>(*clientContext);
@@ -81,7 +81,6 @@ void Client::start()
 }
 
 void Client::whenClientAccepted(){
-	//world->addEntity("camera");
 }
 
 void Client::initLogging() {

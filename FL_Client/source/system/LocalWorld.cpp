@@ -13,7 +13,7 @@
 
 LocalWorld::LocalWorld(sf::RenderTarget& renderTarget, DataProcessedDelegate& OnDataProcessed) : WorldBase(),
 	stateManager(std::make_shared<StateManager>(*this, *this, OnDataProcessed)),
-	entityFactory(std::make_unique<ClientEntityFactory>()), renderManager(std::make_unique<RenderManager>(renderTarget))
+	entityFactory(std::make_unique<ClientEntityFactory>(*this)), renderManager(std::make_unique<RenderManager>(renderTarget))
 {
 	game_logger = spdlog::get("game");
 
@@ -174,6 +174,8 @@ void LocalWorld::onAuth(const sl::net::EntityData& enData)
 		sl::EntityId localEntityId = addNetworkEntity(std::move(entityFactory->entityCollection(enData)), enData.entityId);
 
 		setPlayerEntity(localEntityId);
+
+		addEntity("camera");
 
 	}
 	catch (std::exception& e) {

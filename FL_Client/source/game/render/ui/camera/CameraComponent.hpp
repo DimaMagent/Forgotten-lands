@@ -18,6 +18,10 @@ public:
 	
 	const sf::View& getCamera();
 
+	void setTargetEntity(sl::EntityId newTargetEntity) { targetEntityId = newTargetEntity; }
+
+	std::optional<sl::EntityId> getTargetEntityId() const { return targetEntityId; }
+
 	COMPONENT_TYPE(CameraComponent);
 private:
 	std::unique_ptr<sf::View> camera;

@@ -4,6 +4,7 @@
 #include "SFML/Graphics/Texture.hpp"
 #include "system/Entity.hpp"
 #include "game/render/TextureManager.hpp"
+#include "system/ClientComponentInitContext.hpp"
 
 AnimationComponent::AnimationComponent()
 {
@@ -133,9 +134,9 @@ void AnimationComponent::initialize(sl::ComponentInitContext context) {
 		return;
 	}
 
-	auto* textureManager = context.getService<TextureManager>();
-	if (!textureManager) {
-		throw("ComponentInitContext does not store TextureManager");
+	ClientComponentInitContext* clientContext = context.getService<ClientComponentInitContext>();
+	if (!clientContext) {
+		throw std::runtime_error("AnimationComponent::initialize: ComponentInitContext does not store TextureManager");
 		return;
 	}
 
@@ -146,7 +147,7 @@ void AnimationComponent::initialize(sl::ComponentInitContext context) {
 			std::vector<std::shared_ptr<sf::Texture>> directionFrames;
 			for (auto& [directionName, framePaths] : animation.items()) {
 				for (auto& framePath : framePaths) {
-					directionFrames.push_back(textureManager->getTexture(framePath));
+					directionFrames.push_back(clientContext->textureManager.getTexture(framePath));
 				}
 				animationStorage->addAnimations(animationTypeFromString(animationName), directionName, directionFrames);
 				directionFrames.clear();

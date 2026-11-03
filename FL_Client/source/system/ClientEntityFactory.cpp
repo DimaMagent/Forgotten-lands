@@ -7,10 +7,14 @@
 #include "game/render/TextureManager.hpp"
 #include "ClientDataLoader.hpp"
 #include "network/Serializable.hpp"
+#include "ClientComponentInitContext.hpp"
 
-ClientEntityFactory::ClientEntityFactory() : sl::EntityFactory(std::make_unique<ClientDataLoader>())
+ClientEntityFactory::ClientEntityFactory(const IPlayerEntityStorage& playerEntityStorage) :
+	sl::EntityFactory(std::make_unique<ClientDataLoader>())
 {
 	textureManager = std::make_unique<TextureManager>();
+
+	clientContext = std::make_unique<ClientComponentInitContext>(*textureManager.get(), playerEntityStorage);
 }
 
 ClientEntityFactory::~ClientEntityFactory() = default;
@@ -34,7 +38,7 @@ sl::Entity ClientEntityFactory::entityCollection(const sl::net::EntityData& enDa
 
 std::any ClientEntityFactory::getServiceProvider()
 {
-	return textureManager.get();
+	return clientContext.get();
 }
 
 sl::Serializable* ClientEntityFactory::createAndAttach(uint32_t typeId, sl::Entity& entity) {
@@ -42,7 +46,7 @@ sl::Serializable* ClientEntityFactory::createAndAttach(uint32_t typeId, sl::Enti
 	if (it != getRegistry().end()) {
 		sl::Component* comp = entity.getComponent(typeId);
 		if (!comp) {
-			sl::ComponentInitContext ctx{ entity, nullptr, nullptr };
+			sl::ComponentInitContext ctx{ entity, nullptr, nullptr};
 			it->second(ctx);
 		}
 		return dynamic_cast<sl::Serializable*>(comp);

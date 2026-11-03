@@ -4,6 +4,7 @@
 #include "game/render/animations/AnimationsStorage.hpp"
 #include "system/Entity.hpp"
 #include "TextureManager.hpp"
+#include "system/ClientComponentInitContext.hpp"
 
 
 RenderComponent::RenderComponent()
@@ -44,14 +45,15 @@ void RenderComponent::initialize(sl::ComponentInitContext context) {
 		context.entity.addComponent<RenderComponent>();
 		return;
 	}
-	auto* textureManager = context.getService<TextureManager>();
-	if (!textureManager) {
-		throw("ComponentInitContext does not store TextureManager");
+
+	ClientComponentInitContext* clientContext = context.getService<ClientComponentInitContext>();
+	if (!clientContext) {
+		throw std::runtime_error("RenderComponent::initialize: ComponentInitContext does not store ClientComponentInitContext");
 		return;
 	}
 	auto& rectData = context.js->at("textureRect");
 
-	context.entity.addComponent<RenderComponent>(textureManager->getTexture(context.js->value("texture", "")),
+	context.entity.addComponent<RenderComponent>(clientContext->textureManager.getTexture(context.js->value("texture", "")),
 		rectData.value("height", 0),
 		rectData.value("width", 0),
 		rectData.value("x", 0),

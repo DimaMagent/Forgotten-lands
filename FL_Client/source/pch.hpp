@@ -8,6 +8,7 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <stdexcept>
 #include <memory>
 #include <string>
 #include <vector>

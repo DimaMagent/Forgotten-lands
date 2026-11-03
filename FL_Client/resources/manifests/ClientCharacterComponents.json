@@ -219,6 +219,12 @@
       "centerPositionY": 0.0,
       "cameraSizeX": 1500.0,
       "cameraSizeY": 1500.0
+    },
+    "TransformComponent": {
+      "position": {
+        "x": 0,
+        "y": 0
+      }
     }
   }
 }
