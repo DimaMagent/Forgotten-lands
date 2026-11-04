@@ -4,7 +4,7 @@
 #include "system/systems/collision/Aabb.hpp"
 #include <cstdint>
 #include <string>
-#include "system/systems/collision/Cell.hpp"
+#include "system/Cell.hpp"
 
 namespace sl {
 

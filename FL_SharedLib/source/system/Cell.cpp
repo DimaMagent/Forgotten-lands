@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "system/systems/collision/Cell.hpp"
+#include "system/Cell.hpp"
 
 sl::Cell::Cell(float posX, float posY)
 {

@@ -3,7 +3,7 @@
 #include <vector>
 #include <cstdint>
 #include <unordered_map>
-#include "system/systems/collision/Cell.hpp"
+#include "system/Cell.hpp"
 #include "system/systems/collision/Aabb.hpp"
 #include "system/EntityId.hpp"
 

@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "system/systems/collision/Cell.hpp"
+#include "system/Cell.hpp"
 
 namespace sl {
 	class CollisionCellMap;

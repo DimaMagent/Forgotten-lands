@@ -6,18 +6,21 @@
 sl::TransformComponent::TransformComponent(){
 	setPosition(0.f, 0.f);
 	setRotation(0, -1);
+	setSize(0.0f, 0.0f);
 }
 
-sl::TransformComponent::TransformComponent(sf::Vector2f startPosition)
+sl::TransformComponent::TransformComponent(sf::Vector2f startPosition, sf::Vector2f size)
 {
 	setPosition(startPosition);
 	setRotation(0, -1);
+	setSize(size);
 }
 
-sl::TransformComponent::TransformComponent(float x, float y)
+sl::TransformComponent::TransformComponent(float x, float y, float sizeX, float sizeY)
 {
 	setPosition(x, y);
 	setRotation(0, -1);
+	setSize(sizeX, sizeY);
 }
 
 void sl::TransformComponent::setPosition(float x, float y)
@@ -52,6 +55,16 @@ void sl::TransformComponent::setRotation(const sf::Vector2i& rotation)
 	this->rotation = sl::inBounds(rotation, sf::Vector2i(-1, -1), sf::Vector2i(1, 1));
 }
 
+void sl::TransformComponent::setSize(float newSizeX, float newSizeY) {
+	if (newSizeX < 0 || newSizeY < 0) { return; }
+
+	this->size = sf::Vector2f(newSizeX, newSizeY);
+}
+
+void sl::TransformComponent::setSize(const sf::Vector2f& newSize) {
+	setSize(newSize.x, newSize.y);
+}
+
 void sl::TransformComponent::serialize(std::vector<uint8_t>& out) const
 {
 	sl::net::write<uint32_t>(out, TypeId);
@@ -83,6 +96,11 @@ void sl::TransformComponent::initialize(sl::ComponentInitContext context) {
 		context.entity.addComponent<sl::TransformComponent>();
 		return;
 	}
-	context.entity.addComponent<sl::TransformComponent>(context.js->at("position").value("x", 0.0f), context.js->at("position").value("y", 0.0f));
+	context.entity.addComponent<sl::TransformComponent>(
+		context.js->at("position").value("x", 0.0f),
+		context.js->at("position").value("y", 0.0f),
+		context.js->at("size").value("x", 0.0f),
+		context.js->at("size").value("y", 0.0f)
+	);
 }
 
