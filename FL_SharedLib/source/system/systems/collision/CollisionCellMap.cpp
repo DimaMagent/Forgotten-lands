@@ -37,10 +37,16 @@ void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
 
 	sl::EntityId entityId = entity.getId();
 
-	entityIdToDelegateToken.try_emplace(entity.getId(), transComp->onCellChanged.addFunction([this, entityId](sf::Vector2f pos) {
-		if (!adjustingEntityOnMap(entityId, pos)) {
+	entityIdToDelegateToken.try_emplace(entity.getId(), transComp->onPositionChanged.addFunction([this, entityId](sf::Vector2f prevPos, sf::Vector2f newPos) {
+		bool isCellChanged = (static_cast<int>(newPos.x / Cell::getCellSize()) != static_cast<int>(prevPos.x / Cell::getCellSize())) ||
+			(static_cast<int>(newPos.y / Cell::getCellSize()) != static_cast<int>(prevPos.y / Cell::getCellSize()));
+
+		if (!isCellChanged) { return; }
+
+		if (!adjustingEntityOnMap(entityId, newPos)) {
 			std::cout << "sl::CollisionCellMap::recordEntityToCollisionMap: adjustingEntityOnMap failed\n";
 		}
+
 		}));
 
 }

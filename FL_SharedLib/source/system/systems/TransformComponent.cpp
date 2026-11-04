@@ -25,15 +25,10 @@ sl::TransformComponent::TransformComponent(float x, float y, float sizeX, float 
 
 void sl::TransformComponent::setPosition(float x, float y)
 {
-	bool isCellChanged = (static_cast<int>(position.x / Cell::getCellSize()) != static_cast<int>(x / Cell::getCellSize())) ||
-		(static_cast<int>(position.y / Cell::getCellSize()) != static_cast<int>(y / Cell::getCellSize()));
+	onPositionChanged.broadcast(position, sf::Vector2f(x, y));
 
 	position.x = x;
 	position.y = y;
-
-	if (isCellChanged) {
-		onCellChanged.broadcast(position);
-	}
 }
 
 void sl::TransformComponent::setPosition(const sf::Vector2f& position)

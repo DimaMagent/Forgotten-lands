@@ -22,7 +22,6 @@ void AnimationFrequencyCalculatorSystem::update(float updateTime, const sl::Enti
 		float newFrequency = weaponComp->getAttackCooldown().count() / animComp->getFramesCountForCurrentAnimation(animComp->getCurrentAnimationType(), trComp->getRotation());
 
 		animComp->setCurrentFrequencyOfAnimationIfExist(animComp->getCurrentAnimationType(), newFrequency);
-		
 	}
 }
 
