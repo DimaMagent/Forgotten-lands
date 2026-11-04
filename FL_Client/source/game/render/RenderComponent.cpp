@@ -24,11 +24,18 @@ RenderComponent::RenderComponent(const std::shared_ptr<sf::Texture> texture, int
 	currentTexture = texture;
 }
 
-void RenderComponent::render(sf::RenderTarget& target, sf::Vector2f position) const
+void RenderComponent::render(sf::RenderTarget& target, sf::Vector2f position, sf::Vector2f size) const
 {
 	if (currentTexture) {
 		sf::Sprite sprite(*currentTexture, rectTransform);
+		
+		sf::Vector2f scale = sf::Vector2f(
+			size.x / static_cast<float>(rectTransform.size.x),
+			size.y / static_cast<float>(rectTransform.size.y)
+		);
+
 		sprite.setPosition(position);
+		sprite.setScale(scale);
 		target.draw(sprite);
 	}
 }

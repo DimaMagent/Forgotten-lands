@@ -17,5 +17,5 @@ void RenderManager::render(const sl::Entity& entity) const
 	sl::TransformComponent* trComp = entity.getComponent<sl::TransformComponent>();
 	if (!trComp) { return; }
 
-	rendComp->render(renderTarget, trComp->getPosition());
+ 	rendComp->render(renderTarget, trComp->getPosition(), trComp->getSize());
 }

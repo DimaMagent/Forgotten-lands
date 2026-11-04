@@ -20,7 +20,7 @@ public:
 
 	RenderComponent(const std::shared_ptr<sf::Texture> texture, int height, int width, int x, int y);
 
-	void render(sf::RenderTarget& target, sf::Vector2f position) const;
+	void render(sf::RenderTarget& target, sf::Vector2f position, sf::Vector2f size) const;
 
 	void setCurrentTexture(const std::shared_ptr<sf::Texture> newTexture);
 

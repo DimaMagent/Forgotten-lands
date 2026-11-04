@@ -71,19 +71,24 @@ void sl::TransformComponent::serialize(std::vector<uint8_t>& out) const
 	sl::net::write<uint32_t>(out, getDeserializeDataSize());
 	serializeVector2f(out, position);
 	serializeVector2i(out, rotation);
+	serializeVector2f(out, size);
 }
 
 bool sl::TransformComponent::deserialize(const std::vector<uint8_t>& out, size_t& offset)
 {
 	if ( offset + getDeserializeDataSize() > out.size()) { return false; }
-	position = deserializeVector2f(out, offset);
+	setPosition(deserializeVector2f(out, offset));
 	setRotation(deserializeVector2i(out, offset));
+	setSize(deserializeVector2f(out, offset));
 	return true;
 }
 
 uint32_t sl::TransformComponent::getSerializeDataSize() const
 {
-	return sizeof(position.x) + sizeof(position.y) + sizeof(rotation.x) + sizeof(rotation.y) + sizeof(TypeId) + sizeof(uint32_t);
+	return sizeof(position.x) + sizeof(position.y)
+		+ sizeof(rotation.x) + sizeof(rotation.y)
+		+ sizeof(size.x) + sizeof(size.y)
+		+ sizeof(TypeId) + sizeof(uint32_t);
 }
 
 uint32_t sl::TransformComponent::getDeserializeDataSize() const
