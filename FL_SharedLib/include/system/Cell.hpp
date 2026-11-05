@@ -15,6 +15,11 @@ namespace sl {
 		Cell(cellIndex cellNumX, cellIndex cellNumY);
 		static float getCellSize() { return cellSize; }
 
+		static bool isCellChanged(float prevPosX, float prevPosY, float newPosX, float newPosY) {
+			return (static_cast<int>(newPosX / Cell::getCellSize()) != static_cast<int>(prevPosX / Cell::getCellSize())) ||
+				(static_cast<int>(newPosY / Cell::getCellSize()) != static_cast<int>(prevPosY / Cell::getCellSize()));
+		}
+
 		bool operator==(const Cell& other) const noexcept {
 			return x == other.x && y == other.y;
 		}

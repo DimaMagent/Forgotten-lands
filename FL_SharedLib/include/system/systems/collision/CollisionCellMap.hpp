@@ -22,23 +22,25 @@ namespace sl {
 		
 		void removeEntityFromCollisionMap(const sl::Entity& entity);
 		
-		std::vector<sl::EntityId> getEntityIdsToCollisionMap(sf::Vector2f pos) const;
+		std::vector<sl::EntityId> getEntityIdsToCollisionMap(const sf::Vector2f& pos) const;
 		
-		[[nodiscard]] bool getNearestEntityIdsToPosition(sf::Vector2f pos, std::vector<sl::EntityId>& entityIdsOut, uint8_t searchDepth = 1) const;
+		[[nodiscard]] bool getNearestEntityIdsToPosition(const sf::Vector2f& pos, std::vector<sl::EntityId>& entityIdsOut, uint8_t searchDepth = 1) const;
 		
-		[[nodiscard]] bool getNearestEntityIdsToEntity(const AABB& aabb, sf::Vector2f pos, std::vector<sl::EntityId>& entityIdsOut, uint8_t searchDepth = 1) const;
+		[[nodiscard]] bool getNearestEntityIdsToEntity(const AABB& aabb, const sf::Vector2f& pos, std::vector<sl::EntityId>& entityIdsOut, uint8_t searchDepth = 1) const;
 		
 		static uint8_t getSearchDepthByDistance(float distance);
 	private:
 		std::unordered_map<Cell, std::vector<sl::EntityId>> cellToEntityIds;
 
+		std::unordered_map<sl::EntityId, std::vector<Cell>> entityToCell;
+
 		std::unordered_map<sl::EntityId, std::shared_ptr<sl::DelegateToken>> entityIdToDelegateToken;
 
 		const IEntityRegistry& entityRegistry;
 
-		[[nodiscard]] bool onMapBound(const AABB& aabb, sf::Vector2f pos) const;
-		[[nodiscard]] bool adjustingEntityOnMap(sl::EntityId entityId, sf::Vector2f pos);
-		[[nodiscard]] bool occupiedCellsAdd(sl::EntityId entityId, sf::Vector2f pos);
+		[[nodiscard]] bool onMapBound(const AABB& aabb, const sf::Vector2f& pos) const;
+		[[nodiscard]] bool correctingEntityOnMap(sl::EntityId entityId, const sf::Vector2f& pos);
+		[[nodiscard]] bool occupiedCellsAdd(sl::EntityId entityId, const sf::Vector2f& pos);
 		[[nodiscard]] bool occupiedCellsRemove(sl::EntityId entityId);
 	};
 }

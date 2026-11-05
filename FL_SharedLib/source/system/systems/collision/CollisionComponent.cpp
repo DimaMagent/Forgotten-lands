@@ -16,6 +16,11 @@ sl::CollisionComponent::CollisionComponent(float width, float height, bool stati
 
 }
 
+void sl::CollisionComponent::setAABB(sl::AABB aabb) {
+	this->aabb = aabb;
+	OnAABBChanged.broadcast(aabb);
+}
+
 sl::CollisionType sl::CollisionComponent::isRelativeCollisionWith(float posX, float posY, const AABB& otherAABB, float otherPosX, float otherPosY) const
 {
 	AABB relativeAABB = getRelativeAABB(this->aabb, posX, posY);

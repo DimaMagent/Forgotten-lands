@@ -70,7 +70,7 @@ void sl::CollisionSystem::update(float updateTime, const sl::Entity& entity) {
 
 			onCollisionDetected.broadcast(entity, entityOpt.value(), type);
 
-			//std::cout << "Collision detected between Entity " << entity->getGlobalId().ID << " and Entity " << id << " with CollisionType: " << static_cast<int>(type) << std::endl;
+			//std::cout << "Collision detected between Entity " << entity.getId().ID << " and Entity " << id.ID << " with CollisionType: " << static_cast<int>(type) << std::endl;
 		}
 
 
