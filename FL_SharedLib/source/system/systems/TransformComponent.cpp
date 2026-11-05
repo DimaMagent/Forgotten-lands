@@ -25,10 +25,12 @@ sl::TransformComponent::TransformComponent(float x, float y, float sizeX, float 
 
 void sl::TransformComponent::setPosition(float x, float y)
 {
-	onPositionChanged.broadcast(position, sf::Vector2f(x, y));
-
+	sf::Vector2f lastPos = position;
+	
 	position.x = x;
 	position.y = y;
+
+	OnPositionChanged.broadcast(lastPos, position);
 }
 
 void sl::TransformComponent::setPosition(const sf::Vector2f& position)
@@ -54,6 +56,8 @@ void sl::TransformComponent::setSize(float newSizeX, float newSizeY) {
 	if (newSizeX < 0 || newSizeY < 0) { return; }
 
 	this->size = sf::Vector2f(newSizeX, newSizeY);
+
+	OnSizeChanged.broadcast(sf::Vector2f(newSizeX, newSizeY));
 }
 
 void sl::TransformComponent::setSize(const sf::Vector2f& newSize) {

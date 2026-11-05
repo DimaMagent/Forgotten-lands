@@ -34,12 +34,16 @@ namespace sl {
 
 		std::unordered_map<sl::EntityId, std::vector<Cell>> entityToCell;
 
-		std::unordered_map<sl::EntityId, std::shared_ptr<sl::DelegateToken>> entityIdToDelegateToken;
+		std::unordered_map<sl::EntityId, std::vector<std::shared_ptr<sl::DelegateToken>>> entityIdToDelegateTokens;
 
 		const IEntityRegistry& entityRegistry;
 
 		[[nodiscard]] bool correctingEntityOnMap(sl::EntityId entityId, const sf::Vector2f& pos);
 		[[nodiscard]] bool occupiedCellsAdd(sl::EntityId entityId, const sf::Vector2f& pos);
 		[[nodiscard]] bool occupiedCellsRemove(sl::EntityId entityId);
+		
+		void onPositionChanged(sl::EntityId entityId, const sf::Vector2f& prevPos, const sf::Vector2f& newPos);
+
+		void onCollisionShapeChanged(sl::EntityId entityId, const sl::AABB& newAABB);
 	};
 }

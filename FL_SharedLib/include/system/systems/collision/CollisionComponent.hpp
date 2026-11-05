@@ -20,7 +20,7 @@ namespace sl {
 
 	class CollisionComponent : public Component, public sl::Serializable {
 	public:
-		sl::LockFreeDelegate<const sl::AABB&> OnAABBChanged;
+		sl::LockFreeDelegate<const sl::AABB&> OnCollisionShapedChanged;
 
 		CollisionComponent();
 

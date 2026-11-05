@@ -13,7 +13,9 @@ namespace sl {
 	class TransformComponent: public sl::Component, public sl::Serializable {
 	public:
 		// sends previous position and new position
-		sl::LockFreeDelegate<const sf::Vector2f&, const sf::Vector2f&> onPositionChanged;
+		sl::LockFreeDelegate<const sf::Vector2f&, const sf::Vector2f&> OnPositionChanged;
+
+		sl::LockFreeDelegate<const sf::Vector2f&> OnSizeChanged;
 
 		TransformComponent();
 		TransformComponent(sf::Vector2f startPosition, sf::Vector2f size);

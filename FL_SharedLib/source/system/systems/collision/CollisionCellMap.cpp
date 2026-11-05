@@ -15,7 +15,9 @@ sl::CollisionCellMap::CollisionCellMap(const IEntityRegistry& entityRegistry):
 
 void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
 {
-	if (!entity.hasComponent(sl::CollisionComponent::TypeId)){ return; }
+
+	sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
+	if (!colisComp) { return; }
 
 	sl::TransformComponent* transComp = entity.getComponent<sl::TransformComponent>();
 	if (!transComp) { return; }
@@ -28,12 +30,14 @@ void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
 
 	sl::EntityId entityId = entity.getId();
 
-	entityIdToDelegateToken.try_emplace(entity.getId(), transComp->onPositionChanged.addFunction([this, entityId](const sf::Vector2f& prevPos, const sf::Vector2f& newPos) {
-		if (!Cell::isCellChanged(prevPos.x, prevPos.y, newPos.x, newPos.y)) { return; }
+	entityIdToDelegateTokens.try_emplace(entity.getId(), std::vector<std::shared_ptr<sl::DelegateToken>>());
 
-		if (!correctingEntityOnMap(entityId, newPos)) {
-			std::cout << "sl::CollisionCellMap::recordEntityToCollisionMap: correctingEntityOnMap failed\n";
-		}
+	entityIdToDelegateTokens[entity.getId()].push_back(transComp->OnPositionChanged.addFunction([this, entityId](const sf::Vector2f& prevPos, const sf::Vector2f& newPos) {
+		onPositionChanged(entityId, prevPos, newPos);
+	}));
+
+	entityIdToDelegateTokens[entity.getId()].push_back(colisComp->OnCollisionShapedChanged.addFunction([this, entityId](const sl::AABB& newAABB) {
+		onCollisionShapeChanged(entityId, newAABB);
 	}));
 
 }
@@ -45,10 +49,10 @@ void sl::CollisionCellMap::removeEntityFromCollisionMap(const sl::Entity& entity
 
 	if (!isSuccess) { return; }
 
-	auto tokenIt = entityIdToDelegateToken.find(entity.getId());
-	if (tokenIt == entityIdToDelegateToken.end()) { return; }
+	auto tokenIt = entityIdToDelegateTokens.find(entity.getId());
+	if (tokenIt == entityIdToDelegateTokens.end()) { return; }
 
-	entityIdToDelegateToken.erase(tokenIt);
+	entityIdToDelegateTokens.erase(tokenIt);
 }
 
 std::vector<sl::EntityId> sl::CollisionCellMap::getEntityIdsToCollisionMap(const sf::Vector2f& pos) const
@@ -166,6 +170,7 @@ bool sl::CollisionCellMap::occupiedCellsAdd(sl::EntityId entityId, const sf::Vec
 			entityToCell[entityId].push_back(currentCell);
 		}
 	}
+
 	return true;
 }
 
@@ -205,4 +210,26 @@ bool sl::CollisionCellMap::occupiedCellsRemove(sl::EntityId entityId)
 	return true;
 }
 
+void sl::CollisionCellMap::onPositionChanged(sl::EntityId entityId, const sf::Vector2f& prevPos, const sf::Vector2f& newPos) {
+	if (!Cell::isCellChanged(prevPos.x, prevPos.y, newPos.x, newPos.y)) { return; }
 
+	if (!correctingEntityOnMap(entityId, newPos)) {
+		std::cout << "sl::CollisionCellMap::recordEntityToCollisionMap: correctingEntityOnMap failed\n";
+	}
+}
+
+void sl::CollisionCellMap::onCollisionShapeChanged(sl::EntityId entityId, const sl::AABB& newAABB) {
+
+	auto entityOpt = entityRegistry.getEntityById(entityId);
+
+	if (!entityOpt.has_value()) { return; }
+
+	const sl::Entity& entity = entityOpt.value().get();
+
+	sl::TransformComponent* transComp = entity.getComponent<sl::TransformComponent>();
+	if (!transComp) { return; }
+
+	if (!correctingEntityOnMap(entityId, transComp->getPosition())) {
+		std::cout << "sl::CollisionCellMap::recordEntityToCollisionMap: correctingEntityOnMap failed\n";
+	}
+}
