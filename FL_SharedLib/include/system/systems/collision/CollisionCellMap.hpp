@@ -38,7 +38,6 @@ namespace sl {
 
 		const IEntityRegistry& entityRegistry;
 
-		[[nodiscard]] bool onMapBound(const AABB& aabb, const sf::Vector2f& pos) const;
 		[[nodiscard]] bool correctingEntityOnMap(sl::EntityId entityId, const sf::Vector2f& pos);
 		[[nodiscard]] bool occupiedCellsAdd(sl::EntityId entityId, const sf::Vector2f& pos);
 		[[nodiscard]] bool occupiedCellsRemove(sl::EntityId entityId);

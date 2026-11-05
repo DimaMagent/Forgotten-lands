@@ -4,7 +4,7 @@
 #include <unordered_map>
 
 namespace sl {
-	using cellIndex = uint16_t;
+	using cellIndex = int16_t;
 
 
 	//stores (x, y) cell's index

@@ -65,19 +65,17 @@ std::vector<sl::EntityId> sl::CollisionCellMap::getEntityIdsToCollisionMap(const
 
 bool sl::CollisionCellMap::getNearestEntityIdsToPosition(const sf::Vector2f& pos, std::vector<sl::EntityId>& entityIdsOut, uint8_t searchDepth) const
 {
-	if (pos.x < 0.f || pos.y < 0.f) { return false; }
 	Cell centerCell(pos.x, pos.y);
 
-	int minX = std::max(0, static_cast<int>(centerCell.x) - searchDepth);
-	int maxX = static_cast<int>(centerCell.x) + searchDepth;
-	int minY = std::max(0, static_cast<int>(centerCell.y) - searchDepth);
-	int maxY = static_cast<int>(centerCell.y) + searchDepth;
+	cellIndex minX = centerCell.x - searchDepth;
+	cellIndex maxX = centerCell.x + searchDepth;
+	cellIndex minY = centerCell.y - searchDepth;
+	cellIndex maxY = centerCell.y + searchDepth;
 
-	for (int x = minX; x <= maxX; ++x) {
-		for (int y = minY; y <= maxY; ++y) {
-			if (x < 0 || y < 0) { continue; }
+	for (cellIndex x = minX; x <= maxX; ++x) {
+		for (cellIndex y = minY; y <= maxY; ++y) {
 
-			Cell cell(static_cast<cellIndex>(x), static_cast<cellIndex>(y));
+			Cell cell(x, y);
 
 			auto it = cellToEntityIds.find(cell);
 			if (it == cellToEntityIds.end()) { continue; }
@@ -93,21 +91,18 @@ bool sl::CollisionCellMap::getNearestEntityIdsToEntity(const AABB& aabb, const s
 {
 	if (!aabb.exists()) { return false; }
 
-	if (!onMapBound(aabb, pos)) { return false; }
-
 	Cell minCell(aabb.minX + pos.x, aabb.minY + pos.y);
 	Cell maxCell(aabb.maxX + pos.x, aabb.maxY + pos.y);
 		
-	int minX = std::max(0, static_cast<int>(minCell.x) - searchDepth);
-	int maxX = static_cast<int>(maxCell.x) + searchDepth;
-	int minY = std::max(0, static_cast<int>(minCell.y) - searchDepth);
-	int maxY = static_cast<int>(maxCell.y) + searchDepth;
+	cellIndex minX = minCell.x - searchDepth;
+	cellIndex maxX = maxCell.x + searchDepth;
+	cellIndex minY = minCell.y - searchDepth;
+	cellIndex maxY = maxCell.y + searchDepth;
 
-	for (int x = minX; x <= maxX; ++x) {
-		for (int y = minY; y <= maxY; ++y) {
-			if (x < 0 || y < 0) { continue; }
+	for (cellIndex x = minX; x <= maxX; ++x) {
+		for (cellIndex y = minY; y <= maxY; ++y) {
 
-			Cell cell(static_cast<cellIndex>(x), static_cast<cellIndex>(y));
+			Cell cell(x, y);
 
 			auto it = cellToEntityIds.find(cell);
 			if (it == cellToEntityIds.end()) { continue; }
@@ -122,13 +117,6 @@ bool sl::CollisionCellMap::getNearestEntityIdsToEntity(const AABB& aabb, const s
 uint8_t sl::CollisionCellMap::getSearchDepthByDistance(float distance)
 {
 	return static_cast<uint8_t>(ceil(distance / Cell::getCellSize()));
-}
-
-bool sl::CollisionCellMap::onMapBound(const AABB& aabb, const sf::Vector2f& pos) const
-{
-	if (aabb.minX + pos.x < 0 || aabb.minY + pos.y < 0 || aabb.maxX + pos.x < 0 || aabb.maxY + pos.y < 0) { return false; }
-
-	return true;
 }
 
 bool sl::CollisionCellMap::correctingEntityOnMap(sl::EntityId entityId, const sf::Vector2f& pos)
@@ -154,8 +142,6 @@ bool sl::CollisionCellMap::occupiedCellsAdd(sl::EntityId entityId, const sf::Vec
 	AABB aabb = colisComp->getAABB();
 
 	if (!aabb.exists()) { return false; }
-
-	if (!onMapBound(aabb, pos)) { return false; }
 
 	auto it = entityToCell.find(entityId);
 	if (it == entityToCell.end()) {
