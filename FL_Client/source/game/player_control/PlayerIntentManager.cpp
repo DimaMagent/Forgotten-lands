@@ -2,7 +2,7 @@
 #include "PlayerIntentManager.hpp"
 #include "system/Entity.hpp"
 #include "system/IEntityRegistry.hpp"
-#include "system/WorldMap.hpp"
+#include "system/grids/WorldGridsManager.hpp"
 #include "system/systems/IntentComponent.hpp"
 
 PlayerIntentManager::PlayerIntentManager(

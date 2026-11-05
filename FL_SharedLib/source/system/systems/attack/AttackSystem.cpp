@@ -11,9 +11,9 @@
 #include "system/systems/StunComponent.hpp"
 #include "system/systems/collision/Aabb.hpp"
 #include "system/Entity.hpp"
-#include "system/systems/collision/CollisionCellMap.hpp"
+#include "system/grids/CollisionGrid.hpp"
 #include "system/WorldBase.hpp"
-#include "system/WorldMap.hpp"
+#include "system/grids/WorldGridsManager.hpp"
 #include "system/handlers/DefferedFunctionStorage.hpp"
 #include "system/systems/IntentComponent.hpp"
 
@@ -24,7 +24,7 @@ namespace {
 }
 
 
-sl::AttackSystem::AttackSystem(const sl::CollisionCellMap& collisionCellMap, const sl::IEntityRegistry& entityRegistry):
+sl::AttackSystem::AttackSystem(const sl::CollisionGrid& collisionCellMap, const sl::IEntityRegistry& entityRegistry):
     collisionCellMap(collisionCellMap), entityRegistry(entityRegistry)
 {
     reusableEntityIdsBuffer = std::vector<sl::EntityId>();
@@ -73,7 +73,7 @@ bool sl::AttackSystem::tryMeleeAttack(const sl::Entity& attackingEntity) {
         aabb,
         entityPos,
         reusableEntityIdsBuffer,
-        sl::CollisionCellMap::getSearchDepthByDistance(attackDistance)
+        sl::CollisionGrid::getSearchDepthByDistance(attackDistance)
     );
 
     if (!isSuccess) { return false; }

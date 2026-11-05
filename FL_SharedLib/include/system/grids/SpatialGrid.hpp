@@ -5,6 +5,7 @@
 #include "SFML/System/Vector2.hpp"
 #include "system/Cell.hpp"
 #include "system/EntityId.hpp"
+#include "system/handlers/LockFreeDelegate.hpp"
 
 namespace sl {
 	class Entity;
@@ -13,7 +14,9 @@ namespace sl {
 
 	class SpatialGrid {
 	public:
-		SpatialGrid(const sl::IEntityRegistry& entityRegistry);
+		SpatialGrid(const sl::IEntityRegistry& entityRegistry,
+			sl::LockFreeDelegate<sl::EntityId>& OnEntityAdded,
+			sl::LockFreeDelegate<sl::EntityId>& OnEntityRemoved);
 
 		void recordEntity(const sl::Entity& entity);
 
@@ -33,6 +36,8 @@ namespace sl {
 
 		std::unordered_map<sl::EntityId, std::vector<std::shared_ptr<sl::DelegateToken>>> entityIdToDelegateTokens;
 
+		std::vector<std::shared_ptr<sl::DelegateToken>> delegateTokens;
+
 		const sl::IEntityRegistry& entityRegistry;
 
 		[[nodiscard]] bool correctingEntityOnMap(sl::EntityId entityId, const sf::Vector2f& pos, const sf::Vector2f& entitySize);
@@ -42,6 +47,10 @@ namespace sl {
 		void onPositionChanged(sl::EntityId entityId, const sf::Vector2f& prevPos, const sf::Vector2f& newPos);
 
 		void onSizeChanged(sl::EntityId entityId, const sf::Vector2f& newSize);
+
+		void onEntityAdded(sl::EntityId entityId);
+
+		void onEntityRemoved(sl::EntityId entityId);
 	};
 
 }

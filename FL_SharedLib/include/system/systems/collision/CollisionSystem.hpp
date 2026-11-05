@@ -7,14 +7,14 @@
 
 namespace sl {
 	class Entity;
-	class CollisionCellMap;
+	class CollisionGrid;
 	class IEntityRegistry;
 	struct EntityStorage;
 	enum class CollisionType : uint8_t;
 
 	class CollisionSystem : public sl::UpdatableSystem {
 	public:
-		CollisionSystem(const sl::CollisionCellMap& collisionCellMap, const sl::IEntityRegistry& entityRegistry);
+		CollisionSystem(const sl::CollisionGrid& collisionCellMap, const sl::IEntityRegistry& entityRegistry);
 		void update(float updateTime, const sl::Entity& entity);
 
 		sl::LockFreeDelegate<const sl::Entity&, const sl::Entity&, sl::CollisionType> onCollisionDetected;
@@ -27,7 +27,7 @@ namespace sl {
 
 		std::vector<sl::EntityId> reusableEntityIdsBuffer;
 
-		const sl::CollisionCellMap& collisionCellMap;
+		const sl::CollisionGrid& collisionCellMap;
 
 		const sl::IEntityRegistry& entityRegistry;
 

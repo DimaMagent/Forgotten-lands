@@ -3,7 +3,7 @@
 #include "system/Entity.hpp"
 #include "network/Serializer.hpp"
 #include "network/ConnectionEvents.hpp"
-#include "system/WorldMap.hpp"
+#include "system/grids/WorldGridsManager.hpp"
 #include "network/NetworkIDComponent.hpp"
 #include "ServerEntityFactory.hpp"
 
@@ -40,7 +40,6 @@ sl::EntityId World::addPlayerEntity(sl::entityType entityType, const uint32_t& s
 		}
 
 		enPtr->setId(entityId);
-		worldMap->onEntityAdded(*enPtr);
 
 		OnEntityAdded.broadcast(entityId);
 
@@ -110,8 +109,6 @@ sl::EntityId World::addEntity(sl::entityType entityType)
 	}
 
 	entityPtr->setId(entityId);
-
-	worldMap->onEntityAdded(*entityPtr);
 
 	OnEntityAdded.broadcast(entityId);
 

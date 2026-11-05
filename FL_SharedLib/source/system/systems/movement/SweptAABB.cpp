@@ -8,7 +8,7 @@
 #include "system/systems/movement/MovementComponent.hpp"
 #include "system/systems/TransformComponent.hpp"
 #include "system/systems/collision/CollisionComponent.hpp"
-#include "system/systems/collision/CollisionCellMap.hpp"
+#include "system/grids/CollisionGrid.hpp"
 #include "system/IEntityRegistry.hpp"
 
 namespace {
@@ -21,7 +21,7 @@ namespace {
     std::vector<sl::EntityId> reusableEntityIdsBuffer;
 }
 
-sl::SweptAABB::SweptAABB(const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry):
+sl::SweptAABB::SweptAABB(const sl::CollisionGrid& collisionCellMap, const IEntityRegistry& entityRegistry):
     collisionCellMap(collisionCellMap), entityRegistry(entityRegistry){}
 
 void sl::SweptAABB::update(float updateTime, const sl::Entity& entity) {

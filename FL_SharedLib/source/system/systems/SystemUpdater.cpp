@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "system/systems/SystemUpdater.hpp"
 #include "system/WorldBase.hpp"
-#include "system/WorldMap.hpp"
+#include "system/grids/WorldGridsManager.hpp"
 #include "system/Entity.hpp"
 #include "system/systems/UpdatableSystem.hpp"
 

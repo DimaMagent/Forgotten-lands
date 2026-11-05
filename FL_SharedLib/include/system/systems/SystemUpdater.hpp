@@ -11,14 +11,14 @@ namespace sl {
 	class CollisionSystem;
 	class Entity;
 	class UpdatableSystem;
-	class CollisionCellMap;
+	class CollisionGrid;
 	class WorldBase;
 
 	//To establish new system dependencies in other projects, you need to create a structure that inherits from "SystemCreatorContext".
 	struct SystemCreatorContext {
-		SystemCreatorContext(const sl::CollisionCellMap& collisionCellMap, const sl::IEntityRegistry& entityRegistry):
+		SystemCreatorContext(const sl::CollisionGrid& collisionCellMap, const sl::IEntityRegistry& entityRegistry):
 			collisionCellMap(collisionCellMap), entityRegistry(entityRegistry){}
-		const sl::CollisionCellMap& collisionCellMap;
+		const sl::CollisionGrid& collisionCellMap;
 		const sl::IEntityRegistry& entityRegistry;
 	};
 

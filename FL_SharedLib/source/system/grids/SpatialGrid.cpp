@@ -1,12 +1,24 @@
 #include "pch.h"
-#include "system/SpatialGrid.hpp"
+#include "system/grids/SpatialGrid.hpp"
 #include "system/Entity.hpp"
 #include "system/systems/TransformComponent.hpp"
 #include "system/IEntityRegistry.hpp"
 #include "system/Utils.hpp"
 
-sl::SpatialGrid::SpatialGrid(const sl::IEntityRegistry& entityRegistry):
-	entityRegistry(entityRegistry){
+sl::SpatialGrid::SpatialGrid(const sl::IEntityRegistry& entityRegistry,
+	sl::LockFreeDelegate<sl::EntityId>& OnEntityAdded,
+	sl::LockFreeDelegate<sl::EntityId>& OnEntityRemoved):
+	entityRegistry(entityRegistry)
+{
+	delegateTokens.push_back(OnEntityAdded.addFunction([this](sl::EntityId entityId)
+		{
+			onEntityAdded(entityId);
+		}));
+
+	delegateTokens.push_back(OnEntityRemoved.addFunction([this](sl::EntityId entityId)
+		{
+			onEntityRemoved(entityId);
+		}));
 }
 
 void sl::SpatialGrid::recordEntity(const sl::Entity& entity) {
@@ -219,3 +231,20 @@ void sl::SpatialGrid::onSizeChanged(sl::EntityId entityId, const sf::Vector2f& n
 		std::cout << "sl::SpatialGrid::recordEntity: correctingEntityOnMap failed\n";
 	}
 }
+
+void sl::SpatialGrid::onEntityAdded(sl::EntityId entityId) {
+	auto entityOpt = entityRegistry.getEntityById(entityId);
+
+	if (!entityOpt.has_value()) { return; }
+
+	recordEntity(entityOpt.value().get());
+}
+
+void sl::SpatialGrid::onEntityRemoved(sl::EntityId entityId) {
+	auto entityOpt = entityRegistry.getEntityById(entityId);
+
+	if (!entityOpt.has_value()) { return; }
+
+	removeEntity(entityOpt.value().get());
+}
+

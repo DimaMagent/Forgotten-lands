@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "system/systems/collision/CollisionCellMap.hpp"
+#include "system/grids/CollisionGrid.hpp"
 #include "system/Entity.hpp"
 #include "system/systems/collision/CollisionComponent.hpp"
 #include "system/systems/TransformComponent.hpp"
@@ -8,11 +8,23 @@
 #include "system/Utils.hpp"
 
 
-sl::CollisionCellMap::CollisionCellMap(const IEntityRegistry& entityRegistry):
+sl::CollisionGrid::CollisionGrid(const IEntityRegistry& entityRegistry,
+	sl::LockFreeDelegate<sl::EntityId>& OnEntityAdded,
+	sl::LockFreeDelegate<sl::EntityId>& OnEntityRemoved):
 	entityRegistry(entityRegistry)
-{}
+{
+	delegateTokens.push_back(OnEntityAdded.addFunction([this](sl::EntityId entityId) 
+		{
+			onEntityAdded(entityId);
+		}));
 
-void sl::CollisionCellMap::recordEntity(const sl::Entity& entity)
+	delegateTokens.push_back(OnEntityRemoved.addFunction([this](sl::EntityId entityId) 
+		{
+			onEntityRemoved(entityId);
+		}));
+}
+
+void sl::CollisionGrid::recordEntity(const sl::Entity& entity)
 {
 	sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
 	if (!colisComp) { return; }
@@ -40,7 +52,7 @@ void sl::CollisionCellMap::recordEntity(const sl::Entity& entity)
 
 }
 
-void sl::CollisionCellMap::removeEntity(const sl::Entity& entity)
+void sl::CollisionGrid::removeEntity(const sl::Entity& entity)
 {
 
 	bool isSuccess = occupiedCellsRemove(entity.getId());
@@ -53,7 +65,7 @@ void sl::CollisionCellMap::removeEntity(const sl::Entity& entity)
 	entityIdToDelegateTokens.erase(tokenIt);
 }
 
-std::vector<sl::EntityId> sl::CollisionCellMap::getEntityIds(const sf::Vector2f& pos) const
+std::vector<sl::EntityId> sl::CollisionGrid::getEntityIds(const sf::Vector2f& pos) const
 {
 	if (pos.x < 0 || pos.y < 0) { return  std::vector<sl::EntityId>(); }
 
@@ -65,7 +77,7 @@ std::vector<sl::EntityId> sl::CollisionCellMap::getEntityIds(const sf::Vector2f&
 	return it->second;
 }
 
-bool sl::CollisionCellMap::getNearestEntityIdsToPosition(const sf::Vector2f& pos, std::vector<sl::EntityId>& entityIdsOut, uint8_t searchDepth) const
+bool sl::CollisionGrid::getNearestEntityIdsToPosition(const sf::Vector2f& pos, std::vector<sl::EntityId>& entityIdsOut, uint8_t searchDepth) const
 {
 	Cell centerCell(pos.x, pos.y);
 
@@ -89,7 +101,7 @@ bool sl::CollisionCellMap::getNearestEntityIdsToPosition(const sf::Vector2f& pos
 	return true;
 }
 
-bool sl::CollisionCellMap::getNearestEntityIdsToEntity(const AABB& aabb, const sf::Vector2f& pos, std::vector<sl::EntityId>& entityIdsOut, uint8_t searchDepth) const
+bool sl::CollisionGrid::getNearestEntityIdsToEntity(const AABB& aabb, const sf::Vector2f& pos, std::vector<sl::EntityId>& entityIdsOut, uint8_t searchDepth) const
 {
 	if (!aabb.exists()) { return false; }
 
@@ -116,12 +128,12 @@ bool sl::CollisionCellMap::getNearestEntityIdsToEntity(const AABB& aabb, const s
 	return true;
 }
 
-uint8_t sl::CollisionCellMap::getSearchDepthByDistance(float distance)
+uint8_t sl::CollisionGrid::getSearchDepthByDistance(float distance)
 {
 	return static_cast<uint8_t>(ceil(distance / Cell::getCellSize()));
 }
 
-bool sl::CollisionCellMap::correctingEntityOnMap(sl::EntityId entityId, const sf::Vector2f& pos)
+bool sl::CollisionGrid::correctingEntityOnMap(sl::EntityId entityId, const sf::Vector2f& pos)
 {
 	bool isSuccess = occupiedCellsRemove(entityId);
 
@@ -130,7 +142,7 @@ bool sl::CollisionCellMap::correctingEntityOnMap(sl::EntityId entityId, const sf
 	return occupiedCellsAdd(entityId, pos);
 }
 
-bool sl::CollisionCellMap::occupiedCellsAdd(sl::EntityId entityId, const sf::Vector2f& pos)
+bool sl::CollisionGrid::occupiedCellsAdd(sl::EntityId entityId, const sf::Vector2f& pos)
 {
 	auto entityOpt = entityRegistry.getEntityById(entityId);
 
@@ -172,7 +184,7 @@ bool sl::CollisionCellMap::occupiedCellsAdd(sl::EntityId entityId, const sf::Vec
 	return true;
 }
 
-bool sl::CollisionCellMap::occupiedCellsRemove(sl::EntityId entityId)
+bool sl::CollisionGrid::occupiedCellsRemove(sl::EntityId entityId)
 {
 	auto entityOpt = entityRegistry.getEntityById(entityId);
 
@@ -208,15 +220,15 @@ bool sl::CollisionCellMap::occupiedCellsRemove(sl::EntityId entityId)
 	return true;
 }
 
-void sl::CollisionCellMap::onPositionChanged(sl::EntityId entityId, const sf::Vector2f& prevPos, const sf::Vector2f& newPos) {
+void sl::CollisionGrid::onPositionChanged(sl::EntityId entityId, const sf::Vector2f& prevPos, const sf::Vector2f& newPos) {
 	if (!Cell::isCellChanged(prevPos.x, prevPos.y, newPos.x, newPos.y)) { return; }
 
 	if (!correctingEntityOnMap(entityId, newPos)) {
-		std::cout << "sl::CollisionCellMap::recordEntity: correctingEntityOnMap failed\n";
+		std::cout << "sl::CollisionGrid::recordEntity: correctingEntityOnMap failed\n";
 	}
 }
 
-void sl::CollisionCellMap::onCollisionShapeChanged(sl::EntityId entityId, const sl::AABB& newAABB) {
+void sl::CollisionGrid::onCollisionShapeChanged(sl::EntityId entityId, const sl::AABB& newAABB) {
 
 	auto entityOpt = entityRegistry.getEntityById(entityId);
 
@@ -228,6 +240,22 @@ void sl::CollisionCellMap::onCollisionShapeChanged(sl::EntityId entityId, const 
 	if (!transComp) { return; }
 
 	if (!correctingEntityOnMap(entityId, transComp->getPosition())) {
-		std::cout << "sl::CollisionCellMap::recordEntity: correctingEntityOnMap failed\n";
+		std::cout << "sl::CollisionGrid::recordEntity: correctingEntityOnMap failed\n";
 	}
+}
+
+void sl::CollisionGrid::onEntityAdded(sl::EntityId entityId) {
+	auto entityOpt = entityRegistry.getEntityById(entityId);
+
+	if (!entityOpt.has_value()) { return; }
+
+	recordEntity(entityOpt.value().get());
+}
+
+void sl::CollisionGrid::onEntityRemoved(sl::EntityId entityId) {
+	auto entityOpt = entityRegistry.getEntityById(entityId);
+
+	if (!entityOpt.has_value()) { return; }
+
+	removeEntity(entityOpt.value().get());
 }

@@ -13,7 +13,7 @@
 
 namespace sl {
 	class Entity;
-	class WorldMap;
+	class WorldGridsManager;
 	class CollisionSystem;
 	class SystemUpdater;
 }
@@ -30,13 +30,11 @@ namespace sl {
 		virtual sl::EntityId addEntity(sl::entityType entityType) = 0;
 		virtual sl::EntityId addEntity(const std::string& entityTypeName) = 0;
 		virtual void removeEntityById(sl::EntityId id) = 0;
-		const std::optional<std::reference_wrapper<sl::WorldMap>> getWorldMap() const;
+		const std::optional<std::reference_wrapper<sl::WorldGridsManager>> getWorldMap() const;
 
 	protected:
 		const sf::Time updateTime = sf::seconds(1.f / 60.f);
 		sf::Time timeSinceLastUpdate = sf::Time::Zero;
-
-		std::unique_ptr<sl::WorldMap> worldMap;
 		
 		virtual void onUpdate(float deltaTime);
 	

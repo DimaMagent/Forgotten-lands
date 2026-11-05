@@ -5,13 +5,13 @@
 #include "system/systems/collision/CollisionComponent.hpp"
 #include "system/systems/TransformComponent.hpp"
 #include "system/systems/movement/MovementComponent.hpp"
-#include "system/systems/collision/CollisionCellMap.hpp"
+#include "system/grids/CollisionGrid.hpp"
 #include "system/storages/EntityStorage.hpp"
 #include "system/systems/collision/Aabb.hpp"
 #include "system/IEntityRegistry.hpp"
 #include <optional>
 
-sl::CollisionSystem::CollisionSystem(const sl::CollisionCellMap& collisionCellMap, const sl::IEntityRegistry& entityRegistry):
+sl::CollisionSystem::CollisionSystem(const sl::CollisionGrid& collisionCellMap, const sl::IEntityRegistry& entityRegistry):
 	collisionCellMap(collisionCellMap), entityRegistry(entityRegistry)
 {
 }

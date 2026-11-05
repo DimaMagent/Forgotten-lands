@@ -9,19 +9,19 @@
 namespace sl {
 	class Entity;
 	struct AABB;
-	class CollisionCellMap;
+	class CollisionGrid;
 	class WorldBase;
 	class IEntityRegistry;
 
 	class AttackSystem: public sl::UpdatableSystem {
 	public:
-		AttackSystem(const sl::CollisionCellMap& collisionCellMap, const sl::IEntityRegistry& entityRegistry);
+		AttackSystem(const sl::CollisionGrid& collisionCellMap, const sl::IEntityRegistry& entityRegistry);
 		void update(float updateTime, const sl::Entity& entity) override;
 		[[nodiscard]] bool tryMeleeAttack(const sl::Entity& attackingEntity);
 		void attackEnd(sl::EntityId attackingEntityId, const sl::IEntityRegistry& entityRegistry);
 
 	private:
-		const sl::CollisionCellMap& collisionCellMap;
+		const sl::CollisionGrid& collisionCellMap;
 		const sl::IEntityRegistry& entityRegistry;
 
 		std::vector<sl::EntityId> reusableEntityIdsBuffer;

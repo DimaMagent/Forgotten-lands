@@ -13,7 +13,7 @@
 #include <spdlog/sinks/rotating_file_sink.h> 
 #include "system/handlers/DefferedFunctionStorage.hpp"
 #include "system/systems/ClientSystemUpdater.hpp"
-#include "system/WorldMap.hpp"
+#include "system/grids/WorldGridsManager.hpp"
 
 Client::Client() 
 {
@@ -23,6 +23,7 @@ Client::Client()
 	window = std::make_unique<sf::RenderWindow>(sf::VideoMode::getDesktopMode(), "FL_Client.exe", sf::State::Windowed); // sf::State::Fullscreen
 	dataProcessorManager = std::make_unique<DataProcessorManager>();
 	world = std::make_unique<LocalWorld>(*window, dataProcessorManager->OnDataProcessed);
+	worldGridsManager = std::make_unique<sl::WorldGridsManager>(*world, world->OnEntityAdded, world->OnEntityRemoved);
 	netManager = std::make_unique<NetManager>(*clientContext, *dataProcessorManager);
 	inputManager = std::make_unique<InputManager>(isRunningFlag);
 	controller = std::make_unique<Controller>(*inputManager, world->OnSetPlayerEntity);
@@ -31,7 +32,7 @@ Client::Client()
 		controller->onNewAction,
 		controller->onSetMovementDirection);
 
-	ClientSystemCreatorContext context = { world->getWorldMap().value().get().getCollisionMap().value(), *world, *world, *window};
+	ClientSystemCreatorContext context = { worldGridsManager->getCollisionMap().value(), *world, *world, *window};
 	systemUpdater = std::make_unique<ClientSystemUpdater>(context);
 	systemUpdater->createSystems();
 	tickTimer = std::make_shared<asio::steady_timer>(*clientContext);

@@ -6,6 +6,7 @@
 #include "system/Cell.hpp"
 #include "system/systems/collision/Aabb.hpp"
 #include "system/EntityId.hpp"
+#include "system/handlers/LockFreeDelegate.hpp"
 
 namespace sl {
 	class Entity;
@@ -13,11 +14,13 @@ namespace sl {
 	class IEntityRegistry;
 	class DelegateToken;
 
-	class CollisionCellMap {
+	class CollisionGrid {
 	public:
 		
-		CollisionCellMap(const IEntityRegistry& entityRegistry);
-		
+		CollisionGrid(const IEntityRegistry& entityRegistry,
+			sl::LockFreeDelegate<sl::EntityId>& OnEntityAdded,
+			sl::LockFreeDelegate<sl::EntityId>& OnEntityRemoved);
+
 		void recordEntity(const sl::Entity& entity);
 		
 		void removeEntity(const sl::Entity& entity);
@@ -36,6 +39,8 @@ namespace sl {
 
 		std::unordered_map<sl::EntityId, std::vector<std::shared_ptr<sl::DelegateToken>>> entityIdToDelegateTokens;
 
+		std::vector<std::shared_ptr<sl::DelegateToken>> delegateTokens;
+
 		const IEntityRegistry& entityRegistry;
 
 		[[nodiscard]] bool correctingEntityOnMap(sl::EntityId entityId, const sf::Vector2f& pos);
@@ -45,5 +50,9 @@ namespace sl {
 		void onPositionChanged(sl::EntityId entityId, const sf::Vector2f& prevPos, const sf::Vector2f& newPos);
 
 		void onCollisionShapeChanged(sl::EntityId entityId, const sl::AABB& newAABB);
+
+		void onEntityAdded(sl::EntityId entityId);
+
+		void onEntityRemoved(sl::EntityId entityId);
 	};
 }

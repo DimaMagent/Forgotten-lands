@@ -4,13 +4,13 @@
 
 namespace sl {
 	class Entity;
-	class CollisionCellMap;
+	class CollisionGrid;
 	class IEntityRegistry;
 	class AABB;
 
 	class SweptAABB : public sl::UpdatableSystem {
 	public:
-		SweptAABB(const sl::CollisionCellMap& collisionCellMap, const IEntityRegistry& entityRegistry);
+		SweptAABB(const sl::CollisionGrid& collisionCellMap, const IEntityRegistry& entityRegistry);
 
 		void update(float updateTime, const sl::Entity& entity) override;
 
@@ -23,7 +23,7 @@ namespace sl {
 			bool isCollided;
 		};
 
-		const sl::CollisionCellMap& collisionCellMap;
+		const sl::CollisionGrid& collisionCellMap;
 
 		const IEntityRegistry& entityRegistry;
 

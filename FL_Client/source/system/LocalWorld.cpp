@@ -8,7 +8,7 @@
 #include "game/render/animations/AnimationSystem.hpp"
 #include "system/EntityType.hpp"
 #include "network/packets/StatusPacket.hpp"
-#include "system/WorldMap.hpp"
+#include "system/grids/WorldGridsManager.hpp"
 #include "system/systems/ClientSystemUpdater.hpp"
 
 LocalWorld::LocalWorld(sf::RenderTarget& renderTarget, DataProcessedDelegate& OnDataProcessed) : WorldBase(),
@@ -44,7 +44,6 @@ sl::EntityId LocalWorld::addEntity(sl::entityType entityType)
 
 	if (enPtr) {
 		enPtr->setId(entityId);
-		worldMap->onEntityAdded(*enPtr);
 		
 	}
 
@@ -224,8 +223,6 @@ sl::EntityId LocalWorld::addNetworkEntity(sl::Entity&& entity, sl::EntityId netw
 
 	if (enPtr) {
 		enPtr->setId(entityId);
-
-		worldMap->onEntityAdded(*enPtr);
 	}
 
 	OnEntityAdded.broadcast(entityId);

@@ -20,6 +20,7 @@ namespace asio {
 }
 namespace sl {
 	class DelegateToken;
+	class WorldGridsManager;
 }
 
 class Server {
@@ -36,6 +37,7 @@ private:
 
 	std::unique_ptr<ConnectionEvents> connectionEvents;
 	std::unique_ptr<World> world;
+	std::unique_ptr<sl::WorldGridsManager> worldGridsManager;
 	std::unique_ptr<DataProcessorManager> dataProcessorManager;
 	std::unique_ptr<PlayerManager> playerManager;
 	std::unique_ptr<NetManager> netManager;

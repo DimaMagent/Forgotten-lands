@@ -19,7 +19,7 @@
 #include "network/connectionEvents.hpp"
 #include "system/handlers/DefferedFunctionStorage.hpp"
 #include "system/ServerSystemUpdater.hpp"
-#include "system/WorldMap.hpp"
+#include "system/grids/WorldGridsManager.hpp"
 
 
 Server::Server(short port)
@@ -31,12 +31,13 @@ Server::Server(short port)
 	serverContext = std::make_unique<asio::io_context>();
 	connectionEvents = std::make_unique<ConnectionEvents>();
 	world = std::make_unique<World>(*connectionEvents);
+	worldGridsManager = std::make_unique<sl::WorldGridsManager>(*world, world->OnEntityAdded, world->OnEntityRemoved);
 	dataProcessorManager = std::make_unique<DataProcessorManager>();
 	playerManager = std::make_unique<PlayerManager>(dataProcessorManager->OnDataProcessed, *world);
 	netManager = std::make_unique<NetManager>(*serverContext, port, *dataProcessorManager, *connectionEvents);
 	tickTimer = std::make_shared<asio::steady_timer>(*serverContext);
 
-	sl::SystemCreatorContext context = {  world->getWorldMap().value().get().getCollisionMap().value() , *world };
+	sl::SystemCreatorContext context = { worldGridsManager->getCollisionMap().value() , *world };
 	systemUpdater = std::make_unique<ServerSystemUpdater>(context);
 	systemUpdater->createSystems();
 
