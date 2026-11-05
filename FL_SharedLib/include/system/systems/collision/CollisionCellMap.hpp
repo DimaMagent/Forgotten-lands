@@ -16,7 +16,7 @@ namespace sl {
 	class CollisionCellMap {
 	public:
 		
-		CollisionCellMap(const IEntityRegistry& entityRegistry, cellIndex mapSizeX, cellIndex mapSizeY);
+		CollisionCellMap(const IEntityRegistry& entityRegistry);
 		
 		void recordEntityToCollisionMap(const sl::Entity& entity);
 		

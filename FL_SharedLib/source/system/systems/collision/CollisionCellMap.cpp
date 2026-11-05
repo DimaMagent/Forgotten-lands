@@ -4,21 +4,13 @@
 #include "system/systems/collision/CollisionComponent.hpp"
 #include "system/systems/TransformComponent.hpp"
 #include "system/IEntityRegistry.hpp"
-#include <queue>
-#include <array>
 #include <cmath>
 #include "system/Utils.hpp"
 
 
-sl::CollisionCellMap::CollisionCellMap(const IEntityRegistry& entityRegistry, cellIndex mapSizeX, cellIndex mapSizeY):
+sl::CollisionCellMap::CollisionCellMap(const IEntityRegistry& entityRegistry):
 	entityRegistry(entityRegistry)
 {
-	for (cellIndex x = 0; x < mapSizeX; ++x) {
-		for (cellIndex y = 0; y < mapSizeY; ++y) {
-			Cell cell(x, y);
-			cellToEntityIds.try_emplace(cell, std::vector<sl::EntityId>());
-		}
-	}
 }
 
 void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
@@ -52,9 +44,6 @@ void sl::CollisionCellMap::removeEntityFromCollisionMap(const sl::Entity& entity
 	bool isSuccess = occupiedCellsRemove(entity.getId());
 
 	if (!isSuccess) { return; }
-
-	sl::TransformComponent* transComp = entity.getComponent<sl::TransformComponent>();
-	if (!transComp) { return; }
 
 	auto tokenIt = entityIdToDelegateToken.find(entity.getId());
 	if (tokenIt == entityIdToDelegateToken.end()) { return; }
@@ -91,9 +80,9 @@ bool sl::CollisionCellMap::getNearestEntityIdsToPosition(const sf::Vector2f& pos
 			Cell cell(static_cast<cellIndex>(x), static_cast<cellIndex>(y));
 
 			auto it = cellToEntityIds.find(cell);
-			if (it != cellToEntityIds.end()) {
-				entityIdsOut.insert(entityIdsOut.end(), it->second.begin(), it->second.end());
-			}
+			if (it == cellToEntityIds.end()) { continue; }
+
+			entityIdsOut.insert(entityIdsOut.end(), it->second.begin(), it->second.end());
 		}
 	}
 
@@ -121,9 +110,9 @@ bool sl::CollisionCellMap::getNearestEntityIdsToEntity(const AABB& aabb, const s
 			Cell cell(static_cast<cellIndex>(x), static_cast<cellIndex>(y));
 
 			auto it = cellToEntityIds.find(cell);
-			if (it != cellToEntityIds.end()) {
-				entityIdsOut.insert(entityIdsOut.end(), it->second.begin(), it->second.end());
-			}
+			if (it == cellToEntityIds.end()) { continue; }
+
+			entityIdsOut.insert(entityIdsOut.end(), it->second.begin(), it->second.end());
 		}
 	}
 
@@ -181,7 +170,13 @@ bool sl::CollisionCellMap::occupiedCellsAdd(sl::EntityId entityId, const sf::Vec
 	for (cellIndex cellNumX = minCellX; cellNumX <= maxCellX; ++cellNumX) {
 		for (cellIndex cellNumY = minCellY; cellNumY <= maxCellY; ++cellNumY) {
 			Cell currentCell(cellNumX, cellNumY);
+			auto it = cellToEntityIds.find(currentCell);
+
+			if (it == cellToEntityIds.end()) {
+				cellToEntityIds.try_emplace(currentCell, std::vector<sl::EntityId>());
+			}
 			cellToEntityIds[currentCell].push_back(entityId);
+
 			entityToCell[entityId].push_back(currentCell);
 		}
 	}
@@ -208,13 +203,18 @@ bool sl::CollisionCellMap::occupiedCellsRemove(sl::EntityId entityId)
 		auto it = cellToEntityIds.find(cell);
 		if (it == cellToEntityIds.end()) { continue; }
 
+		if (it->second.size() == 1 || it->second.size() == 0) {
+			cellToEntityIds.erase(it);
+			continue;
+		}
+
 		auto itEntity = std::find(it->second.begin(), it->second.end(), entity.getId());
 		if (itEntity == it->second.end()) { continue; }
 
 		sl::swapPopDelete(it->second, std::distance(it->second.begin(), itEntity));
 	}
 
-	cellsIt->second.clear();
+	entityToCell.erase(cellsIt);
 
 	return true;
 }
