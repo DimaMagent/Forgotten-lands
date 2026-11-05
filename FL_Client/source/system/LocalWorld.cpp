@@ -40,24 +40,29 @@ sl::EntityId LocalWorld::addEntity(sl::entityType entityType)
 
 	sl::EntityId entityId = entities.spawn(std::move(entity));
 
-	entity.setId(entityId);
-
 	auto enPtr = entities.get(entityId);
 
 	if (enPtr) {
+		enPtr->setId(entityId);
 		worldMap->onEntityAdded(*enPtr);
+		
 	}
+
+	OnEntityAdded.broadcast(entityId);
+
 	return entityId;
 }
 
-sl::EntityId LocalWorld::addEntity(const std::string& entityType) {
-	return addEntity(sl::hashEntityType(entityType));
+sl::EntityId LocalWorld::addEntity(const std::string& entityTypeName) {
+	return addEntity(sl::hashEntityType(entityTypeName));
 }
 
 sl::EntityId LocalWorld::addNetworkEntity(sl::entityType entityType, sl::EntityId networkId) {
 	sl::EntityId entityId = addEntity(entityType);
 
 	networkIdToLocalId.try_emplace(networkId, entityId);
+
+	OnEntityAdded.broadcast(entityId);
 
 	return entityId;
 }
@@ -90,6 +95,8 @@ void LocalWorld::removeEntityById(sl::EntityId id)
 		#endif // DEBUG
 
 	}
+
+	OnEntityRemoved.broadcast(id);
 
 	entities.destroy(id);
 }
@@ -220,6 +227,8 @@ sl::EntityId LocalWorld::addNetworkEntity(sl::Entity&& entity, sl::EntityId netw
 
 		worldMap->onEntityAdded(*enPtr);
 	}
+
+	OnEntityAdded.broadcast(entityId);
 
 	return entityId;
 }

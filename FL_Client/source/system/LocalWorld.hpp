@@ -30,9 +30,9 @@ public:
 
 	virtual ~LocalWorld();
 
-	sl::EntityId addEntity(sl::entityType entityType);
+	sl::EntityId addEntity(sl::entityType entityType) override;
 
-	sl::EntityId addEntity(const std::string& entityType);
+	sl::EntityId addEntity(const std::string& entityTypeName) override;
 
 	// returns local entity id
 	sl::EntityId addNetworkEntity(sl::entityType entityType, sl::EntityId networkId);

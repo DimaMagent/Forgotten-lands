@@ -42,6 +42,8 @@ sl::EntityId World::addPlayerEntity(sl::entityType entityType, const uint32_t& s
 		enPtr->setId(entityId);
 		worldMap->onEntityAdded(*enPtr);
 
+		OnEntityAdded.broadcast(entityId);
+
 		if (!serializer) {
 			throw std::runtime_error("World::addPlayerEntity: serializer is not valid. AddPlayerEntity failed.");
 		}
@@ -63,6 +65,8 @@ void World::removePlayerEntityByToken(uint32_t sessionToken)
 	auto it = tokenToEntityId.find(sessionToken);
 	if (it == tokenToEntityId.end()) { return; }
 
+	OnEntityRemoved.broadcast(it->second);
+
 	entities.destroy(it->second);
 
 	tokenToEntityId.erase(sessionToken);
@@ -81,6 +85,8 @@ void World::removeEntityById(sl::EntityId id)
 	{
 		tokenToEntityId.erase(netComp->getSessionToken());
 	}
+
+	OnEntityRemoved.broadcast(id);
 
 	entities.destroy(id);
 
@@ -106,6 +112,8 @@ sl::EntityId World::addEntity(sl::entityType entityType)
 	entityPtr->setId(entityId);
 
 	worldMap->onEntityAdded(*entityPtr);
+
+	OnEntityAdded.broadcast(entityId);
 
 	return entityId;
 }

@@ -10,12 +10,10 @@
 
 sl::CollisionCellMap::CollisionCellMap(const IEntityRegistry& entityRegistry):
 	entityRegistry(entityRegistry)
-{
-}
+{}
 
-void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
+void sl::CollisionCellMap::recordEntity(const sl::Entity& entity)
 {
-
 	sl::CollisionComponent* colisComp = entity.getComponent<sl::CollisionComponent>();
 	if (!colisComp) { return; }
 
@@ -42,7 +40,7 @@ void sl::CollisionCellMap::recordEntityToCollisionMap(const sl::Entity& entity)
 
 }
 
-void sl::CollisionCellMap::removeEntityFromCollisionMap(const sl::Entity& entity)
+void sl::CollisionCellMap::removeEntity(const sl::Entity& entity)
 {
 
 	bool isSuccess = occupiedCellsRemove(entity.getId());
@@ -55,7 +53,7 @@ void sl::CollisionCellMap::removeEntityFromCollisionMap(const sl::Entity& entity
 	entityIdToDelegateTokens.erase(tokenIt);
 }
 
-std::vector<sl::EntityId> sl::CollisionCellMap::getEntityIdsToCollisionMap(const sf::Vector2f& pos) const
+std::vector<sl::EntityId> sl::CollisionCellMap::getEntityIds(const sf::Vector2f& pos) const
 {
 	if (pos.x < 0 || pos.y < 0) { return  std::vector<sl::EntityId>(); }
 
@@ -214,7 +212,7 @@ void sl::CollisionCellMap::onPositionChanged(sl::EntityId entityId, const sf::Ve
 	if (!Cell::isCellChanged(prevPos.x, prevPos.y, newPos.x, newPos.y)) { return; }
 
 	if (!correctingEntityOnMap(entityId, newPos)) {
-		std::cout << "sl::CollisionCellMap::recordEntityToCollisionMap: correctingEntityOnMap failed\n";
+		std::cout << "sl::CollisionCellMap::recordEntity: correctingEntityOnMap failed\n";
 	}
 }
 
@@ -230,6 +228,6 @@ void sl::CollisionCellMap::onCollisionShapeChanged(sl::EntityId entityId, const 
 	if (!transComp) { return; }
 
 	if (!correctingEntityOnMap(entityId, transComp->getPosition())) {
-		std::cout << "sl::CollisionCellMap::recordEntityToCollisionMap: correctingEntityOnMap failed\n";
+		std::cout << "sl::CollisionCellMap::recordEntity: correctingEntityOnMap failed\n";
 	}
 }

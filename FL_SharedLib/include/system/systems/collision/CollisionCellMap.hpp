@@ -18,11 +18,11 @@ namespace sl {
 		
 		CollisionCellMap(const IEntityRegistry& entityRegistry);
 		
-		void recordEntityToCollisionMap(const sl::Entity& entity);
+		void recordEntity(const sl::Entity& entity);
 		
-		void removeEntityFromCollisionMap(const sl::Entity& entity);
+		void removeEntity(const sl::Entity& entity);
 		
-		std::vector<sl::EntityId> getEntityIdsToCollisionMap(const sf::Vector2f& pos) const;
+		std::vector<sl::EntityId> getEntityIds(const sf::Vector2f& pos) const;
 		
 		[[nodiscard]] bool getNearestEntityIdsToPosition(const sf::Vector2f& pos, std::vector<sl::EntityId>& entityIdsOut, uint8_t searchDepth = 1) const;
 		
