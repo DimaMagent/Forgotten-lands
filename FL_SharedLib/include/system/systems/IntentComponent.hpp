@@ -4,6 +4,7 @@
 #include <span>
 #include <iostream>
 #include <optional>
+#include <string>
 
 namespace sl {
 	class IntentComponent : public sl::Component {
@@ -19,9 +20,11 @@ namespace sl {
 		bool hasAction(sl::Action action) const;
 		void setAction(sl::Action action, bool isActionActive) { 
 			intentChanged = intentions.isActionActive != isActionActive || action != intentions.action;
+			if (!intentChanged) { return; }
 			intentions.action = action;
 			intentions.isActionActive = isActionActive;
 		}
+		// The check for a new direction should take place here, not in the controller.
 		void setMovementDirection(const sf::Vector2i& newDirection) {
 			intentChanged = true;
 			intentions.movementDirectionIntentions = newDirection; 
